@@ -5,7 +5,7 @@
 
 #include "defs.h"
 #include <string>
-
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 
@@ -18,6 +18,8 @@
 // If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
 // set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
 #include <SDKDDKVer.h>
+
+#include <windows.h>
 
 #endif //SKETCHTESTER_OS_WIN32
 

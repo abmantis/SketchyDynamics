@@ -1,9 +1,9 @@
 #include "StdAfx.h"
-#include "WindowManager.h"
+#include "ApplicationWindow.h"
 
 namespace PhySketch
 {
-WindowManager::WindowManager(void)
+ApplicationWindow::ApplicationWindow(void)
 {
 	_fullscreen	= false;
 	_hDC		= NULL;
@@ -13,11 +13,11 @@ WindowManager::WindowManager(void)
 }
 
 
-WindowManager::~WindowManager(void)
+ApplicationWindow::~ApplicationWindow(void)
 {
 }
 
-bool WindowManager::CreateWindow( std::string title, int width, int height, bool fullscreen )
+bool ApplicationWindow::CreateWindow( std::string title, int width, int height, bool fullscreen )
 {
 	GLuint		PixelFormat;			// Holds The Results After Searching For A Match
 	WNDCLASS	wc;						// Windows Class Structure
@@ -34,7 +34,7 @@ bool WindowManager::CreateWindow( std::string title, int width, int height, bool
 	_hInstance			= GetModuleHandle(NULL);				// Grab An Instance For Our Window
 
 	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
-	wc.lpfnWndProc		= &WindowManager::InitialWndProc;					// WndProc Handles Messages
+	wc.lpfnWndProc		= &ApplicationWindow::InitialWndProc;					// WndProc Handles Messages
 	wc.cbClsExtra		= 0;									// No Extra Window Data
 	wc.cbWndExtra		= 0;									// No Extra Window Data
 	wc.hInstance		= _hInstance;							// Set The Instance
@@ -46,7 +46,7 @@ bool WindowManager::CreateWindow( std::string title, int width, int height, bool
 
 	if (!RegisterClass(&wc))									// Attempt To Register The Window Class
 	{
-		MessageBox(NULL,"Failed To Register The Window Class.","ERROR",MB_OK|MB_ICONEXCLAMATION);
+		MessageBox(NULL, "Failed To Register The Window Class.", "ERROR", MB_OK|MB_ICONEXCLAMATION);
 		return FALSE;											// Return FALSE
 	}
 
@@ -183,20 +183,20 @@ bool WindowManager::CreateWindow( std::string title, int width, int height, bool
 	return TRUE;									// Success
 }
 
-LRESULT CALLBACK WindowManager::InitialWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK ApplicationWindow::InitialWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
 	if (Msg == WM_NCCREATE) {
 		LPCREATESTRUCT create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		void * lpCreateParam = create_struct->lpCreateParams;
-		WindowManager * this_window = reinterpret_cast<WindowManager *>(lpCreateParam);
+		ApplicationWindow * this_window = reinterpret_cast<ApplicationWindow *>(lpCreateParam);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this_window));
-		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowManager::StaticWndProc));
+		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&ApplicationWindow::StaticWndProc));
 		return this_window->WndProc(hWnd, Msg, wParam, lParam);
 	}
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
 
-LRESULT CALLBACK WindowManager::StaticWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK ApplicationWindow::StaticWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
 	LONG_PTR user_data = GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	MyWindowClass * this_window = reinterpret_cast<MyWindowClass *>(user_data);

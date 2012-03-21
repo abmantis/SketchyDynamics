@@ -24,7 +24,13 @@
     <ClInclude Include="..\include\stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\WindowManager.h">
+    <ClInclude Include="..\include\Logger.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\Singleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\ApplicationWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +38,10 @@
     <ClCompile Include="..\src\stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\WindowManager.cpp">
+    <ClCompile Include="..\src\Logger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\ApplicationWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
