@@ -51,7 +51,7 @@ Logger& Logger::getSingleton(void)
 	return *ms_Singleton;
 }
 
-void Logger::WriteToFile( std::string msg )
+void Logger::writeToFile( std::string msg )
 {
 	if(_logFile != NULL)
 	{
@@ -67,9 +67,9 @@ void Logger::WriteToFile( std::string msg )
 	}
 }
 
-void Logger::Write( std::string msg )
+void Logger::writeMessage( std::string msg )
 {
-	WriteToFile(msg);
+	writeToFile(msg);
 
 	if(_printToConsole)
 	{
@@ -77,9 +77,9 @@ void Logger::Write( std::string msg )
 	}
 }
 
-void Logger::WriteWarning( std::string warning )
+void Logger::writeWarning( std::string warning )
 {
-	WriteToFile(PHYSKETCH_LOG_WARNING + warning);
+	writeToFile(PHYSKETCH_LOG_WARNING + warning);
 
 	if(_printToConsole)
 	{
@@ -87,9 +87,9 @@ void Logger::WriteWarning( std::string warning )
 	}
 }
 
-void Logger::WriteError( std::string error )
+void Logger::writeError( std::string error )
 {
-	WriteToFile(PHYSKETCH_LOG_ERROR + error);
+	writeToFile(PHYSKETCH_LOG_ERROR + error);
 	
 	if(_printToConsole)
 	{

@@ -20,7 +20,7 @@ ApplicationWindow_WGL::~ApplicationWindow_WGL(void)
 {
 }
 
-bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int width, int height, bool fullscreen)
+bool ApplicationWindow_WGL::createWindow( std::string title, int width, int height, bool fullscreen)
 {
 	int bpp = 32;
 	int			PixelFormat;			// Holds The Results After Searching For A Match
@@ -38,7 +38,7 @@ bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int widt
 	_hInstance			= GetModuleHandle(NULL);				// Grab An Instance For Our Window
 
 	wc.style			= CS_HREDRAW | CS_VREDRAW | CS_OWNDC;	// Redraw On Size, And Own DC For Window.
-	wc.lpfnWndProc		= &ApplicationWindow_WGL::InitialWndProc;					// WndProc Handles Messages
+	wc.lpfnWndProc		= &ApplicationWindow_WGL::initialWndProc;					// WndProc Handles Messages
 	wc.cbClsExtra		= 0;									// No Extra Window Data
 	wc.cbWndExtra		= 0;									// No Extra Window Data
 	wc.hInstance		= _hInstance;							// Set The Instance
@@ -50,7 +50,7 @@ bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int widt
 
 	if (!RegisterClass(&wc))									// Attempt To Register The Window Class
 	{
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Failed To Register The Window Class");
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Failed To Register The Window Class");
 		return FALSE;											// Return FALSE
 	}
 
@@ -69,7 +69,7 @@ bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int widt
 		{
 			// If The Mode Fails, Use Windowed Mode.			
 			fullscreen=FALSE;
-			Logger::getSingletonPtr()->WriteWarning("Fullscreen mode not supported");			
+			Logger::getSingletonPtr()->writeWarning("Fullscreen mode not supported");			
 		}
 	}
 
@@ -102,8 +102,8 @@ bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int widt
 		_hInstance,							// Instance
 		NULL)))								// Dont Pass Anything To WM_CREATE
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Window Creation Error");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Window Creation Error");
 		return FALSE;								// Return FALSE
 	}
 
@@ -131,55 +131,55 @@ bool ApplicationWindow_WGL::CreateApplicationWindow( std::string title, int widt
 
 	if (!(_hDC=GetDC(_hWnd)))							// Did We Get A Device Context?
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Can't Create A GL Device Context");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Create A GL Device Context");
 		return FALSE;								// Return FALSE
 	}
 
 	if (!(PixelFormat=ChoosePixelFormat(_hDC,&pfd)))	// Did Windows Find A Matching Pixel Format?
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Can't Find A Suitable PixelFormat");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Find A Suitable PixelFormat");
 		return FALSE;								// Return FALSE
 	}
 
 	if(!SetPixelFormat(_hDC,PixelFormat,&pfd))		// Are We Able To Set The Pixel Format?
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Can't Set The PixelFormat");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Set The PixelFormat");
 		return FALSE;								// Return FALSE
 	}
 
 	if (!(_hRC=wglCreateContext(_hDC)))				// Are We Able To Get A Rendering Context?
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Can't Create A GL Rendering Context");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Create A GL Rendering Context");
 		return FALSE;								// Return FALSE
 	}
 
 	if(!wglMakeCurrent(_hDC,_hRC))					// Try To Activate The Rendering Context
 	{
-		DestroyApplicationWindow();								// Reset The Display
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Can't Activate The GL Rendering Context");
+		destroyWindow();								// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Activate The GL Rendering Context");
 		return FALSE;								// Return FALSE
 	}
 
 	ShowWindow(_hWnd, SW_SHOW);						// Show The Window
 	SetForegroundWindow(_hWnd);						// Slightly Higher Priority
 	SetFocus(_hWnd);								// Sets Keyboard Focus To The Window
-	//ResizeGLScene(width, height);					// Set Up Our Perspective GL Screen
+	resizeGLScene(width, height);					// Set Up Our Perspective GL Screen
 
-	//if (!InitGL())									// Initialize Our Newly Created GL Window
-	//{
-	//	DestroyApplicationWindow();					// Reset The Display
-	//	Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Initialization Failed.");
-	//	return FALSE;								// Return FALSE
-	//}
+	if (!initGL())									// Initialize Our Newly Created GL Window
+	{
+		destroyWindow();					// Reset The Display
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Initialization Failed.");
+		return FALSE;								// Return FALSE
+	}
 
 	return TRUE;									// Success
 }
 
-void ApplicationWindow_WGL::DestroyApplicationWindow(void)								
+void ApplicationWindow_WGL::destroyWindow(void)								
 {
 	if (_fullscreen)									// Are We In Fullscreen Mode?
 	{
@@ -191,36 +191,36 @@ void ApplicationWindow_WGL::DestroyApplicationWindow(void)
 	{
 		if (!wglMakeCurrent(NULL,NULL))					// Are We Able To Release The DC And RC Contexts?
 		{
-			Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Release Of DC And RC Failed");
+			Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Release Of DC And RC Failed");
 		}
 
 		if (!wglDeleteContext(_hRC))					// Are We Able To Delete The RC?
 		{
-			Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Release Rendering Context Failed");
+			Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Release Rendering Context Failed");
 		}
 		_hRC=NULL;										// Set RC To NULL
 	}
 
 	if (_hDC && !ReleaseDC(_hWnd, _hDC))				// Are We Able To Release The DC
 	{
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Release Device Context Failed");
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Release Device Context Failed");
 		_hDC=NULL;										// Set DC To NULL
 	}
 
 	if (_hWnd && !DestroyWindow(_hWnd))					// Are We Able To Destroy The Window?
 	{
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Could Not Release hWnd");
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Could Not Release hWnd");
 		_hWnd=NULL;										// Set hWnd To NULL
 	}
 
 	if (!UnregisterClass(PHYSKETCH_WINDOW_CLASS_NAME, _hInstance))			// Are We Able To Unregister Class
 	{
-		Logger::getSingletonPtr()->WriteError("{ApplicationWindow_WGL}Could Not Unregister Class");
+		Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Could Not Unregister Class");
 		_hInstance=NULL;									// Set hInstance To NULL
 	}
 }
 
-void ApplicationWindow_WGL::ResizeGLScene(int width, int height)		// Resize And Initialize The GL Window
+void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 {
 	if (height==0)										// Prevent A Divide By Zero By
 	{
@@ -242,20 +242,20 @@ void ApplicationWindow_WGL::ResizeGLScene(int width, int height)		// Resize And 
 
 }
 
-LRESULT CALLBACK ApplicationWindow_WGL::InitialWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK ApplicationWindow_WGL::initialWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
 	if (Msg == WM_NCCREATE) {
 		LPCREATESTRUCT create_struct = reinterpret_cast<LPCREATESTRUCT>(lParam);
 		void * lpCreateParam = create_struct->lpCreateParams;
 		ApplicationWindow_WGL * this_window = reinterpret_cast<ApplicationWindow_WGL *>(lpCreateParam);
 		SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this_window));
-		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&ApplicationWindow_WGL::StaticWndProc));
+		SetWindowLongPtr(hWnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&ApplicationWindow_WGL::staticWndProc));
 		return this_window->WndProc(hWnd, Msg, wParam, lParam);
 	}
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
 
-LRESULT CALLBACK ApplicationWindow_WGL::StaticWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
+LRESULT CALLBACK ApplicationWindow_WGL::staticWndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
 	LONG_PTR user_data = GetWindowLongPtr(hWnd, GWLP_USERDATA);
 	ApplicationWindow_WGL * this_window = reinterpret_cast<ApplicationWindow_WGL *>(user_data);
@@ -268,7 +268,7 @@ LRESULT CALLBACK ApplicationWindow_WGL::WndProc( HWND hWnd, UINT Msg, WPARAM wPa
 	return DefWindowProc(hWnd, Msg, wParam, lParam);
 }
 
-int ApplicationWindow_WGL::InitGL( void )
+int ApplicationWindow_WGL::initGL( void )
 {
 	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background

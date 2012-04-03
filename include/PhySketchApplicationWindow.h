@@ -23,12 +23,12 @@ namespace PhySketch
 		 *
 		 * <returns>	true if window was created successfully. </returns>
 		 */
-		virtual bool CreateApplicationWindow(std::string title, int width, int height, bool fullscreen) = 0;
+		virtual bool createWindow(std::string title, int width, int height, bool fullscreen) = 0;
 
 		/**
 		 * <summary> Properly destroy the window </summary>
 		 */
-		virtual void DestroyApplicationWindow(void) = 0;
+		virtual void destroyWindow(void) = 0;
 
 	protected:
 		bool		_fullscreen;	// Fullscreen flag
@@ -53,12 +53,12 @@ namespace PhySketch
 		 *
 		 * <returns>	true if window was created successfully. </returns>
 		 */
-		bool CreateApplicationWindow(std::string title, int width, int height, bool fullscreen);
+		bool createWindow(std::string title, int width, int height, bool fullscreen);
 
 		/**
 		 * <summary> Properly destroy the window </summary>
 		 */
-		void DestroyApplicationWindow(void);
+		void destroyWindow(void);
 
 	protected:
 
@@ -71,28 +71,28 @@ namespace PhySketch
 		
 		/**
 		 * <summary> The initial WndProc assigned to WNDCLASS. This WndProc waits for the 
-		 * 			 WM_NCCREATE message and then sets the other WndProc (StaticWndProc).
+		 * 			 WM_NCCREATE message and then sets the other WndProc (staticWndProc).
 		 * 			 This is needed because when the window is created and WM_NCCREATE
 		 * 			 is received there's no userdata 
 		 * 			 (http://members.gamedev.net/sicrane/articles/WindowClass.html) </summary>
 		 */
-		static LRESULT CALLBACK InitialWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK initialWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 
 		/**
 		 * <summary> The seccond (and final) WndProc assigned to WNDCLASS.
 		 * 			 This WndProc calls the member function from ApplicationWindow_WGL </summary>
 		 */
-		static LRESULT CALLBACK StaticWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+		static LRESULT CALLBACK staticWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 	
 		/**
 		 * <summary> Resize And Initialize The GL Window </summary>
 		 */		
-		void ApplicationWindow_WGL::ResizeGLScene(int width, int height);
+		void resizeGLScene(int width, int height);
 
 		/**
 		 * <summary> Setup OpenGL </summary>
 		 */		
-		int InitGL(void);
+		int initGL(void);
 
 	protected:
 		HDC			_hDC;			// Private GDI Device Context

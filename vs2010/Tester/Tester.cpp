@@ -8,7 +8,7 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	PhySketch::ApplicationWindow_WGL window;
-	window.CreateApplicationWindow("test", 800, 600, false);
+	window.createWindow("test", 800, 600, false);
 	return 0;
 }
 

@@ -14,15 +14,15 @@ namespace PhySketch
 		Logger(std::string logfile, bool printToConsole);
 		~Logger(void);
 
-		void Write(std::string msg);		
-		void WriteWarning(std::string warning);
-		void WriteError(std::string error);
+		void writeMessage(std::string msg);		
+		void writeWarning(std::string warning);
+		void writeError(std::string error);
 
 		static Logger* getSingletonPtr(void);
 		static Logger& getSingleton(void);
 
 	protected:
-		void WriteToFile(std::string msg);
+		void writeToFile(std::string msg);
 		
 
 	protected:
