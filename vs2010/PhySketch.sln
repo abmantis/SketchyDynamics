@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PhySketch", "PhySketch.vcxproj", "{4BDB6380-06B6-4241-9178-0CFCB5F3047F}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tester", "Tester\Tester.vcxproj", "{65A86B8A-33F7-4936-A55C-D7D28A69ECD6}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4BDB6380-06B6-4241-9178-0CFCB5F3047F} = {4BDB6380-06B6-4241-9178-0CFCB5F3047F}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +18,10 @@ Global
 		{4BDB6380-06B6-4241-9178-0CFCB5F3047F}.Debug|Win32.Build.0 = Debug|Win32
 		{4BDB6380-06B6-4241-9178-0CFCB5F3047F}.Release|Win32.ActiveCfg = Release|Win32
 		{4BDB6380-06B6-4241-9178-0CFCB5F3047F}.Release|Win32.Build.0 = Release|Win32
+		{65A86B8A-33F7-4936-A55C-D7D28A69ECD6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{65A86B8A-33F7-4936-A55C-D7D28A69ECD6}.Debug|Win32.Build.0 = Debug|Win32
+		{65A86B8A-33F7-4936-A55C-D7D28A69ECD6}.Release|Win32.ActiveCfg = Release|Win32
+		{65A86B8A-33F7-4936-A55C-D7D28A69ECD6}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
