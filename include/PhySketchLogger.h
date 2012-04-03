@@ -12,17 +12,17 @@ namespace PhySketch
 	public:
 		Logger();
 		Logger(std::string logfile, bool printToConsole);
-		~Logger(void);
+		virtual ~Logger(void);
 
-		void writeMessage(std::string msg);		
-		void writeWarning(std::string warning);
-		void writeError(std::string error);
+		virtual void writeMessage(std::string msg);		
+		virtual void writeWarning(std::string warning);
+		virtual void writeError(std::string error);
 
 		static Logger* getSingletonPtr(void);
 		static Logger& getSingleton(void);
 
 	protected:
-		void writeToFile(std::string msg);
+		virtual void writeToFile(std::string msg);
 		
 
 	protected:

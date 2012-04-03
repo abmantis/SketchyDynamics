@@ -10,7 +10,7 @@ namespace PhySketch
 	{
 	public:
 		ApplicationWindow(void) { _fullscreen = false; }
-		//virtual ~ApplicationWindow(void) = 0;
+		virtual ~ApplicationWindow(void);
 
 
 		/**
@@ -40,7 +40,7 @@ namespace PhySketch
 	{
 	public:
 		ApplicationWindow_WGL(void);
-		~ApplicationWindow_WGL(void);
+		virtual ~ApplicationWindow_WGL(void);
 
 
 		/**
@@ -53,12 +53,12 @@ namespace PhySketch
 		 *
 		 * <returns>	true if window was created successfully. </returns>
 		 */
-		bool createWindow(std::string title, int width, int height, bool fullscreen);
+		virtual bool createWindow(std::string title, int width, int height, bool fullscreen);
 
 		/**
 		 * <summary> Properly destroy the window </summary>
 		 */
-		void destroyWindow(void);
+		virtual void destroyWindow(void);
 
 	protected:
 
@@ -67,7 +67,7 @@ namespace PhySketch
 		 *		the WM_NCCREATE message is processed. This is a member
 		 *		function so it can access member variables and functions. </summary>
 		 */
-		LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
+		virtual LRESULT CALLBACK WndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 		
 		/**
 		 * <summary> The initial WndProc assigned to WNDCLASS. This WndProc waits for the 
@@ -87,12 +87,12 @@ namespace PhySketch
 		/**
 		 * <summary> Resize And Initialize The GL Window </summary>
 		 */		
-		void resizeGLScene(int width, int height);
+		virtual void resizeGLScene(int width, int height);
 
 		/**
 		 * <summary> Setup OpenGL </summary>
 		 */		
-		int initGL(void);
+		virtual int initGL(void);
 
 	protected:
 		HDC			_hDC;			// Private GDI Device Context
