@@ -37,6 +37,8 @@ namespace PhySketch
 #include <iostream>
 #include <fstream>
 #include <time.h>
+#include <list>
+#include <set>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 

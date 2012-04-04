@@ -3,6 +3,7 @@
 #pragma once
 
 #include "PhySketchDefinitions.h"
+#include "PhySketchInputListener.h"
 
 namespace PhySketch
 {
@@ -30,8 +31,18 @@ namespace PhySketch
 		 */
 		virtual void destroyWindow(void) = 0;
 
+		virtual void addInputListener(InputListener * inputListener);
+		virtual void removeInputListener(InputListener * inputListener);
+
 	protected:
-		bool		_fullscreen;	// Fullscreen flag
+		virtual void updateInputListeners();
+		virtual void callInputListenersKeyDown(Key key);
+		virtual void callInputListenersKeyUp(Key key);
+
+	protected:
+		bool _fullscreen;	// Fullscreen flag
+		std::set<InputListener*> _inputListeners;
+		std::set<InputListener*> _inputListenersToRemove;
 	};
 
 

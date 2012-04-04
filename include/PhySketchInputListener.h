@@ -16,8 +16,8 @@ namespace PhySketch
 		InputListener();
 		virtual ~InputListener() {};
 
-		virtual void keyPressed(Key key) = 0;
-		virtual void keyReleased(Key key) = 0;
+		virtual void keyDown(Key key) = 0;
+		virtual void keyUp(Key key) = 0;
 
 		virtual void mouseDown(MouseButton button, int x, int y) = 0;
 		virtual void mouseUp(MouseButton button, int x, int y) = 0;
@@ -45,11 +45,11 @@ namespace PhySketch
 		KEY_Pause		= 8,
 		KEY_Capital		= 9,
 		KEY_Kana		= 10,
-		KEY_Hangul		= 11,
+
 		KEY_Junja		= 12,
 		KEY_Final		= 13,
 		KEY_Hanja		= 14,
-		KEY_Kanji		= 15,
+		
 		KEY_Escape		= 16,
 		KEY_Convert		= 17,
 		KEY_Nonconvert	= 18,
