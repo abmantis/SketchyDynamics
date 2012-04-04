@@ -10,7 +10,7 @@ namespace PhySketch
 	{
 	public:
 		ApplicationWindow(void) { _fullscreen = false; }
-		virtual ~ApplicationWindow(void);
+		virtual ~ApplicationWindow(void) {};
 
 
 		/**

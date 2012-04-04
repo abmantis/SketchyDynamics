@@ -86,6 +86,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
+    <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
     <ClInclude Include="..\include\PhySketchSingleton.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />

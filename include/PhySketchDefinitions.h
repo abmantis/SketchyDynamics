@@ -23,6 +23,7 @@ namespace PhySketch
 	// without including individual .h
 	class ApplicationWindow;
 	class ApplicationWindow_WGL;
+	class InputListener;
 	class Logger;
 
 } //namespace PhySketch
