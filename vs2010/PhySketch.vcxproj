@@ -85,6 +85,7 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\PhySketchCore.h" />
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
@@ -92,6 +93,7 @@
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\PhySketchCore.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
   </ItemGroup>

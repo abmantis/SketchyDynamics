@@ -10,8 +10,8 @@ namespace PhySketch
 	class ApplicationWindow
 	{
 	public:
-		ApplicationWindow(void) { _fullscreen = false; }
-		virtual ~ApplicationWindow(void) {};
+		ApplicationWindow(void);
+		virtual ~ApplicationWindow(void);
 
 
 		/**
@@ -31,6 +31,15 @@ namespace PhySketch
 		 */
 		virtual void destroyWindow(void) = 0;
 
+		/**
+		 * <summary> Update the window and process any messages. </summary>
+		 *
+		 * <returns> false if the window received a close message </returns>
+		 */
+		virtual bool updateWindow() = 0;
+
+		virtual bool isClosePending() { return _closePending; }
+
 		virtual void addInputListener(InputListener * inputListener);
 		virtual void removeInputListener(InputListener * inputListener);
 
@@ -40,9 +49,11 @@ namespace PhySketch
 		virtual void callInputListenersKeyUp(Key key);
 
 	protected:
-		bool _fullscreen;	// Fullscreen flag
-		std::set<InputListener*> _inputListeners;
-		std::set<InputListener*> _inputListenersToRemove;
+		bool _closePending;	// is the window waiting to be closed?
+		bool _active;		// is the window active (not minimized)?
+		bool _fullscreen;	// fullscreen window?
+		std::set<InputListener*> _inputListeners;			// input listeners that wold be called
+		std::set<InputListener*> _inputListenersToRemove;	// input listeners that should be removed from the IL list
 	};
 
 
@@ -70,6 +81,8 @@ namespace PhySketch
 		 * <summary> Properly destroy the window </summary>
 		 */
 		virtual void destroyWindow(void);
+
+		virtual bool updateWindow();
 
 	protected:
 

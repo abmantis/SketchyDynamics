@@ -2,13 +2,14 @@
 //
 
 #include "stdafx.h"
-#include "PhySketchApplicationWindow.h"
+#include "PhySketchCore.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	PhySketch::ApplicationWindow_WGL window;
-	window.createWindow("test", 800, 600, false);
+	PhySketch::Core core;
+	core.createWindow("test", 800, 600, false);
+	core.startLoop();
 	return 0;
 }
 

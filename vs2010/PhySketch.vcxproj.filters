@@ -33,12 +33,18 @@
     <ClInclude Include="..\include\PhySketchInputListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchCore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchCore.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
