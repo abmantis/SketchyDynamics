@@ -24,7 +24,11 @@ ApplicationWindow* Core::createWindow( std::string title, int width, int height,
 		delete _window;
 	}
 
+#ifdef PHYSKETCH_OS_WIN32
 	_window = new ApplicationWindow_WGL();
+#endif
+	
+
 	_window->createWindow( title, width, height, fullscreen);
 
 	return _window;

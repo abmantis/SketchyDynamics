@@ -19,6 +19,44 @@ ApplicationWindow::~ApplicationWindow( void )
 }
 
 
+void ApplicationWindow::addInputListener( InputListener * inputListener )
+{
+	_inputListeners.insert(inputListener);
+}
+
+void ApplicationWindow::removeInputListener( InputListener * inputListener )
+{
+	_inputListenersToRemove.insert(inputListener);
+}
+
+void ApplicationWindow::updateInputListeners()
+{
+	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
+		iter != _inputListenersToRemove.end(); iter++)
+	{
+		_inputListeners.erase(*iter);
+	}
+	_inputListenersToRemove.clear();
+}
+
+void ApplicationWindow::callInputListenersKeyDown( Key key )
+{
+	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
+		iter != _inputListenersToRemove.end(); iter++)
+	{
+		(*iter)->keyDown(key);
+	}
+}
+
+void ApplicationWindow::callInputListenersKeyUp( Key key )
+{
+	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
+		iter != _inputListenersToRemove.end(); iter++)
+	{
+		(*iter)->keyUp(key);
+	}
+}
+
 ApplicationWindow_WGL::ApplicationWindow_WGL(void) : ApplicationWindow()
 {
 	_hDC		= NULL;
@@ -232,6 +270,38 @@ void ApplicationWindow_WGL::destroyWindow(void)
 	}
 }
 
+int ApplicationWindow_WGL::initGL( void )
+{
+	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
+	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
+	//glClearDepth(1.0f);									// Depth Buffer Setup
+	//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
+	//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
+	glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
+	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+	return TRUE;										// Initialization Went OK
+}
+
+bool ApplicationWindow_WGL::updateWindow()
+{
+	MSG	msg;
+	if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
+	{
+		if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
+		{
+			_closePending = true;
+			return false;
+		}
+		else									// If Not, Deal With Window Messages
+		{
+			TranslateMessage(&msg);				// Translate The Message
+			DispatchMessage(&msg);				// Dispatch The Message
+		}
+	}
+
+	return true;
+}
+
 void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 {
 	if (height==0)										// Prevent A Divide By Zero By
@@ -276,7 +346,8 @@ LRESULT CALLBACK ApplicationWindow_WGL::staticWndProc( HWND hWnd, UINT Msg, WPAR
 
 LRESULT CALLBACK ApplicationWindow_WGL::WndProc( HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam )
 {
-	std::cout << "MESSAGE" << std::endl;
+//	std::cout << "WndProc_MESSAGE" << std::endl;
+
 	if(!_inputListenersToRemove.empty())
 	{
 		// remove InputListeners before doing anything else
@@ -307,11 +378,13 @@ LRESULT CALLBACK ApplicationWindow_WGL::WndProc( HWND hWnd, UINT Msg, WPARAM wPa
 		PostQuitMessage(0);
 		break;
 	}
-	case WM_QUIT:
-	{
-		_closePending = true;
-		break;
-	}
+	//case WM_QUIT:
+	//{
+	//	_closePending = true;
+	//	break;
+	//}
+
+#pragma region Keyboard events
 	case WM_KEYDOWN:
 	{
 		switch(wParam)
@@ -548,6 +621,7 @@ LRESULT CALLBACK ApplicationWindow_WGL::WndProc( HWND hWnd, UINT Msg, WPARAM wPa
 			break;
 		}
 	}
+#pragma endregion
 
 	default:
 		// We do not want to handle this message so pass back to Windows
@@ -556,76 +630,6 @@ LRESULT CALLBACK ApplicationWindow_WGL::WndProc( HWND hWnd, UINT Msg, WPARAM wPa
 	}
 
 	return 0;
-}
-
-int ApplicationWindow_WGL::initGL( void )
-{
-	glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
-	glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
-	//glClearDepth(1.0f);									// Depth Buffer Setup
-	//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
-	//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
-	glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
-	//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-	return TRUE;										// Initialization Went OK
-}
-
-bool ApplicationWindow_WGL::updateWindow()
-{
-	MSG	msg;
-	if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
-	{
-		if (msg.message==WM_QUIT)				// Have We Received A Quit Message?
-		{
-			_closePending = true;
-			return false;
-		}
-		else									// If Not, Deal With Window Messages
-		{
-			TranslateMessage(&msg);				// Translate The Message
-			DispatchMessage(&msg);				// Dispatch The Message
-		}
-	}
-
-	return true;
-}
-
-void ApplicationWindow::addInputListener( InputListener * inputListener )
-{
-	_inputListeners.insert(inputListener);
-}
-
-void ApplicationWindow::removeInputListener( InputListener * inputListener )
-{
-	_inputListenersToRemove.insert(inputListener);
-}
-
-void ApplicationWindow::updateInputListeners()
-{
-	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
-		iter != _inputListenersToRemove.end(); iter++)
-	{
-		_inputListeners.erase(*iter);
-	}
-	_inputListenersToRemove.clear();
-}
-
-void ApplicationWindow::callInputListenersKeyDown( Key key )
-{
-	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
-		iter != _inputListenersToRemove.end(); iter++)
-	{
-		(*iter)->keyDown(key);
-	}
-}
-
-void ApplicationWindow::callInputListenersKeyUp( Key key )
-{
-	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
-		iter != _inputListenersToRemove.end(); iter++)
-	{
-		(*iter)->keyUp(key);
-	}
 }
 
 
