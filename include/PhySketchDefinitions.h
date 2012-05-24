@@ -26,6 +26,7 @@ namespace PhySketch
 	class Core;
 	class InputListener;
 	class Logger;
+	class Vector2;
 
 } //namespace PhySketch
 

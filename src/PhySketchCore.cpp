@@ -1,5 +1,8 @@
 #include "PhySketchCore.h"
-#include "PhySketchApplicationWindow.h"
+
+#ifdef PHYSKETCH_OS_WIN32
+	#include "PhySketchApplicationWindow_WGL.h"
+#endif
 
 namespace PhySketch
 {

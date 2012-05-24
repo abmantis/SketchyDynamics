@@ -85,14 +85,17 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\PhySketchApplicationWindow_WGL.h" />
     <ClInclude Include="..\include\PhySketchCore.h" />
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
     <ClInclude Include="..\include\PhySketchSingleton.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />
+    <ClInclude Include="..\include\PhySketchVector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\PhySketchApplicationWindow_WGL.cpp" />
     <ClCompile Include="..\src\PhySketchCore.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />

@@ -24,7 +24,7 @@ Logger::Logger()
 Logger::Logger( std::string logfile, bool printToConsole )
 {
 	_logFile = new std::ofstream;
-	_logFile->open(logfile);
+	_logFile->open(logfile, std::ios_base::out);
 	_printToConsole = printToConsole;
 }
 
@@ -61,7 +61,7 @@ void Logger::writeToFile( std::string msg )
 		Tm=localtime(&ltime);
 		
 		// print message with added timestamp
-		(*_logFile) << "[" << Tm->tm_year+1900 << " " << Tm->tm_mon+1 << " " 
+		(*_logFile) << "[" << Tm->tm_year+1900 << "-" << Tm->tm_mon+1 << "-" 
 			<< Tm->tm_mday << " " << Tm->tm_hour<< ":" << Tm->tm_min << ":"
 			<< Tm->tm_sec<< "]" << msg;
 	}
