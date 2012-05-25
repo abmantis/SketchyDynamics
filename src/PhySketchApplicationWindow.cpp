@@ -37,8 +37,8 @@ void ApplicationWindow::updateInputListeners()
 
 void ApplicationWindow::callInputListenersKeyDown( Key key )
 {
-	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
-		iter != _inputListenersToRemove.end(); iter++)
+	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
+		iter != _inputListeners.end(); iter++)
 	{
 		(*iter)->keyDown(key);
 	}
@@ -46,10 +46,37 @@ void ApplicationWindow::callInputListenersKeyDown( Key key )
 
 void ApplicationWindow::callInputListenersKeyUp( Key key )
 {
-	for(std::set<InputListener*>::iterator iter = _inputListenersToRemove.begin(); 
-		iter != _inputListenersToRemove.end(); iter++)
+	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
+		iter != _inputListeners.end(); iter++)
 	{
 		(*iter)->keyUp(key);
+	}
+}
+
+void ApplicationWindow::callInputListenersMouseDown( MouseButton button, int x, int y )
+{
+	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
+		iter != _inputListeners.end(); iter++)
+	{
+		(*iter)->mouseDown(button, x, y);
+	}
+}
+
+void ApplicationWindow::callInputListenersMouseUp( MouseButton button, int x, int y )
+{
+	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
+		iter != _inputListeners.end(); iter++)
+	{
+		(*iter)->mouseUp(button, x, y);
+	}
+}
+
+void ApplicationWindow::callInputListenersMouseMoved( int x, int y )
+{
+	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
+		iter != _inputListeners.end(); iter++)
+	{
+		(*iter)->mouseMoved(x, y);
 	}
 }
 

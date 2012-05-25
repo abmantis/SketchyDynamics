@@ -49,6 +49,9 @@ namespace PhySketch
 		virtual void updateInputListeners();
 		virtual void callInputListenersKeyDown(Key key);
 		virtual void callInputListenersKeyUp(Key key);
+		virtual void callInputListenersMouseDown(MouseButton button, int x, int y);
+		virtual void callInputListenersMouseUp(MouseButton button, int x, int y);
+		virtual void callInputListenersMouseMoved(int x, int y);
 
 	protected:
 		bool _closePending;	// is the window waiting to be closed?

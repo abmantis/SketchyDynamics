@@ -41,6 +41,7 @@ namespace PhySketch
 #include <time.h>
 #include <list>
 #include <set>
+#include <sstream>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 
@@ -55,6 +56,7 @@ namespace PhySketch
 	#include <SDKDDKVer.h>
 
 	#include <windows.h>
+	#include <windowsx.h>
 
 #endif //PHYSKETCH_OS_WIN32
 

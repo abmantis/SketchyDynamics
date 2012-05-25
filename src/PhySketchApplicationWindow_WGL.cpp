@@ -338,7 +338,42 @@ namespace PhySketch
 			//{
 			//	_closePending = true;
 			//	break;
-			//}
+			//} 
+		case WM_LBUTTONDOWN:
+			{				
+				callInputListenersMouseDown( MB_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_LBUTTONUP:
+			{				
+				callInputListenersMouseUp( MB_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_MBUTTONDOWN:
+			{				
+				callInputListenersMouseDown( MB_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_MBUTTONUP:
+			{				
+				callInputListenersMouseUp( MB_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_RBUTTONDOWN:
+			{				
+				callInputListenersMouseDown( MB_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_RBUTTONUP:
+			{				
+				callInputListenersMouseUp( MB_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
+		case WM_MOUSEMOVE:
+			{				
+				callInputListenersMouseMoved( GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				break;
+			}
 
 #pragma region Keyboard events
 		case WM_KEYDOWN:

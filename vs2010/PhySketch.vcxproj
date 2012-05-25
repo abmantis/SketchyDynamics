@@ -92,6 +92,7 @@
     <ClInclude Include="..\include\PhySketchLogger.h" />
     <ClInclude Include="..\include\PhySketchSingleton.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />
+    <ClInclude Include="..\include\PhySketchUtils.h" />
     <ClInclude Include="..\include\PhySketchVector2.h" />
   </ItemGroup>
   <ItemGroup>

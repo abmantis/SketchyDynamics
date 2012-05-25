@@ -13,7 +13,7 @@ namespace PhySketch
 	class InputListener
 	{
 	public:
-		InputListener();
+		InputListener() {};
 		virtual ~InputListener() {};
 
 		virtual void keyDown(Key key) = 0;
