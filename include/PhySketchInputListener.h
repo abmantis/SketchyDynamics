@@ -3,6 +3,7 @@
 #pragma once
 
 #include "PhySketchDefinitions.h"
+#include "CALI\CIScribble.h"
 
 namespace PhySketch
 {	
@@ -147,6 +148,27 @@ namespace PhySketch
 		KEY_B			= 110,
 		KEY_N			= 111,
 		KEY_M			= 112
+
+	};
+
+	
+	/// <summary> Main input listener to deal with internal input responses (like gesture drawing). </summary>
+	class MainInputListener : public InputListener
+	{
+	public:
+		MainInputListener();
+		virtual ~MainInputListener();;
+
+		virtual void keyDown(Key key);
+		virtual void keyUp(Key key);
+
+		virtual void mouseDown(MouseButton button, int x, int y);
+		virtual void mouseUp(MouseButton button, int x, int y);
+		virtual void mouseMoved(int x, int y);
+
+	private:
+		bool _isLeftMouseDown;
+		CIScribble *_scribble;
 
 	};
 }

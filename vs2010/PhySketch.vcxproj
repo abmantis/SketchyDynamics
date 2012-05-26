@@ -85,6 +85,35 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\include\CALI\CIAlpha.h" />
+    <ClInclude Include="..\include\CALI\CICircle.h" />
+    <ClInclude Include="..\include\CALI\CICommand.h" />
+    <ClInclude Include="..\include\CALI\CIDiamond.h" />
+    <ClInclude Include="..\include\CALI\CIEllipse.h" />
+    <ClInclude Include="..\include\CALI\CIEvaluate.h" />
+    <ClInclude Include="..\include\CALI\CIFeatures.h" />
+    <ClInclude Include="..\include\CALI\CIFunction.h" />
+    <ClInclude Include="..\include\CALI\CIFuzzyNode.h" />
+    <ClInclude Include="..\include\CALI\CIFuzzySet.h" />
+    <ClInclude Include="..\include\CALI\CIGesture.h" />
+    <ClInclude Include="..\include\CALI\CILine.h" />
+    <ClInclude Include="..\include\CALI\CIList.h" />
+    <ClInclude Include="..\include\CALI\CIListNode.h" />
+    <ClInclude Include="..\include\CALI\CIPoint.h" />
+    <ClInclude Include="..\include\CALI\CIPolygon.h" />
+    <ClInclude Include="..\include\CALI\CIRecognizer.h" />
+    <ClInclude Include="..\include\CALI\CIRectangle.h" />
+    <ClInclude Include="..\include\CALI\CIScribble.h" />
+    <ClInclude Include="..\include\CALI\CIShape.h" />
+    <ClInclude Include="..\include\CALI\CIStroke.h" />
+    <ClInclude Include="..\include\CALI\CITriangle.h" />
+    <ClInclude Include="..\include\CALI\CIUnknown.h" />
+    <ClInclude Include="..\include\CALI\CIVector.h" />
+    <ClInclude Include="..\include\CALI\CIWavyLine.h" />
+    <ClInclude Include="..\include\CALI\Commands.h" />
+    <ClInclude Include="..\include\CALI\myValues.h" />
+    <ClInclude Include="..\include\CALI\Shapes.h" />
+    <ClInclude Include="..\include\PhySketchAABB.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow_WGL.h" />
     <ClInclude Include="..\include\PhySketchCore.h" />
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
@@ -96,8 +125,31 @@
     <ClInclude Include="..\include\PhySketchVector2.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\src\CALI\CIAlpha.cxx" />
+    <ClCompile Include="..\src\CALI\CICircle.cxx" />
+    <ClCompile Include="..\src\CALI\CICommand.cxx" />
+    <ClCompile Include="..\src\CALI\CIDiamond.cxx" />
+    <ClCompile Include="..\src\CALI\CIEllipse.cxx" />
+    <ClCompile Include="..\src\CALI\CIEvaluate.cxx" />
+    <ClCompile Include="..\src\CALI\CIFeatures.cxx" />
+    <ClCompile Include="..\src\CALI\CIFunction.cxx" />
+    <ClCompile Include="..\src\CALI\CIFuzzyNode.cxx" />
+    <ClCompile Include="..\src\CALI\CIFuzzySet.cxx" />
+    <ClCompile Include="..\src\CALI\CILine.cxx" />
+    <ClCompile Include="..\src\CALI\CIPoint.cxx" />
+    <ClCompile Include="..\src\CALI\CIPolygon.cxx" />
+    <ClCompile Include="..\src\CALI\CIRecognizer.cxx" />
+    <ClCompile Include="..\src\CALI\CIRectangle.cxx" />
+    <ClCompile Include="..\src\CALI\CIScribble.cxx" />
+    <ClCompile Include="..\src\CALI\CIShape.cxx" />
+    <ClCompile Include="..\src\CALI\CIStroke.cxx" />
+    <ClCompile Include="..\src\CALI\CITriangle.cxx" />
+    <ClCompile Include="..\src\CALI\CIUnknown.cxx" />
+    <ClCompile Include="..\src\CALI\CIVector.cxx" />
+    <ClCompile Include="..\src\CALI\CIWavyLine.cxx" />
     <ClCompile Include="..\src\PhySketchApplicationWindow_WGL.cpp" />
     <ClCompile Include="..\src\PhySketchCore.cpp" />
+    <ClCompile Include="..\src\PhySketchInputListener.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
   </ItemGroup>

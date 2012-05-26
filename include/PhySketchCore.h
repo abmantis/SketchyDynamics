@@ -3,10 +3,11 @@
 #pragma once
 
 #include "PhySketchDefinitions.h"
+#include "PhySketchSingleton.h"
 
 namespace PhySketch
 {
-	class Core
+	class Core : public Singleton<Core>
 	{
 	public:
 		Core(void);
@@ -16,6 +17,8 @@ namespace PhySketch
 		
 		virtual void startLoop();
 
+		static Core* getSingletonPtr(void);
+		static Core& getSingleton(void);
 	protected:
 		ApplicationWindow* _window;
 	};

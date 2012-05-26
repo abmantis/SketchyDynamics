@@ -42,6 +42,7 @@ namespace PhySketch
 #include <list>
 #include <set>
 #include <sstream>
+#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 

@@ -4,8 +4,10 @@
 	#include "PhySketchApplicationWindow_WGL.h"
 #endif
 
+
 namespace PhySketch
 {
+template<> Core* Singleton<Core>::ms_Singleton = 0;
 
 Core::Core( void )
 {
@@ -51,6 +53,18 @@ void Core::startLoop()
 	}
 
 	
+}
+
+Core* Core::getSingletonPtr( void )
+{
+	assert(ms_Singleton != NULL);
+	return ms_Singleton;
+}
+
+Core& Core::getSingleton( void )
+{
+	assert(ms_Singleton != NULL);
+	return *ms_Singleton;
 }
 
 }
