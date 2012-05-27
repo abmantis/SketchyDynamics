@@ -3,6 +3,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
+#include "PhySketchVector2.h"
 
 namespace PhySketch
 {
@@ -12,26 +13,28 @@ namespace PhySketch
 		Renderer();
 		virtual ~Renderer();
 
-		/// <summary> Adds a mesh to the rendering list. </summary>
-		/// <param name="mesh"> The new mesh. </param>
-		virtual void addMesh(Mesh *mesh);
+		/// <summary> Adds a polygon to the rendering list. </summary>
+		/// <param name="polygon"> The new polygon. </param>
+		virtual void addPolygon(Polygon *polygon);
 
-		/// <summary> Removes the mesh from the rendering list. </summary>
-		/// <param name="mesh"> The mesh to remove. </param>
-		/// <remarks> This function will not clear any of the meshe's resources </remakrs>
-		virtual void removeMesh(Mesh *mesh);
+		/// <summary> Removes the polygon from the rendering list. </summary>
+		/// <param name="polygon"> The polygon to remove. </param>
+		/// <remarks> This function will not clear any of the polygone's resources </remakrs>
+		virtual void removePolygon(Polygon *polygon);
 	
-		/// <summary> Renders the meshes in the mesh list to screen. </summary>		
+		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
 		virtual void render() const;
+
+		virtual Vector2 getViewAxisLimits() const;
 
 		static Renderer* getSingletonPtr(void);
 		static Renderer& getSingleton(void);
 
 	protected:
-		std::set<Mesh*> _meshes;
+		std::set<Polygon*> _polygons;
+		Vector2 _viewAxisLimits;		// The limits of the orthographic viewing region
 
-
-		typedef std::set<Mesh*>::iterator mesh_set_iterator;
+		typedef std::set<Polygon*>::iterator polygon_set_iterator;
 		
 	};
 }

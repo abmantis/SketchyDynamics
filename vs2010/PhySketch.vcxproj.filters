@@ -138,10 +138,10 @@
     <ClInclude Include="..\include\CALI\Shapes.h">
       <Filter>Header Files\CALI</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\PhySketchMesh.h">
+    <ClInclude Include="..\include\PhySketchRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\PhySketchRenderer.h">
+    <ClInclude Include="..\include\PhySketchPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -227,10 +227,10 @@
     <ClCompile Include="..\src\PhySketchInputListener.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\PhySketchMesh.cpp">
+    <ClCompile Include="..\src\PhySketchRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\PhySketchRenderer.cpp">
+    <ClCompile Include="..\src\PhySketchPolygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -169,7 +169,7 @@ namespace PhySketch
 	protected:
 		bool _isLeftMouseDown;
 		CIScribble *_scribble;
-		Mesh *_gestureMesh;
+		Polygon *_gesturePolygon;
 		Renderer *_renderer;
 
 	};

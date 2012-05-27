@@ -1,5 +1,5 @@
 #include "PhySketchRenderer.h"
-#include "PhySketchMesh.h"
+#include "PhySketchPolygon.h"
 
 #include <gl\gl.h>			// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
@@ -9,8 +9,9 @@ namespace PhySketch
 {
 	template<> Renderer* Singleton<Renderer>::ms_Singleton = 0;
 
-	Renderer::Renderer()
+	Renderer::Renderer() : _viewAxisLimits(8.0f, 4.5f)
 	{
+
 	}
 
 	Renderer::~Renderer()
@@ -31,33 +32,33 @@ namespace PhySketch
 
 	void Renderer::render() const
 	{
-		Mesh *pMesh = nullptr;
-		int meshIndexCount = 0;
-		int meshVertexCount = 0;
+		Polygon *pPolygon = nullptr;
+		int polygonIndexCount = 0;
+		int polygonVertexCount = 0;
 		Vector2 *vec = nullptr;
 		
-		mesh_set_iterator it = _meshes.begin();
-		mesh_set_iterator it_end = _meshes.end();
-		for(; it != _meshes.end(); it++)
+		polygon_set_iterator it = _polygons.begin();
+		polygon_set_iterator it_end = _polygons.end();
+		for(; it != _polygons.end(); it++)
 		{
-			pMesh = *it;
+			pPolygon = *it;
 			glPushMatrix();
-			glTranslated(pMesh->_position.x, pMesh->_position.y, 0.0f);
-			glRotated(pMesh->_angle, 0, 0, 1);
-			glScaled(pMesh->_scale.x, pMesh->_scale.y, 1.0f);
+			glTranslated(pPolygon->_position.x, pPolygon->_position.y, 0.0f);
+			glRotated(pPolygon->_angle, 0, 0, 1);
+			glScaled(pPolygon->_scale.x, pPolygon->_scale.y, 1.0f);
 			glBegin(GL_LINE_STRIP);
 			
-			meshIndexCount = pMesh->_vertexIndexes.size();
-			meshVertexCount = pMesh->_vertices.size();
-			for (int j = 0; j < meshIndexCount; j++)
+			polygonIndexCount = pPolygon->_vertexIndexes.size();
+			polygonVertexCount = pPolygon->_vertices.size();
+			for (int j = 0; j < polygonIndexCount; j++)
 			{
-				if(pMesh->_vertexIndexes[j] >= meshVertexCount)
+				if(pPolygon->_vertexIndexes[j] >= polygonVertexCount)
 				{
 					Logger::getSingletonPtr()->writeError("Renderer::render",
 						"Vertex index out of range");
 				}
 				
-				vec = &pMesh->_vertices[pMesh->_vertexIndexes[j]];
+				vec = &pPolygon->_vertices[pPolygon->_vertexIndexes[j]];
 				glVertex2d(vec->x, vec->y);
 			}
 
@@ -66,19 +67,24 @@ namespace PhySketch
 		}
 	}
 
-	void Renderer::addMesh( Mesh *mesh )
+	void Renderer::addPolygon( Polygon *polygon )
 	{
-		std::pair<mesh_set_iterator, bool> res = _meshes.insert(mesh);
+		std::pair<polygon_set_iterator, bool> res = _polygons.insert(polygon);
 		if(res.second == false)
 		{
-			Logger::getSingletonPtr()->writeWarning("Renderer::addMesh",
-				"Tried do add a mesh that was already in the rendering list");
+			Logger::getSingletonPtr()->writeWarning("Renderer::addPolygon",
+				"Tried do add a polygon that was already in the rendering list");
 		}
 	}
 
-	void Renderer::removeMesh( Mesh *mesh )
+	void Renderer::removePolygon( Polygon *polygon )
 	{
-		_meshes.erase(mesh);
+		_polygons.erase(polygon);
+	}
+
+	Vector2 Renderer::getViewAxisLimits() const
+	{
+		return _viewAxisLimits;
 	}
 
 }

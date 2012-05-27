@@ -1,6 +1,6 @@
 #include "PhySketchInputListener.h"
 #include "PhySketchVector2.h"
-#include "PhySketchMesh.h"
+#include "PhySketchPolygon.h"
 #include "PhySketchRenderer.h"
 
 namespace PhySketch
@@ -43,9 +43,9 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 			_scribble->addStroke(new CIStroke());
 			(*_scribble->getStrokes())[0]->addPoint(position.x, position.y);
 			
-			_gestureMesh = new Mesh();
-			_gestureMesh->addVertex(position);
-			_renderer->addMesh(_gestureMesh);
+			_gesturePolygon = new Polygon();
+			_gesturePolygon->addVertex(position);
+			_renderer->addPolygon(_gesturePolygon);
 			
 			break;
 		}
@@ -73,10 +73,10 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 				delete _scribble; _scribble = nullptr;
 			}
 
-			if(_gestureMesh)
+			if(_gesturePolygon)
 			{
-				_renderer->removeMesh(_gestureMesh);
-				delete _gestureMesh; _gestureMesh = nullptr;
+				_renderer->removePolygon(_gesturePolygon);
+				delete _gesturePolygon; _gesturePolygon = nullptr;
 			}
 			break;
 		}
@@ -97,7 +97,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 	if(_isLeftMouseDown)
 	{
 		(*_scribble->getStrokes())[0]->addPoint(position.x, position.y);
-		_gestureMesh->addVertex(position);
+		_gesturePolygon->addVertex(position);
 	}
 }
 

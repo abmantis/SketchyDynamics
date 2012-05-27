@@ -28,7 +28,7 @@ namespace PhySketch
 	class InputListener;
 	class Logger;
 	class MainInputListener;
-	class Mesh;
+	class Polygon;
 	class Renderer;
 	class Vector2;
 
