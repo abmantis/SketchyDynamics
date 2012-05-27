@@ -49,9 +49,9 @@ namespace PhySketch
 		virtual void updateInputListeners();
 		virtual void callInputListenersKeyDown(Key key);
 		virtual void callInputListenersKeyUp(Key key);
-		virtual void callInputListenersMouseDown(MouseButton button, int x, int y);
-		virtual void callInputListenersMouseUp(MouseButton button, int x, int y);
-		virtual void callInputListenersMouseMoved(int x, int y);
+		virtual void callInputListenersMouseDown(MouseButton button, Vector2 position);
+		virtual void callInputListenersMouseUp(MouseButton button, Vector2 position);
+		virtual void callInputListenersMouseMoved(Vector2 position);
 
 	protected:
 		bool _closePending;	// is the window waiting to be closed?
@@ -59,6 +59,7 @@ namespace PhySketch
 		bool _fullscreen;	// fullscreen window?
 		std::set<InputListener*> _inputListeners;			// input listeners that wold be called
 		std::set<InputListener*> _inputListenersToRemove;	// input listeners that should be removed from the IL list
+		Renderer *_renderer;
 	};
 
 }// namespace PhySketch

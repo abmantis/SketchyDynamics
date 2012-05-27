@@ -20,9 +20,9 @@ namespace PhySketch
 		virtual void keyDown(Key key) = 0;
 		virtual void keyUp(Key key) = 0;
 
-		virtual void mouseDown(MouseButton button, int x, int y) = 0;
-		virtual void mouseUp(MouseButton button, int x, int y) = 0;
-		virtual void mouseMoved(int x, int y) = 0;
+		virtual void mouseDown(MouseButton button, Vector2 position) = 0;
+		virtual void mouseUp(MouseButton button, Vector2 position) = 0;
+		virtual void mouseMoved(Vector2 position) = 0;
 
 	};
 
@@ -162,13 +162,15 @@ namespace PhySketch
 		virtual void keyDown(Key key);
 		virtual void keyUp(Key key);
 
-		virtual void mouseDown(MouseButton button, int x, int y);
-		virtual void mouseUp(MouseButton button, int x, int y);
-		virtual void mouseMoved(int x, int y);
+		virtual void mouseDown(MouseButton button, Vector2 position);
+		virtual void mouseUp(MouseButton button, Vector2 position);
+		virtual void mouseMoved(Vector2 position);
 
-	private:
+	protected:
 		bool _isLeftMouseDown;
 		CIScribble *_scribble;
+		Mesh *_gestureMesh;
+		Renderer *_renderer;
 
 	};
 }

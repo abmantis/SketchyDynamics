@@ -66,7 +66,7 @@ namespace PhySketch
 		 */		
 		virtual void resizeGLScene(int width, int height);
 
-		virtual bool drawGLScene();
+		virtual void drawGLScene();
 
 	protected:
 		HDC			_hDC;			// Private GDI Device Context

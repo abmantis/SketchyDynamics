@@ -4,6 +4,7 @@
 #include <gl\gl.h>			// Header File For The OpenGL32 Library
 #include <gl\glu.h>			// Header File For The GLu32 Library
 #include "PhySketchVector2.h"
+#include "PhySketchRenderer.h"
 
 namespace PhySketch
 {
@@ -229,6 +230,9 @@ namespace PhySketch
 		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+		
+		_renderer = Renderer::getSingletonPtr();
+
 		return TRUE;										// Initialization Went OK
 	}
 
@@ -249,7 +253,10 @@ namespace PhySketch
 			}
 		}
 
-		if(drawGLScene())
+		drawGLScene();		
+		SwapBuffers(_hDC);
+		
+	/*	if(drawGLScene())
 		{
 			SwapBuffers(_hDC);
 		}
@@ -257,7 +264,7 @@ namespace PhySketch
 		{	
 			_closePending = true;
 			return false;
-		}
+		}*/
 
 		return true;
 	}
@@ -274,7 +281,8 @@ namespace PhySketch
 		Vector2 extents(6.0f, 6.0f / ratio);
 
 		// Using Ortho for 2D
-		gluOrtho2D(-extents.x, extents.x, -extents.y, extents.y);
+		//gluOrtho2D(-extents.x, extents.x, -extents.y, extents.y);
+		gluOrtho2D(0, width, height, 0);
 		glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
 		glLoadIdentity();									// Reset The Modelview Matrix
 
@@ -341,37 +349,37 @@ namespace PhySketch
 			//} 
 		case WM_LBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseDown( MB_Left, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_LBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseUp( MB_Left, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_MBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseDown( MB_Middle, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_MBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseUp( MB_Middle, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_RBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseDown( MB_Right, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_RBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseUp( MB_Right, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 		case WM_MOUSEMOVE:
 			{				
-				callInputListenersMouseMoved( GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) );
+				callInputListenersMouseMoved( Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
 				break;
 			}
 
@@ -623,32 +631,14 @@ namespace PhySketch
 		return 0;
 	}
 
-	bool ApplicationWindow_WGL::drawGLScene()
+	void ApplicationWindow_WGL::drawGLScene()
 	{
 		glClear(GL_COLOR_BUFFER_BIT);	// Since we're in 2D, only clear Screen Buffer and not the depth buffer
 		glLoadIdentity();									// Reset The Current Modelview Matrix
 
 		glColor3f(1,1,1);
 
-		glPushMatrix();
-		glTranslatef(-1.5f,0.0f,0.0f);						// Move Left 1.5 Units And Into The Screen 6.0
-		glBegin(GL_TRIANGLES);								// Drawing Using Triangles
-		glVertex2f( 0.0f, 1.0f);						// Top
-		glVertex2f(-1.0f,-1.0f);						// Bottom Left
-		glVertex2f( 1.0f,-1.0f);						// Bottom Right
-		glEnd();											// Finished Drawing The Triangle
-		glPopMatrix();
-
-		glTranslatef(3.0f,0.0f,0.0f);						// Move Right 3 Units
-		glBegin(GL_QUADS);									// Draw A Quad
-		glVertex2f(-1.0f, 1.0f);						// Top Left
-		glVertex2f( 1.0f, 1.0f);						// Top Right
-		glVertex2f( 1.0f,-1.0f);						// Bottom Right
-		glVertex2f(-1.0f,-1.0f);						// Bottom Left
-		glEnd();											// Done Drawing The Quad
-
-
-		return TRUE;										// Keep Going
+		_renderer->render();
 	}
 
 

@@ -138,6 +138,12 @@
     <ClInclude Include="..\include\CALI\Shapes.h">
       <Filter>Header Files\CALI</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\PhySketchRenderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -219,6 +225,12 @@
       <Filter>Source Files\CALI</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchInputListener.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchRenderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

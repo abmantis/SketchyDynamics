@@ -4,6 +4,7 @@
 #include "PhySketchInputListener.h"
 #include "PhySketchLogger.h"
 #include "PhySketchUtils.h"
+#include "PhySketchVector2.h"
 
 class TestInputListener : public PhySketch::InputListener
 {
@@ -15,15 +16,15 @@ public:
 	void keyDown(PhySketch::Key key) {}
 	void keyUp(PhySketch::Key key) {}
 
-	void mouseDown(PhySketch::MouseButton button, int x, int y)
+	void mouseDown(PhySketch::MouseButton button, PhySketch::Vector2 position)
 	{
 
 	}
-	void mouseUp(PhySketch::MouseButton button, int x, int y) 
+	void mouseUp(PhySketch::MouseButton button, PhySketch::Vector2 position) 
 	{
 
 	}
-	void mouseMoved(int x, int y) 
+	void mouseMoved(PhySketch::Vector2 position) 
 	{
 
 	}

@@ -17,7 +17,7 @@ namespace PhySketch
 		{
 		}
 
-		Vector2(const Vector2 &point) : x(point.x), y(point.y)
+		Vector2(const Vector2 &vector) : x(vector.x), y(vector.y)
 		{
 		}
 
@@ -26,42 +26,67 @@ namespace PhySketch
 		}
 
 
-		virtual bool operator==(const Vector2& point) const
+		virtual bool operator==(const Vector2& right) const
 		{
-			return (x == point.x) && (y == point.y);
+			return (x == right.x) && (y == right.y);
 		}
-		virtual bool operator<(const Vector2& point) const
+		virtual bool operator<(const Vector2& right) const
 		{
-			return (x < point.x) && (y < point.y);
+			return (x < right.x) && (y < right.y);
 		}
-		virtual bool operator>(const Vector2& point) const
+		virtual bool operator>(const Vector2& right) const
 		{
-			return (x > point.x) && (y > point.y);
+			return (x > right.x) && (y > right.y);
 		}
-		virtual bool operator<=(const Vector2& point) const
+		virtual bool operator<=(const Vector2& right) const
 		{
-			return (x <= point.x) && (y <= point.y);
+			return (x <= right.x) && (y <= right.y);
 		}
-		virtual bool operator>=(const Vector2& point) const
+		virtual bool operator>=(const Vector2& right) const
 		{
-			return (x >= point.x) && (y >= point.y);
+			return (x >= right.x) && (y >= right.y);
 		}
 
-		virtual Vector2 operator*(const Vector2& point) const
+		virtual Vector2 operator*(const Vector2& right) const
 		{
-			return Vector2(x * point.x, y * point.y);
+			return Vector2(x * right.x, y * right.y);
 		}	
-		virtual Vector2 operator/(const Vector2& point) const
+		virtual Vector2 operator/(const Vector2& right) const
 		{
-			return Vector2(x / point.x, y / point.y);
+			return Vector2(x / right.x, y / right.y);
 		}
-		virtual Vector2 operator+(const Vector2& point) const
+		virtual Vector2 operator+(const Vector2& right) const
 		{
-			return Vector2(x + point.x, y + point.y);
+			return Vector2(x + right.x, y + right.y);
 		}	
-		virtual Vector2 operator-(const Vector2& point) const
+		virtual Vector2 operator-(const Vector2& right) const
 		{
-			return Vector2(x - point.x, y - point.y);
+			return Vector2(x - right.x, y - right.y);
+		}
+
+		virtual Vector2& operator*=(const Vector2& right) 
+		{
+			this->x *= right.x;
+			this->y *= right.y;
+			return *this;
+		}	
+		virtual Vector2& operator/=(const Vector2& right)
+		{
+			this->x /= right.x;
+			this->y /= right.y;
+			return *this;
+		}
+		virtual Vector2& operator+=(const Vector2& right)
+		{
+			this->x += right.x;
+			this->y += right.y;
+			return *this;
+		}	
+		virtual Vector2& operator-=(const Vector2& right)
+		{
+			this->x -= right.x;
+			this->y -= right.y;
+			return *this;
 		}
 
 		virtual Vector2 operator*(const double& scalar) const
@@ -94,33 +119,33 @@ namespace PhySketch
 			return std::sqrt( sqrdLength() );
 		}
 
-		// Squared distance between this point and point p
+		// Squared distance between this vector and vector p
 		virtual double sqrdDistanceTo(const Vector2& p) const
 		{
 			return sqrdDistance(*this, p);
 		}
 
-		// Distance between this point and point p
+		// Distance between this vector and vector p
 		virtual double distanceTo(const Vector2& p) const
 		{
 			return distance(*this, p);
 		}
 
-		// Squared distance between two points
+		// Squared distance between two vectors
 		static double sqrdDistance(const Vector2& p1, const Vector2& p2)
 		{
 			return (p2 - p1).sqrdLength();
 		}
 
-		// Distance between two points
+		// Distance between two vectors
 		static double distance(const Vector2& p1, const Vector2& p2)
 		{
 			return (p2 - p1).length();
 		}
 
-		friend std::ostream& operator<<(std::ostream& out, const Vector2& point)
+		friend std::ostream& operator<<(std::ostream& out, const Vector2& vector)
 		{
-			out << "(" << point.x << ", " << point.y << ")";
+			out << "(" << vector.x << ", " << vector.y << ")";
 			return out;
 		}
 

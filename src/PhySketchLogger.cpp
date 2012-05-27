@@ -87,6 +87,11 @@ void Logger::writeWarning( std::string warning )
 	}
 }
 
+void Logger::writeWarning( std::string location, std::string warning )
+{
+	writeWarning("{" + location + "} " + warning);
+}
+
 void Logger::writeError( std::string error )
 {
 	writeToFile(PHYSKETCH_LOG_ERROR + error);
@@ -95,6 +100,11 @@ void Logger::writeError( std::string error )
 	{
 		std::cerr << PHYSKETCH_LOG_ERROR << error << std::endl;
 	}	
+}
+
+void Logger::writeError( std::string location, std::string error )
+{
+	writeError("{" + location + "} " + error);
 }
 
 }

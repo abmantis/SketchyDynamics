@@ -119,6 +119,8 @@
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
+    <ClInclude Include="..\include\PhySketchMesh.h" />
+    <ClInclude Include="..\include\PhySketchRenderer.h" />
     <ClInclude Include="..\include\PhySketchSingleton.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />
     <ClInclude Include="..\include\PhySketchUtils.h" />
@@ -152,6 +154,8 @@
     <ClCompile Include="..\src\PhySketchInputListener.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
+    <ClCompile Include="..\src\PhySketchMesh.cpp" />
+    <ClCompile Include="..\src\PhySketchRenderer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

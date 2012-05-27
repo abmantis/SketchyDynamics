@@ -21,11 +21,15 @@ namespace PhySketch
 
 	// Pre-declare classes so we can use pointers in header files 
 	// without including individual .h
+	class AABB;
 	class ApplicationWindow;
 	class ApplicationWindow_WGL;
 	class Core;
 	class InputListener;
 	class Logger;
+	class MainInputListener;
+	class Mesh;
+	class Renderer;
 	class Vector2;
 
 } //namespace PhySketch
@@ -39,6 +43,7 @@ namespace PhySketch
 #include <iostream>
 #include <fstream>
 #include <time.h>
+#include <vector>
 #include <list>
 #include <set>
 #include <sstream>

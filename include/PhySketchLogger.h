@@ -14,9 +14,27 @@ namespace PhySketch
 		Logger(std::string logfile, bool printToConsole);
 		virtual ~Logger(void);
 
+		/// <summary> Writes a message to the log. </summary>
+		/// <param name="msg"> The message. </param>
 		virtual void writeMessage(std::string msg);		
+
+		/// <summary> Writes a warning to the log. </summary>
+		/// <param name="warning"> The warning. </param>
 		virtual void writeWarning(std::string warning);
+
+		/// <summary> Writes a warningto the log. </summary>
+		/// <param name="location"> The location of the error (class/function). </param>
+		/// <param name="warning"> The warning. </param>
+		virtual void writeWarning(std::string location, std::string warning);
+		
+		/// <summary> Writes an error to the log. </summary>
+		/// <param name="error"> The error. </param>
 		virtual void writeError(std::string error);
+
+		/// <summary> Writes an error to the log. </summary>
+		/// <param name="location"> The location of the error (class/function). </param>
+		/// <param name="error"> The error. </param>
+		virtual void writeError(std::string location, std::string error);
 
 		static Logger* getSingletonPtr(void);
 		static Logger& getSingleton(void);

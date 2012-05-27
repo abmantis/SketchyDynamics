@@ -13,6 +13,14 @@ namespace PhySketch
 		Core(void);
 		virtual ~Core(void);
 
+		virtual void initialise(std::string logfile, bool logToConsole);	
+		
+		/// <summary> Creates a window. </summary>
+		/// <param name="title"> The title. </param>
+		/// <param name="width"> The width. </param>
+		/// <param name="height"> The height. </param>
+		/// <param name="fullscreen"> true to fullscreen. </param>
+		/// <returns> The new window. </returns>
 		virtual ApplicationWindow* createWindow(std::string title, int width, int height, bool fullscreen);
 		
 		virtual void startLoop();
@@ -21,6 +29,10 @@ namespace PhySketch
 		static Core& getSingleton(void);
 	protected:
 		ApplicationWindow* _window;
+		Logger *_logger;
+		Renderer *_renderer;
+		MainInputListener *_mainInputListener;
+
 	};
 }
 #endif // PhySketchCore_h__

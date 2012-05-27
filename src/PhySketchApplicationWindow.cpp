@@ -1,6 +1,7 @@
 
 #include "PhySketchApplicationWindow.h"
 #include "PhySketchLogger.h"
+#include "PhySketchVector2.h"
 
 namespace PhySketch
 {
@@ -9,6 +10,7 @@ ApplicationWindow::ApplicationWindow( void )
 	_fullscreen = false; 
 	_closePending = false;
 	_active = false;
+	_renderer = nullptr;
 }
 
 ApplicationWindow::~ApplicationWindow( void )
@@ -53,30 +55,30 @@ void ApplicationWindow::callInputListenersKeyUp( Key key )
 	}
 }
 
-void ApplicationWindow::callInputListenersMouseDown( MouseButton button, int x, int y )
+void ApplicationWindow::callInputListenersMouseDown( MouseButton button, Vector2 position )
 {
 	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
 		iter != _inputListeners.end(); iter++)
 	{
-		(*iter)->mouseDown(button, x, y);
+		(*iter)->mouseDown(button, position);
 	}
 }
 
-void ApplicationWindow::callInputListenersMouseUp( MouseButton button, int x, int y )
+void ApplicationWindow::callInputListenersMouseUp( MouseButton button, Vector2 position )
 {
 	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
 		iter != _inputListeners.end(); iter++)
 	{
-		(*iter)->mouseUp(button, x, y);
+		(*iter)->mouseUp(button, position);
 	}
 }
 
-void ApplicationWindow::callInputListenersMouseMoved( int x, int y )
+void ApplicationWindow::callInputListenersMouseMoved( Vector2 position )
 {
 	for(std::set<InputListener*>::iterator iter = _inputListeners.begin(); 
 		iter != _inputListeners.end(); iter++)
 	{
-		(*iter)->mouseMoved(x, y);
+		(*iter)->mouseMoved(position);
 	}
 }
 
