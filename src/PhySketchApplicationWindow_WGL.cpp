@@ -10,10 +10,10 @@ namespace PhySketch
 {
 	ApplicationWindow_WGL::ApplicationWindow_WGL(void) : ApplicationWindow()
 	{
-		_hDC		= NULL;
-		_hRC		= NULL;		
-		_hWnd		= NULL;		
-		_hInstance	= NULL;	
+		_hDC		= nullptr;
+		_hRC		= nullptr;		
+		_hWnd		= nullptr;		
+		_hInstance	= nullptr;	
 	}
 
 	ApplicationWindow_WGL::~ApplicationWindow_WGL(void)
@@ -23,6 +23,8 @@ namespace PhySketch
 
 	bool ApplicationWindow_WGL::createWindow( std::string title, int width, int height, bool fullscreen)
 	{
+		_renderer = Renderer::getSingletonPtr();
+
 		int bpp = 32;
 		int			PixelFormat;			// Holds The Results After Searching For A Match
 		WNDCLASS	wc;						// Windows Class Structure
@@ -231,8 +233,6 @@ namespace PhySketch
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 		
-		_renderer = Renderer::getSingletonPtr();
-
 		return TRUE;										// Initialization Went OK
 	}
 
@@ -271,6 +271,9 @@ namespace PhySketch
 
 	void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 	{
+		_renderer->_windowSize.x = width;
+		_renderer->_windowSize.y = height;
+
 		glViewport(0,0,width,height);						// Reset The Current Viewport
 
 		glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
@@ -278,11 +281,15 @@ namespace PhySketch
 
 		double ratio = double(width) / double(height);
 
-		Vector2 extents(6.0f, 6.0f / ratio);
-
 		// Using Ortho for 2D
+		//Vector2 extents(6.0f, 6.0f / ratio);		
 		//gluOrtho2D(-extents.x, extents.x, -extents.y, extents.y);
+
+		//Vector2 viewlimits = _renderer->getViewAxisLimits();
+		//gluOrtho2D(-viewlimits.x, viewlimits.x, -viewlimits.y, viewlimits.y);
+
 		gluOrtho2D(0, width, height, 0);
+		
 		glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
 		glLoadIdentity();									// Reset The Modelview Matrix
 

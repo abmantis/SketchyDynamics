@@ -9,6 +9,8 @@ namespace PhySketch
 {
 	class Renderer : public Singleton<Renderer>
 	{
+
+		friend class ApplicationWindow_WGL;
 	public:
 		Renderer();
 		virtual ~Renderer();
@@ -31,8 +33,17 @@ namespace PhySketch
 		static Renderer& getSingleton(void);
 
 	protected:
-		std::set<Polygon*> _polygons;
+		virtual void renderPixelPolygons() const;
+		virtual void renderPercentPolygons() const;
+		virtual void renderScenePolygons() const;
+
+	protected:
+		std::set<Polygon*> _pixelPolygons;
+		std::set<Polygon*> _percentPolygons;
+		std::set<Polygon*> _scenePolygons;
+
 		Vector2 _viewAxisLimits;		// The limits of the orthographic viewing region
+		Vector2 _windowSize;
 
 		typedef std::set<Polygon*>::iterator polygon_set_iterator;
 		

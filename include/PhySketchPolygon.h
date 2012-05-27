@@ -9,8 +9,16 @@ namespace PhySketch
 	class Polygon 
 	{
 		friend class Renderer;
+
+		enum CoordinateSystem
+		{
+			CS_Scene	= 1,	// Scene space (the same used in ortho2d)
+			CS_Pixel	= 2,	// Pixel space (window space)
+			CS_Percent	= 3		// Percentage in window space
+		};
+
 	public:
-		Polygon();
+		Polygon(CoordinateSystem cs = CS_Scene);
 		virtual ~Polygon();
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
@@ -56,6 +64,10 @@ namespace PhySketch
 		/// <param name="vertex"> The vertex. </param>
 		void addVertex(const Vector2& vertex);
 
+		/// <summary> Gets the coordinate system used by vertices. </summary>
+		/// <returns> The coordinate system. </returns>
+		const CoordinateSystem& getCoordinateSystem() const;
+
 	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<int> _vertexIndexes;
@@ -64,6 +76,7 @@ namespace PhySketch
 		double _angle;
 		Vector2 _position;
 		Vector2 _scale;
+		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
 		
 	};
 }

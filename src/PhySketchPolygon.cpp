@@ -3,7 +3,7 @@
 namespace PhySketch
 {
 
-Polygon::Polygon() : _angle(0), _position(0, 0), _scale(1, 1)
+Polygon::Polygon(CoordinateSystem cs /*= CS_Scene*/) : _angle(0), _position(0, 0), _scale(1, 1), _coordSystem(cs)
 {
 }
 
@@ -50,6 +50,11 @@ void Polygon::addVertex( const Vector2& vertex )
 {
 	_vertexIndexes.push_back(_vertexIndexes.size());
 	_vertices.push_back(vertex);	
+}
+
+const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
+{
+	return _coordSystem;
 }
 
 
