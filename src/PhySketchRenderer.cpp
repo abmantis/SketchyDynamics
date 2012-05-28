@@ -151,7 +151,7 @@ namespace PhySketch
 		{
 			if(poly->_vertexIndexes[j] >= polygonVertexCount)
 			{
-				Logger::getSingletonPtr()->writeError("Renderer::renderScenePolygons",
+				Logger::getSingletonPtr()->writeError("Renderer::renderPolygon",
 					"Vertex index out of range");
 			}
 
