@@ -10,6 +10,7 @@ namespace PhySketch
 	{
 		friend class Renderer;
 
+	public:
 		enum CoordinateSystem
 		{
 			CS_Scene	= 1,	// Scene space (the same used in ortho2d)

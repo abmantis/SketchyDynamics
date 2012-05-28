@@ -43,7 +43,7 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 			_scribble->addStroke(new CIStroke());
 			(*_scribble->getStrokes())[0]->addPoint(position.x, position.y);
 			
-			_gesturePolygon = new Polygon();
+			_gesturePolygon = new Polygon(Polygon::CS_Pixel);
 			_gesturePolygon->addVertex(position);
 			_renderer->addPolygon(_gesturePolygon);
 			
