@@ -69,6 +69,9 @@ namespace PhySketch
 		/// <returns> The coordinate system. </returns>
 		const CoordinateSystem& getCoordinateSystem() const;
 
+		static Polygon* getSquare();
+		static Polygon* getCircle();
+
 	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<int> _vertexIndexes;

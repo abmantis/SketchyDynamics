@@ -57,6 +57,20 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
+Polygon* Polygon::getSquare()
+{
+	Polygon *poly = new Polygon(CS_Scene);
+	poly->addVertex(Vector2(-0.5f, -0.5f));
+	poly->addVertex(Vector2(-0.5f, 0.5f));
+	poly->addVertex(Vector2(0.5f, 0.5f));
+	poly->addVertex(Vector2(0.5f, -0.5f));	
+}
+
+Polygon* Polygon::getCircle()
+{
+
+}
+
 
 }
 
