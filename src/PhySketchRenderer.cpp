@@ -9,7 +9,7 @@ namespace PhySketch
 {
 	template<> Renderer* Singleton<Renderer>::ms_Singleton = 0;
 
-	Renderer::Renderer() : _viewAxisLimits(8.0f, 4.5f)
+	Renderer::Renderer() : _sceneViewMin(-8.0f, -4.5f), _sceneViewMax(8.0f, 4.5f)
 	{
 
 	}
@@ -75,10 +75,17 @@ namespace PhySketch
 		}
 	}
 
-	Vector2 Renderer::getViewAxisLimits() const
+	Vector2 Renderer::getSceneViewAxisMin() const
 	{
-		return _viewAxisLimits;
+		return _sceneViewMin;
 	}
+
+
+	Vector2 Renderer::getSceneViewAxisMax() const
+	{
+		return _sceneViewMax;
+	}
+
 
 	void Renderer::renderPixelPolygons() const
 	{
@@ -92,7 +99,7 @@ namespace PhySketch
 		for(; it != _pixelPolygons.end(); it++)
 		{
 			pPolygon = *it;
-			glPushMatrix();
+			glPushMatrix();	// push matrix for individual polygon 
 			glTranslated(pPolygon->_position.x, pPolygon->_position.y, 0.0f);
 			glRotated(pPolygon->_angle, 0, 0, 1);
 			glScaled(pPolygon->_scale.x, pPolygon->_scale.y, 1.0f);
@@ -113,25 +120,28 @@ namespace PhySketch
 			}
 
 			glEnd();
-			glPopMatrix();
+			glPopMatrix();	// push individual polygon matrix
 		}
-
 	}
 
 	void Renderer::renderPercentPolygons() const
 	{
-		// TODO: scale+translate from percent to pixel
+		Vector2 percentToPixelScale = _windowSize / 100.0f;
 		Polygon *pPolygon = nullptr;
 		int polygonIndexCount = 0;
 		int polygonVertexCount = 0;
 		Vector2 *vec = nullptr;
+
+		// Transform from percentage coordinates to pixel coordinates
+		glPushMatrix();	// push matrix for percent-to-pixel transformations
+		glScaled(percentToPixelScale.x, percentToPixelScale.y, 0);
 
 		polygon_set_iterator it = _percentPolygons.begin();
 		polygon_set_iterator it_end = _percentPolygons.end();
 		for(; it != _percentPolygons.end(); it++)
 		{
 			pPolygon = *it;
-			glPushMatrix();
+			glPushMatrix();	// push matrix for individual polygon 
 			glTranslated(pPolygon->_position.x, pPolygon->_position.y, 0.0f);
 			glRotated(pPolygon->_angle, 0, 0, 1);
 			glScaled(pPolygon->_scale.x, pPolygon->_scale.y, 1.0f);
@@ -143,7 +153,7 @@ namespace PhySketch
 			{
 				if(pPolygon->_vertexIndexes[j] >= polygonVertexCount)
 				{
-					Logger::getSingletonPtr()->writeError("Renderer::render",
+					Logger::getSingletonPtr()->writeError("Renderer::renderPercentPolygons",
 						"Vertex index out of range");
 				}
 
@@ -152,24 +162,31 @@ namespace PhySketch
 			}
 
 			glEnd();
-			glPopMatrix();
+			glPopMatrix();	// pop individual polygon matrix
 		}
+		glPopMatrix(); // pop matrix for percent-to-pixel transformations
 	}
 
 	void Renderer::renderScenePolygons() const
 	{
-		// TODO: scale+translate from scene to pixel
+		Vector2 sceneToPixelScale = _windowSize / (_sceneViewMax - _sceneViewMin);
+		Vector2 halfWindowSize = _windowSize / 2.0f;
 		Polygon *pPolygon = nullptr;
 		int polygonIndexCount = 0;
 		int polygonVertexCount = 0;
-		Vector2 *vec = nullptr;
+		Vector2 *vec = nullptr; 
+
+		// Transform from scene coordinates to pixel coordinates
+		glPushMatrix();	// push matrix for scene-to-pixel transformations
+		glScaled(sceneToPixelScale.x, sceneToPixelScale.y, 0);
+		glTranslated(halfWindowSize.x, halfWindowSize.y, 0);
 
 		polygon_set_iterator it = _scenePolygons.begin();
 		polygon_set_iterator it_end = _scenePolygons.end();
 		for(; it != _scenePolygons.end(); it++)
 		{
 			pPolygon = *it;
-			glPushMatrix();
+			glPushMatrix();		// push matrix for this individual polygon
 			glTranslated(pPolygon->_position.x, pPolygon->_position.y, 0.0f);
 			glRotated(pPolygon->_angle, 0, 0, 1);
 			glScaled(pPolygon->_scale.x, pPolygon->_scale.y, 1.0f);
@@ -181,7 +198,7 @@ namespace PhySketch
 			{
 				if(pPolygon->_vertexIndexes[j] >= polygonVertexCount)
 				{
-					Logger::getSingletonPtr()->writeError("Renderer::render",
+					Logger::getSingletonPtr()->writeError("Renderer::renderScenePolygons",
 						"Vertex index out of range");
 				}
 
@@ -190,8 +207,9 @@ namespace PhySketch
 			}
 
 			glEnd();
-			glPopMatrix();
+			glPopMatrix();	// pop individual polygon matrix
 		}
+		glPopMatrix(); // pop matrix for scene-to-pixel transformations
 	}
 
 }
