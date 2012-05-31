@@ -64,11 +64,36 @@ Polygon* Polygon::getSquare()
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, -0.5f));	
+
+	return poly;
 }
 
-Polygon* Polygon::getCircle()
+Polygon* Polygon::getCircle( int num_segments )
 {
+	Polygon *poly = new Polygon(CS_Scene);
 
+	//////////////////////////////////////////////////////////////////////////
+	// Code from http://slabode.exofire.net/circle_draw.shtml
+	double r = 0.5f;	// radius
+	double theta = 2.0 * M_PI / double(num_segments); 
+	double c = cos(theta);//precalculate the sine and cosine
+	double s = sin(theta);
+	double t;
+
+	double x = r;//we start at angle = 0 
+	double y = 0; 
+
+	for(int ii = 0; ii < num_segments; ii++) 
+	{ 
+		poly->addVertex(Vector2(x, y));
+
+		//apply the rotation matrix
+		t = x;
+		x = c * x - s * y;
+		y = s * t + c * y;
+	} 
+
+	return poly;
 }
 
 

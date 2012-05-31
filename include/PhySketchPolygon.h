@@ -69,8 +69,14 @@ namespace PhySketch
 		/// <returns> The coordinate system. </returns>
 		const CoordinateSystem& getCoordinateSystem() const;
 
+		/// <summary> Creates a unity sized square. </summary>
+		/// <returns> The square. </returns>
 		static Polygon* getSquare();
-		static Polygon* getCircle();
+		
+		/// <summary> Creates a unity sized circle (radius of 0.5). </summary>
+		/// <param name="segments"> The number of segments that compose the circle. </param>
+		/// <returns> The circle. </returns>
+		static Polygon* getCircle(int num_segments);
 
 	protected:
 		std::vector<Vector2> _vertices;

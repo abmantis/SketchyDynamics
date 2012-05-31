@@ -14,6 +14,14 @@ namespace PhySketch
 	#   define PHYSKETCH_ARCH_32
 	#endif
 
+	// Sombunall versions of math.h already define M_PI
+	#ifndef M_PI
+		// You can extend this approximation as far as you need to;
+		// this version was copied from the MINGW GCC headers
+		#define M_PI 3.14159265358979323846  
+	#endif
+
+
 	// type defs
 	typedef unsigned int uint;
 	typedef unsigned long ulong;
