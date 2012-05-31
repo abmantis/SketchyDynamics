@@ -3,7 +3,8 @@
 namespace PhySketch
 {
 
-Polygon::Polygon(CoordinateSystem cs /*= CS_Scene*/) : _angle(0), _position(0, 0), _scale(1, 1), _coordSystem(cs)
+Polygon::Polygon(DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) 
+	: _angle(0), _position(0, 0), _scale(1, 1), _coordSystem(cs), _drawingMode(dm)
 {
 }
 
@@ -59,7 +60,7 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 
 Polygon* Polygon::getSquare()
 {
-	Polygon *poly = new Polygon(CS_Scene);
+	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
@@ -70,7 +71,7 @@ Polygon* Polygon::getSquare()
 
 Polygon* Polygon::getCircle( int num_segments )
 {
-	Polygon *poly = new Polygon(CS_Scene);
+	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Code from http://slabode.exofire.net/circle_draw.shtml
@@ -94,6 +95,11 @@ Polygon* Polygon::getCircle( int num_segments )
 	} 
 
 	return poly;
+}
+
+const Polygon::DrawingMode& Polygon::getDrawingMode() const
+{
+	return(_drawingMode);
 }
 
 

@@ -11,6 +11,7 @@ namespace PhySketch
 
 	Renderer::Renderer() : _sceneViewMin(-8.0f, -4.5f), _sceneViewMax(8.0f, 4.5f)
 	{
+		addPolygon(Polygon::getSquare());
 
 	}
 
@@ -138,12 +139,39 @@ namespace PhySketch
 		int polygonIndexCount = 0;
 		int polygonVertexCount = 0;
 		const Vector2 *vec = nullptr; 
+		GLenum mode;
+		switch(poly->_drawingMode)
+		{
+		case Polygon::DM_POINTS:
+			mode = GL_POINTS;
+			break;
+		case Polygon::DM_LINES:
+			mode = GL_LINES;
+			break;
+		case Polygon::DM_LINE_STRIP:
+			mode = GL_LINE_STRIP;
+			break;
+		case Polygon::DM_LINE_LOOP:
+			mode = GL_LINE_LOOP;
+			break;
+		case Polygon::DM_TRIANGLES:
+			mode = GL_TRIANGLES;
+			break;
+		case Polygon::DM_TRIANGLE_STRIP:
+			mode = GL_TRIANGLE_STRIP;
+			break;
+		case Polygon::DM_TRIANGLE_FAN:
+			mode = GL_TRIANGLE_FAN;
+			break;
+		default:
+			mode = GL_POINTS;
+		}
 
 		glPushMatrix();		// push matrix for this individual polygon
 		glTranslated(poly->_position.x, poly->_position.y, 0.0f);
 		glRotated(poly->_angle, 0, 0, 1);
 		glScaled(poly->_scale.x, poly->_scale.y, 1.0f);
-		glBegin(GL_LINE_STRIP);
+		glBegin(mode);
 
 		polygonIndexCount = poly->_vertexIndexes.size();
 		polygonVertexCount = poly->_vertices.size();

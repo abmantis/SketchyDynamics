@@ -13,13 +13,23 @@ namespace PhySketch
 	public:
 		enum CoordinateSystem
 		{
-			CS_Scene	= 1,	// Scene space (the same used in ortho2d)
-			CS_Pixel	= 2,	// Pixel space (window space)
-			CS_Percent	= 3		// Percentage in window space
+			CS_Scene,		// Scene space (the same used in ortho2d)
+			CS_Pixel,		// Pixel space (window space)
+			CS_Percent		// Percentage in window space
 		};
 
+		enum DrawingMode
+		{
+			DM_POINTS,
+			DM_LINES, 
+			DM_LINE_STRIP, 
+			DM_LINE_LOOP, 
+			DM_TRIANGLES, 
+			DM_TRIANGLE_STRIP, 
+			DM_TRIANGLE_FAN
+		};
 	public:
-		Polygon(CoordinateSystem cs = CS_Scene);
+		Polygon(DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
 		virtual ~Polygon();
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
@@ -69,11 +79,15 @@ namespace PhySketch
 		/// <returns> The coordinate system. </returns>
 		const CoordinateSystem& getCoordinateSystem() const;
 
-		/// <summary> Creates a unity sized square. </summary>
+		/// <summary> Gets the drawing mode. </summary>
+		/// <returns> The drawing mode. </returns>
+		const DrawingMode& getDrawingMode() const;;
+
+		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
 		static Polygon* getSquare();
 		
-		/// <summary> Creates a unity sized circle (radius of 0.5). </summary>
+		/// <summary> Creates a unity sized circle (radius of 0.5), in scene coordinate space. </summary>
 		/// <param name="segments"> The number of segments that compose the circle. </param>
 		/// <returns> The circle. </returns>
 		static Polygon* getCircle(int num_segments);
@@ -87,6 +101,7 @@ namespace PhySketch
 		Vector2 _position;
 		Vector2 _scale;
 		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
+		DrawingMode _drawingMode;		
 		
 	};
 }
