@@ -60,9 +60,9 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-Polygon* Polygon::CreateSquare()
+Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 {
-	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
+	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
@@ -71,9 +71,9 @@ Polygon* Polygon::CreateSquare()
 	return poly;
 }
 
-Polygon* Polygon::CreateCircle( int num_segments )
+Polygon* Polygon::CreateCircle( CoordinateSystem cs, int num_segments )
 {
-	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
+	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Code from http://slabode.exofire.net/circle_draw.shtml
