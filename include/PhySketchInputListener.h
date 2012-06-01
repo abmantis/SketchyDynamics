@@ -3,7 +3,9 @@
 #pragma once
 
 #include "PhySketchDefinitions.h"
-#include "CALI\CIScribble.h"
+
+class CIStroke;
+class CIRecognizer;
 
 namespace PhySketch
 {	
@@ -167,10 +169,15 @@ namespace PhySketch
 		virtual void mouseMoved(Vector2 position);
 
 	protected:
+		virtual void startDrawingGesture(Vector2 startPoint);
+		virtual void stopDrawingGesture();
+	protected:
 		bool _isLeftMouseDown;
-		CIScribble *_scribble;
+		CIStroke *_caliStroke;
+		CIRecognizer *_caliRecognizer;
 		Polygon *_gesturePolygon;
 		Renderer *_renderer;
+
 
 	};
 }
