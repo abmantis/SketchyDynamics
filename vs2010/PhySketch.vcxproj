@@ -156,6 +156,7 @@
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
     <ClCompile Include="..\src\PhySketchPolygon.cpp" />
     <ClCompile Include="..\src\PhySketchRenderer.cpp" />
+    <ClCompile Include="..\src\PhySketchVector2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
