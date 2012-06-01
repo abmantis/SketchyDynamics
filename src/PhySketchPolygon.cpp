@@ -51,6 +51,8 @@ void Polygon::addVertex( const Vector2& vertex )
 {
 	_vertexIndexes.push_back(_vertexIndexes.size());
 	_vertices.push_back(vertex);	
+
+	_aabb.update(vertex);
 }
 
 const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
@@ -100,6 +102,22 @@ Polygon* Polygon::CreateCircle( int num_segments )
 const Polygon::DrawingMode& Polygon::getDrawingMode() const
 {
 	return(_drawingMode);
+}
+
+void Polygon::updateAABB()
+{
+	_aabb.invalidate();
+
+	int nr_vertices = _vertices.size();
+	for (int i = 0; i < nr_vertices; i++)
+	{
+		_aabb.update(_vertices[i]);
+	}
+}
+
+const AABB& Polygon::getAABB() const
+{
+	return _aabb;
 }
 
 

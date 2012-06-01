@@ -3,6 +3,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchVector2.h"
+#include "PhySketchAABB.h"
 
 namespace PhySketch
 {
@@ -81,7 +82,14 @@ namespace PhySketch
 
 		/// <summary> Gets the drawing mode. </summary>
 		/// <returns> The drawing mode. </returns>
-		const DrawingMode& getDrawingMode() const;;
+		const DrawingMode& getDrawingMode() const;
+
+		/// <summary> Updates the axis aligned bounding box. </summary>
+		void updateAABB();
+
+		/// <summary> Gets the axis aligned bounding box of this mesh. </summary>
+		/// <returns> The axis aligned bounding box. </returns>
+		const AABB& getAABB() const;
 
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
@@ -102,6 +110,7 @@ namespace PhySketch
 		Vector2 _scale;
 		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
 		DrawingMode _drawingMode;		
+		AABB _aabb;
 		
 	};
 }

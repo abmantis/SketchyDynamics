@@ -31,6 +31,12 @@ namespace PhySketch
 			return _valid;
 		}
 
+		/// <summary> Invalidates the AABB so that it is considered as new in the next update. </summary>
+		void invalidate()
+		{
+			_valid = false;
+		}
+
 		Vector2 getMin() const 
 		{ 
 			return _min; 
