@@ -58,7 +58,7 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-Polygon* Polygon::getSquare()
+Polygon* Polygon::CreateSquare()
 {
 	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
@@ -69,7 +69,7 @@ Polygon* Polygon::getSquare()
 	return poly;
 }
 
-Polygon* Polygon::getCircle( int num_segments )
+Polygon* Polygon::CreateCircle( int num_segments )
 {
 	Polygon *poly = new Polygon(DM_LINE_LOOP, CS_Scene);
 

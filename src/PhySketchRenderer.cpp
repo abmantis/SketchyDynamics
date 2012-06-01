@@ -11,8 +11,6 @@ namespace PhySketch
 
 	Renderer::Renderer() : _sceneViewMin(-8.0f, -4.5f), _sceneViewMax(8.0f, 4.5f)
 	{
-		addPolygon(Polygon::getSquare());
-
 	}
 
 	Renderer::~Renderer()
