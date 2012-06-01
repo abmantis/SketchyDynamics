@@ -91,14 +91,12 @@ CIList<CIGesture *> *CIRecognizer::recognize(CIScribble *sc)
 
 
     for (i=0; i<nshapes; i++) {
-        char* nam = (*_shapesList)[i]->getName(); // Para apagar
         val = (*_shapesList)[i]->evalGlobalFeatures(sc);
         if (val > _alfaCut) {
             val2 = (*_shapesList)[i]->evalLocalFeatures(sc, _shapesList);
             if (val2 < val)
                 val = val2;
             if (val > _alfaCut) {
-                nam = (*_shapesList)[i]->getName(); // Para apagar
                 _shapes2Return->insertInOrder((*_shapesList)[i], 1 - val); 
                 // (1-val) is used because the method insertInOrder creates an
                 // ascendant list, and we want a descendant one.
