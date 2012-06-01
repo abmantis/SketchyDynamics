@@ -56,6 +56,11 @@ namespace PhySketch
 		{
 			return _max.x - _min.x; 
 		}
+		Vector2 getSize() const
+		{
+			return _max - _min;
+		}
+
 		// The center of the bounding box
 		Vector2 getCenter() const
 		{
