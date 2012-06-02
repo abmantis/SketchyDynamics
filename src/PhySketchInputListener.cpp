@@ -14,13 +14,16 @@ MainInputListener::MainInputListener() : InputListener()
 	_renderer = Renderer::getSingletonPtr();
 	_isLeftMouseDown = false;
 	_caliStroke = nullptr;
+	_caliScribble = nullptr;
 	_gesturePolygon = nullptr;	
 	_caliRecognizer = new CIRecognizer();
 }
 
 MainInputListener::~MainInputListener()
 {
-	delete _caliStroke;
+	delete _caliScribble;	
+	_caliScribble = nullptr;
+	//delete _caliStroke; //the scribble already deletes this
 	_caliStroke = nullptr;
 
 	delete _gesturePolygon;
@@ -94,7 +97,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 
 void MainInputListener::startDrawingGesture( Vector2 startPoint )
 {
-	delete _caliStroke;
+	delete _caliScribble;
+	_caliScribble = new CIScribble();
 	_caliStroke = new CIStroke();
 	_caliStroke->addPoint(startPoint.x, startPoint.y);
 
@@ -106,20 +110,96 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 }
 
 void MainInputListener::stopDrawingGesture()
-{
-	CIScribble *scribble = new CIScribble();
-	scribble->addStroke(_caliStroke);
-	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(scribble);
-	for (int i = recGests->getNumItems()-1; i >=0; i-- )
-	{
-		CIGesture *gesture = (*recGests)[i];
-		std::cout << gesture->getName() << std::endl;
-	}
-
-	delete _caliStroke; _caliStroke = nullptr;
+{	
+	_caliScribble->addStroke(_caliStroke);
+	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
+	processGesture((*recGests)[0]->getName());
 
 	_renderer->removePolygon(_gesturePolygon);
-	delete _gesturePolygon; _gesturePolygon = nullptr;
+}
+
+void MainInputListener::processGesture( std::string gesture )
+{
+	Polygon *poly;
+	bool bValid = false;
+	if (gesture.compare("Triangle") == 0)
+	{
+		bValid = true;
+
+		CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
+		Vector2 rectP1((*tri)[0].x, (*tri)[0].y);
+		Vector2 rectP2((*tri)[1].x, (*tri)[1].y);
+		Vector2 rectP3((*tri)[2].x, (*tri)[2].y);
+
+		poly = new Polygon(Polygon::DM_LINE_LOOP, Polygon::CS_Pixel);
+		poly->addVertex(rectP1);
+		poly->addVertex(rectP2);
+		poly->addVertex(rectP3);
+	} 
+	else if (gesture.compare("Rectangle") == 0 || gesture.compare("Diamond") == 0)
+	{
+		bValid = true;
+
+		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
+		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
+		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
+		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
+
+		//poly = new Polygon(Polygon::DM_LINE_LOOP, Polygon::CS_Pixel);
+		//poly->addVertex(rectP1);
+		//poly->addVertex(rectP2);
+		//poly->addVertex(rectP3);
+		//poly->addVertex(rectP4);
+		
+		poly = Polygon::CreateSquare(Polygon::CS_Pixel);
+		AABB aabb = _gesturePolygon->getAABB();
+		poly->setPosition(aabb.getCenter());
+		Vector2 scale(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+		poly->setScale(scale);
+		Vector2 vectToOrient = rectP2 - rectP1;
+		double angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
+		if(vectToOrient.y < 0)
+		{
+			angle = 180 - angle;
+		}
+		poly->setAngle(angle);
+	} 
+	else if (gesture.compare("Circle") == 0 || gesture.compare("Ellipse") == 0)
+	{
+		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
+		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
+		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
+		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
+
+		poly = Polygon::CreateCircle(Polygon::CS_Pixel, 180);
+		AABB aabb = _gesturePolygon->getAABB();
+		poly->setPosition(aabb.getCenter());
+		Vector2 scale(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+		poly->setScale(scale);
+		Vector2 vectToOrient = rectP2 - rectP1;
+		double angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
+		if(vectToOrient.y < 0)
+		{
+			angle = 180 - angle;
+		}
+		poly->setAngle(angle);
+		bValid = true;
+	} 
+	else if(gesture.compare("WavyLine") == 0)
+	{
+		//bValid = true;
+	} 
+	else if(gesture.compare("Alpha") == 0)
+	{
+		//bValid = true;
+	} 
+
+	if (bValid)
+	{
+		_renderer->addPolygon(poly);
+	}
 }
 
 

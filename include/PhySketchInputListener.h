@@ -4,6 +4,7 @@
 
 #include "PhySketchDefinitions.h"
 
+class CIScribble;
 class CIStroke;
 class CIRecognizer;
 
@@ -171,9 +172,12 @@ namespace PhySketch
 	protected:
 		virtual void startDrawingGesture(Vector2 startPoint);
 		virtual void stopDrawingGesture();
+		virtual void processGesture(std::string gesture);
+
 	protected:
 		bool _isLeftMouseDown;
 		CIStroke *_caliStroke;
+		CIScribble *_caliScribble;
 		CIRecognizer *_caliRecognizer;
 		Polygon *_gesturePolygon;
 		Renderer *_renderer;
