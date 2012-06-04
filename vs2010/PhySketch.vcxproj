@@ -115,6 +115,7 @@
     <ClInclude Include="..\include\CALI\Shapes.h" />
     <ClInclude Include="..\include\PhySketchAABB.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow_WGL.h" />
+    <ClInclude Include="..\include\PhySketchBodyPolygon.h" />
     <ClInclude Include="..\include\PhySketchCore.h" />
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
@@ -150,6 +151,7 @@
     <ClCompile Include="..\src\CALI\CIVector.cxx" />
     <ClCompile Include="..\src\CALI\CIWavyLine.cxx" />
     <ClCompile Include="..\src\PhySketchApplicationWindow_WGL.cpp" />
+    <ClCompile Include="..\src\PhySketchBodyPolygon.cpp" />
     <ClCompile Include="..\src\PhySketchCore.cpp" />
     <ClCompile Include="..\src\PhySketchInputListener.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
