@@ -4,6 +4,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchUtils.h"
+#include "Box2D/Common/b2Math.h"
 
 namespace PhySketch
 {
@@ -27,6 +28,10 @@ namespace PhySketch
 		}
 
 		Vector2(const Vector2 &vector) : x(vector.x), y(vector.y)
+		{
+		}
+		
+		Vector2(const b2Vec2 &b2vector) : x(b2vector.x), y(b2vector.y)
 		{
 		}
 
@@ -92,6 +97,13 @@ namespace PhySketch
 			return *this;
 		}	
 		virtual Vector2& operator-=(const Vector2& right)
+		{
+			this->x -= right.x;
+			this->y -= right.y;
+			return *this;
+		}
+
+		virtual Vector2& operator=(const b2Vec2& right)
 		{
 			this->x -= right.x;
 			this->y -= right.y;
