@@ -118,7 +118,8 @@ b2World* Core::getPhysicsWorld() const
 
 b2World* Core::createPhysicsWorld( Vector2 gravity )
 {
-	_physicsWorld= new b2World(b2Vec2(gravity.x, gravity.y));
+	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
+	return _physicsWorld;
 }
 
 
