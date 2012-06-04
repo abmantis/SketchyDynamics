@@ -71,24 +71,23 @@ Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 	return poly;
 }
 
-Polygon* Polygon::CreateCircle( CoordinateSystem cs, int num_segments )
+Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments )
 {
 	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
 
 	//////////////////////////////////////////////////////////////////////////
 	// Code from http://slabode.exofire.net/circle_draw.shtml
-	double r = 0.5f;	// radius
 	double theta = 2.0 * M_PI / double(num_segments); 
 	double c = cos(theta);//precalculate the sine and cosine
 	double s = sin(theta);
 	double t;
 
-	double x = r;//we start at angle = 0 
+	double x = radius;//we start at angle = 0 
 	double y = 0; 
 
 	for(int ii = 0; ii < num_segments; ii++) 
 	{ 
-		poly->addVertex(Vector2(x, y));
+		poly->addVertex(Vector2(x + center.x, y + center.y));
 
 		//apply the rotation matrix
 		t = x;

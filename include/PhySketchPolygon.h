@@ -98,11 +98,14 @@ namespace PhySketch
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
 		static Polygon* CreateSquare(CoordinateSystem cs);
-		
-		/// <summary> Creates a unity sized circle (radius of 0.5), in scene coordinate space. </summary>
-		/// <param name="segments"> The number of segments that compose the circle. </param>
-		/// <returns> The circle. </returns>
-		static Polygon* CreateCircle( CoordinateSystem cs, int num_segments);
+
+		/// <summary> Creates a circle polygon. </summary>
+		/// <param name="cs"> The coordinate system </param>
+		/// <param name="center"> The center. </param>
+		/// <param name="radius"> The radius. </param>
+		/// <param name="num_segments"> The number of segments that compose the circle.  </param>
+		/// <returns> The circle polygon. </returns>
+		static Polygon* CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments);
 
 	protected:
 		std::vector<Vector2> _vertices;
