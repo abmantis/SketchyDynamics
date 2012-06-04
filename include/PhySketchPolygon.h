@@ -40,56 +40,56 @@ namespace PhySketch
 		/// <summary> Gets the rotation angle of the polygon in degrees. </summary>
 		/// 
 		/// <returns> The angle in degrees. </returns>
-		double getAngle(void) const;
+		virtual double getAngle(void) const;
 
 		/// <summary> Sets the rotation angle of the polygon in degrees. </summary>
 		///
 		/// <param name="angle"> The new angle in degrees. </param>
-		void setAngle(double angle);
+		virtual void setAngle(double angle);
 
 		/// <summary> Gets the position of the polygon. </summary>
 		///
 		/// <returns> The position of the polygon. </returns>
-		const Vector2& getPosition(void) const;
+		virtual const Vector2& getPosition(void) const;
 
 		/// <summary> Sets the position of the polygon. </summary>
 		///
 		/// <param name="position"> The new position of the polygon. </param>
-		void setPosition(const Vector2& position);
+		virtual void setPosition(const Vector2& position);
 
 		/// <summary> Gets the scale. </summary>
 		///
 		/// <returns> The scale. </returns>
-		const Vector2& getScale(void) const;
+		virtual const Vector2& getScale(void) const;
 
 		/// <summary> Sets the new scale of the polygon. </summary>
 		///
 		/// <param name="scale"> The new scale. </param>
-		void setScale(const Vector2& scale);
+		virtual void setScale(const Vector2& scale);
 
 		/// <summary> Translates the polygon </summary>
 		///
 		/// <param name="amount"> The amount to translate the polygon. </param>
-		void translate(const Vector2& amount);
+		virtual void translate(const Vector2& amount);
 
 		/// <summary> Adds a new vertex . </summary>
 		/// <param name="vertex"> The vertex. </param>
-		void addVertex(const Vector2& vertex);
+		virtual void addVertex(const Vector2& vertex);
 
 		/// <summary> Gets the coordinate system used by vertices. </summary>
 		/// <returns> The coordinate system. </returns>
-		const CoordinateSystem& getCoordinateSystem() const;
+		virtual const CoordinateSystem& getCoordinateSystem() const;
 
 		/// <summary> Gets the drawing mode. </summary>
 		/// <returns> The drawing mode. </returns>
-		const DrawingMode& getDrawingMode() const;
+		virtual const DrawingMode& getDrawingMode() const;
 
 		/// <summary> Updates the axis aligned bounding box. </summary>
-		void updateAABB();
+		virtual void updateAABB();
 
 		/// <summary> Gets the axis aligned bounding box of this mesh. </summary>
 		/// <returns> The axis aligned bounding box. </returns>
-		const AABB& getAABB() const;
+		virtual const AABB& getAABB() const;
 
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
