@@ -176,7 +176,7 @@ void MainInputListener::processGesture( std::string gesture )
 		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
 		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
 
-		poly = Polygon::CreateCircle(Polygon::CS_Pixel, 180);
+		poly = Polygon::CreateCircle(Polygon::CS_Pixel, Vector2(0,0), 0.5f, 180);
 		AABB aabb = _gesturePolygon->getAABB();
 		poly->setPosition(aabb.getCenter());
 		Vector2 scale(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
