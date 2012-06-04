@@ -99,6 +99,11 @@ void Core::initialise( std::string logfile, bool logToConsole )
 	
 }
 
+const ApplicationWindow* Core::getWindow() const
+{
+	return _window;
+}
+
 
 
 }

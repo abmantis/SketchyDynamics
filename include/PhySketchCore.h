@@ -22,6 +22,7 @@ namespace PhySketch
 		/// <param name="fullscreen"> true to fullscreen. </param>
 		/// <returns> The new window. </returns>
 		virtual ApplicationWindow* createWindow(std::string title, int width, int height, bool fullscreen);
+		virtual const ApplicationWindow* getWindow() const;
 		
 		virtual void startLoop();
 
