@@ -23,16 +23,22 @@ namespace PhySketch
 		/// <returns> The new window. </returns>
 		virtual ApplicationWindow* createWindow(std::string title, int width, int height, bool fullscreen);
 		virtual const ApplicationWindow* getWindow() const;
+
+		/// <summary> Gets the physics world. </summary>
+		/// <returns> The physics world. </returns>
+		virtual b2World* getPhysicsWorld() const;
 		
 		virtual void startLoop();
 
 		static Core* getSingletonPtr(void);
 		static Core& getSingleton(void);
+
 	protected:
 		ApplicationWindow* _window;
 		Logger *_logger;
 		Renderer *_renderer;
 		MainInputListener *_mainInputListener;
+		b2World *_physicsWorld;
 
 	};
 }

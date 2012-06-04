@@ -104,6 +104,11 @@ const ApplicationWindow* Core::getWindow() const
 	return _window;
 }
 
+b2World* Core::getPhysicsWorld() const
+{
+	return _physicsWorld;
+}
+
 
 
 }
