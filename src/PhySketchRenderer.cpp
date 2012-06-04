@@ -132,8 +132,12 @@ namespace PhySketch
 		glPopMatrix(); // pop matrix for scene-to-pixel transformations
 	}
 
-	void Renderer::renderPolygon( const Polygon *poly ) const
+	void Renderer::renderPolygon( Polygon *poly ) const
 	{
+
+		// make sure the polygon is updated before being rendered
+		poly->update();
+
 		int polygonIndexCount = 0;
 		int polygonVertexCount = 0;
 		const Vector2 *vec = nullptr; 

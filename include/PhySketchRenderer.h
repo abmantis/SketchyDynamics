@@ -41,7 +41,7 @@ namespace PhySketch
 		virtual void renderPixelPolygons() const;
 		virtual void renderPercentPolygons() const;
 		virtual void renderScenePolygons() const;
-		virtual void renderPolygon(const Polygon *poly) const;
+		virtual void renderPolygon(Polygon *poly) const;
 
 	protected:
 		std::set<Polygon*> _pixelPolygons;

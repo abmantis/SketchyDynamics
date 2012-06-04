@@ -91,6 +91,10 @@ namespace PhySketch
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual const AABB& getAABB() const;
 
+		/// <summary> Updates the Polygon. </summary>
+		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
+		virtual void update() {}
+
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
 		static Polygon* CreateSquare(CoordinateSystem cs);
