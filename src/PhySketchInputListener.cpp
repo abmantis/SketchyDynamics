@@ -69,9 +69,12 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 	{
 	case MB_Left:
 		{
-			_isLeftMouseDown = false;
+			if(_isLeftMouseDown)
+			{
+				stopDrawingGesture();	
+			}		
 
-			stopDrawingGesture();			
+			_isLeftMouseDown = false;			
 			break;
 		}
 	case MB_Middle:
