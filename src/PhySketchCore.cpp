@@ -17,6 +17,7 @@ Core::Core( void )
 	_logger = nullptr;
 	_mainInputListener = nullptr;
 	_renderer = nullptr;
+	_physicsWorld = nullptr;
 }
 
 Core::~Core( void )
@@ -25,10 +26,6 @@ Core::~Core( void )
 	{
 		delete _window; _window = nullptr;
 	}
-	if(_logger != nullptr)
-	{
-		delete _logger; _logger = nullptr;
-	}
 	if(_mainInputListener != nullptr)
 	{
 		delete _mainInputListener; _mainInputListener = nullptr; 
@@ -36,6 +33,14 @@ Core::~Core( void )
 	if(_renderer != nullptr)
 	{
 		delete _renderer; _renderer = nullptr;
+	}
+	if(_logger != nullptr)
+	{
+		delete _logger; _logger = nullptr;
+	}
+	if(_physicsWorld != nullptr)
+	{
+		delete _physicsWorld; _physicsWorld = nullptr;
 	}
 }
 
@@ -83,7 +88,7 @@ Core& Core::getSingleton( void )
 	return *ms_Singleton;
 }
 
-void Core::initialise( std::string logfile, bool logToConsole )
+void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGravity )
 {
 	if(logfile.empty())
 	{
@@ -93,6 +98,8 @@ void Core::initialise( std::string logfile, bool logToConsole )
 	{
 		_logger = new Logger(logfile, logToConsole);
 	}
+
+	createPhysicsWorld(physicsGravity);
 
 	_renderer = new Renderer();
 	_mainInputListener = new MainInputListener();
@@ -107,6 +114,11 @@ ApplicationWindow* Core::getWindow() const
 b2World* Core::getPhysicsWorld() const
 {
 	return _physicsWorld;
+}
+
+b2World* Core::createPhysicsWorld( Vector2 gravity )
+{
+	_physicsWorld= new b2World(b2Vec2(gravity.x, gravity.y));
 }
 
 

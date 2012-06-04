@@ -14,7 +14,7 @@ namespace PhySketch
 		Core(void);
 		virtual ~Core(void);
 
-		virtual void initialise(std::string logfile, bool logToConsole);	
+		virtual void initialise(std::string logfile, bool logToConsole,  Vector2 physicsGravity);	
 		
 		/// <summary> Creates a window. </summary>
 		/// <param name="title"> The title. </param>
@@ -27,6 +27,8 @@ namespace PhySketch
 		/// <summary> Gets the window. </summary>		
 		/// <returns> The window, or NULL if createWindow() was not called. </returns>
 		virtual ApplicationWindow* getWindow() const;
+
+		virtual b2World* createPhysicsWorld(Vector2 gravity);
 
 		/// <summary> Gets the physics world. </summary>
 		/// <returns> The physics world. </returns>
