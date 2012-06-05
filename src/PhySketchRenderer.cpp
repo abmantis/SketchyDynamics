@@ -193,5 +193,42 @@ namespace PhySketch
 		glPopMatrix();	// pop individual polygon matrix
 	}
 
+	PhySketch::Vector2 Renderer::pixelToScene( const Vector2 &vec, bool translate /*= true*/ )
+	{
+		ASSERT(_windowSize > Vector2(0,0));
+		Vector2 sceneVec;
+		Vector2 sceneSize = _sceneViewMax - _sceneViewMin;
+		Vector2 pixelToSceneScale = sceneSize / _windowSize;
+		Vector2 halfSceneSize = sceneSize / 2.0f;
+				
+		sceneVec = vec * pixelToSceneScale;
+		
+		if(translate)
+		{
+			sceneVec -= halfSceneSize;		
+			sceneVec.y = -sceneVec.y;
+		}
+
+		return sceneVec;
+	}
+
+	PhySketch::Vector2 Renderer::sceneToPixel( const Vector2 &vec, bool translate /*= true*/ )
+	{
+		ASSERT(_windowSize > Vector2(0,0));
+		Vector2 pixelVec(vec);
+		Vector2 sceneToPixelScale = _windowSize / (_sceneViewMax - _sceneViewMin);
+		Vector2 halfWindowSize = _windowSize / 2.0f;
+
+		pixelVec *= sceneToPixelScale;
+		
+		if(translate)
+		{
+			pixelVec.y *= -1;
+			pixelVec += halfWindowSize;
+		}
+
+		return pixelVec;
+	}
+
 }
 
