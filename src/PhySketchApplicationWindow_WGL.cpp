@@ -167,6 +167,9 @@ namespace PhySketch
 			return FALSE;								// Return FALSE
 		}
 
+		Vector2 sceneSize = _renderer->_sceneViewMax - _renderer->_sceneViewMin;
+		_aspectRatio = sceneSize.x / sceneSize.y;
+		
 		ShowWindow(_hWnd, SW_SHOW);						// Show The Window
 		SetForegroundWindow(_hWnd);						// Slightly Higher Priority
 		SetFocus(_hWnd);								// Sets Keyboard Focus To The Window
@@ -226,7 +229,7 @@ namespace PhySketch
 	int ApplicationWindow_WGL::initGL( void )
 	{
 		glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
-		glClearColor(0.0f, 0.0f, 0.0f, 0.5f);				// Black Background
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Black Background
 		//glClearDepth(1.0f);									// Depth Buffer Setup
 		//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
 		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
@@ -273,22 +276,31 @@ namespace PhySketch
 	{
 		_renderer->_windowSize.x = width;
 		_renderer->_windowSize.y = height;
+		GLint x = 0, y = 0;
 
-		glViewport(0,0,width,height);						// Reset The Current Viewport
+		//taller
+		if (((float)width/(float)height) < _aspectRatio)
+		{
+			_renderer->_windowSize.x = width;
+			_renderer->_windowSize.y = width/_aspectRatio;
+			y = (int)(height - _renderer->_windowSize.y) / 2;
+		}
+		//wider
+		else
+		{
+			_renderer->_windowSize.x = height*_aspectRatio;
+			_renderer->_windowSize.y = height;
+
+			x = (int)(width - _renderer->_windowSize.x) / 2;
+		}
+
+		glViewport(x, y, (int)_renderer->_windowSize.x, (int)_renderer->_windowSize.y);						// Reset The Current Viewport
 
 		glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 		glLoadIdentity();									// Reset The Projection Matrix
-
-		double ratio = double(width) / double(height);
-
-		// Using Ortho for 2D
-		//Vector2 extents(6.0f, 6.0f / ratio);		
-		//gluOrtho2D(-extents.x, extents.x, -extents.y, extents.y);
-
-		//Vector2 viewlimits = _renderer->getViewAxisLimits();
-		//gluOrtho2D(-viewlimits.x, viewlimits.x, -viewlimits.y, viewlimits.y);
-
-		gluOrtho2D(0, width, height, 0);
+					
+		gluOrtho2D(_renderer->_sceneViewMin.x, _renderer->_sceneViewMax.x, 
+			_renderer->_sceneViewMin.y, _renderer->_sceneViewMax.y);
 		
 		glMatrixMode(GL_MODELVIEW);							// Select The Modelview Matrix
 		glLoadIdentity();									// Reset The Modelview Matrix
@@ -643,8 +655,16 @@ namespace PhySketch
 		glClear(GL_COLOR_BUFFER_BIT);	// Since we're in 2D, only clear Screen Buffer and not the depth buffer
 		glLoadIdentity();									// Reset The Current Modelview Matrix
 
+		// draw a background quad
 		glColor3f(1,1,1);
-
+		glBegin(GL_QUADS);                      // Draw A Quad
+		glVertex3f(-8.0f, 4.5f, 0.0f);              // Top Left
+		glVertex3f( 8.0f, 4.5f, 0.0f);              // Top Right
+		glVertex3f( 8.0f,-4.5f, 0.0f);              // Bottom Right
+		glVertex3f(-8.0f,-4.5f, 0.0f);              // Bottom Left
+		glEnd();                            // Done Drawing The Quad
+		
+		glColor3f(0,0,0);
 		_renderer->render();
 	}
 

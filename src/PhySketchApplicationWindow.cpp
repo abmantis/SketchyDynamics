@@ -11,6 +11,7 @@ ApplicationWindow::ApplicationWindow( void )
 	_closePending = false;
 	_active = false;
 	_renderer = nullptr;
+	_aspectRatio = 0;
 }
 
 ApplicationWindow::~ApplicationWindow( void )

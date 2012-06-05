@@ -88,6 +88,13 @@ namespace PhySketch
 
 	void Renderer::renderPixelPolygons() const
 	{
+		// change the view to pixel coordinates
+		glMatrixMode(GL_PROJECTION);						
+		glLoadIdentity();									
+		gluOrtho2D(0, _windowSize.x, _windowSize.y, 0);
+		glMatrixMode(GL_MODELVIEW);	
+		glLoadIdentity();			
+
 		polygon_set_iterator it = _pixelPolygons.begin();
 		polygon_set_iterator it_end = _pixelPolygons.end();
 		for(; it != _pixelPolygons.end(); it++)
@@ -98,11 +105,12 @@ namespace PhySketch
 
 	void Renderer::renderPercentPolygons() const
 	{
-		Vector2 percentToPixelScale = _windowSize / 100.0f;
-
-		// Transform from percentage coordinates to pixel coordinates
-		glPushMatrix();	// push matrix for percent-to-pixel transformations
-		glScaled(percentToPixelScale.x, percentToPixelScale.y, 0);
+		// change the view to percent coordinates
+		glMatrixMode(GL_PROJECTION);						
+		glLoadIdentity();									
+		gluOrtho2D(0, 100, 100, 0);
+		glMatrixMode(GL_MODELVIEW);	
+		glLoadIdentity();
 
 		polygon_set_iterator it = _percentPolygons.begin();
 		polygon_set_iterator it_end = _percentPolygons.end();
@@ -110,18 +118,18 @@ namespace PhySketch
 		{
 			renderPolygon(*it);	
 		}
-		glPopMatrix(); // pop matrix for percent-to-pixel transformations
 	}
 
 	void Renderer::renderScenePolygons() const
 	{
-		Vector2 sceneToPixelScale = _windowSize / (_sceneViewMax - _sceneViewMin);
-		Vector2 halfWindowSize = _windowSize / 2.0f;
-		
-		// Transform from scene coordinates to pixel coordinates
-		glPushMatrix();	// push matrix for scene-to-pixel transformations
-		glTranslated(halfWindowSize.x, halfWindowSize.y, 0);
-		glScaled(sceneToPixelScale.x, -sceneToPixelScale.y, 0);		
+		// change the view to scene coordinates
+		glMatrixMode(GL_PROJECTION);						
+		glLoadIdentity();									
+		gluOrtho2D(_sceneViewMin.x, _sceneViewMax.x, 
+			_sceneViewMin.y, _sceneViewMax.y);
+		glMatrixMode(GL_MODELVIEW);	
+		glLoadIdentity();
+
 
 		polygon_set_iterator it = _scenePolygons.begin();
 		polygon_set_iterator it_end = _scenePolygons.end();
@@ -129,7 +137,6 @@ namespace PhySketch
 		{
 			renderPolygon(*it);			
 		}
-		glPopMatrix(); // pop matrix for scene-to-pixel transformations
 	}
 
 	void Renderer::renderPolygon( Polygon *poly ) const
