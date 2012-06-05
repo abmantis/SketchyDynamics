@@ -34,15 +34,10 @@ namespace PhySketch
 		/// <returns> The scene view axis maximum limit. </returns>
 		virtual Vector2 getSceneViewAxisMax() const;
 
-		/// <summary> Converts a vector in pixel coordinates to scene coordinates. </summary>
-		/// <param name="vec"> The vector in pixel coordinates. </param>
+		/// <summary> Converts a position in screen coordinates to scene coordinates. </summary>
+		/// <param name="vec"> The vector in screen coordinates. </param>
 		/// <returns> The vector in scene coordinates.  </returns>
-		virtual Vector2 pixelToScene(const Vector2 &vec, bool translate = true);
-
-		/// <summary> Converts a vector in scene coordinates to pixel coordinates. </summary>
-		/// <param name="vec"> The vector in scene coordinates. </param>
-		/// <returns> The vector in pixel coordinates.  </returns>
-		virtual Vector2 sceneToPixel(const Vector2 &vec, bool translate = true);
+		virtual Vector2 windowToScene(const Vector2 &vec);
 
 		static Renderer* getSingletonPtr(void);
 		static Renderer& getSingleton(void);

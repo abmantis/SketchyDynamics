@@ -200,42 +200,27 @@ namespace PhySketch
 		glPopMatrix();	// pop individual polygon matrix
 	}
 
-	PhySketch::Vector2 Renderer::pixelToScene( const Vector2 &vec, bool translate /*= true*/ )
+	PhySketch::Vector2 Renderer::windowToScene( const Vector2 &vec )
 	{
 		ASSERT(_viewportSize > Vector2(0,0));
-		Vector2 sceneVec;
-		Vector2 sceneSize = _sceneViewMax - _sceneViewMin;
-		Vector2 pixelToSceneScale = sceneSize / _viewportSize;
-		Vector2 halfSceneSize = sceneSize / 2.0f;
-				
-		sceneVec = vec * pixelToSceneScale;
-		
-		if(translate)
-		{
-			sceneVec -= halfSceneSize;		
-			sceneVec.y = -sceneVec.y;
-		}
+			
+		GLint viewport[4];
+		GLdouble modelview[16];
+		GLdouble projection[16];
+		GLdouble winX, winY, winZ;
+		GLdouble posX, posY, posZ;
 
-		return sceneVec;
+		glGetDoublev( GL_MODELVIEW_MATRIX, modelview );
+		glGetDoublev( GL_PROJECTION_MATRIX, projection );
+		glGetIntegerv( GL_VIEWPORT, viewport );
+
+		winX = vec.x;
+		winY = viewport[3] - vec.y;
+		glReadPixels( (int)vec.x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
+
+		gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
+
+		return Vector2(posX, posY);
 	}
-
-	PhySketch::Vector2 Renderer::sceneToPixel( const Vector2 &vec, bool translate /*= true*/ )
-	{
-		ASSERT(_viewportSize > Vector2(0,0));
-		Vector2 pixelVec(vec);
-		Vector2 sceneToPixelScale = _viewportSize / (_sceneViewMax - _sceneViewMin);
-		Vector2 halfWindowSize = _viewportSize / 2.0f;
-
-		pixelVec *= sceneToPixelScale;
-		
-		if(translate)
-		{
-			pixelVec.y *= -1;
-			pixelVec += halfWindowSize;
-		}
-
-		return pixelVec;
-	}
-
 }
 

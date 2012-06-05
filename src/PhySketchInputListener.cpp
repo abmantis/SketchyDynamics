@@ -4,6 +4,8 @@
 #include "PhySketchRenderer.h"
 #include "CALI\CIRecognizer.h"
 #include "CALI\CIScribble.h"
+#include "PhySketchBodyPolygon.h"
+#include "PhySketchCore.h"
 
 namespace PhySketch
 {
@@ -49,7 +51,7 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 		{
 			_isLeftMouseDown = true;
 
-			startDrawingGesture(position);			
+			startDrawingGesture(_renderer->windowToScene(position));
 			break;
 		}
 	case MB_Middle:
@@ -93,6 +95,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 {
 	if(_isLeftMouseDown)
 	{
+		position = _renderer->windowToScene(position);
 		_caliStroke->addPoint(position.x, position.y);
 		_gesturePolygon->addVertex(position);
 	}
@@ -107,7 +110,7 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 
 	_renderer->removePolygon(_gesturePolygon);
 	delete _gesturePolygon;
-	_gesturePolygon = new Polygon(Polygon::DM_LINE_STRIP, Polygon::CS_Pixel);
+	_gesturePolygon = new Polygon(Polygon::DM_LINE_STRIP, Polygon::CS_Scene);
 	_gesturePolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }
@@ -134,10 +137,34 @@ void MainInputListener::processGesture( std::string gesture )
 		Vector2 rectP2((*tri)[1].x, (*tri)[1].y);
 		Vector2 rectP3((*tri)[2].x, (*tri)[2].y);
 
-		poly = new Polygon(Polygon::DM_LINE_LOOP, Polygon::CS_Pixel);
-		poly->addVertex(rectP1);
-		poly->addVertex(rectP2);
-		poly->addVertex(rectP3);
+		// get "centroid" of the triangle and translate it to origin
+		Vector2 position = (rectP1 + rectP2 + rectP3) / 3.0;
+		rectP1 -= position;
+		rectP2 -= position;
+		rectP3 -= position;
+		
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set((float)position.x, (float)position.y);
+		bodyDef.angle = 0;
+		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2Vec2 vertices[3];
+		vertices[0].Set((float)rectP1.x, (float)rectP1.y);
+		vertices[1].Set((float)rectP2.x, (float)rectP2.y);
+		vertices[2].Set((float)rectP3.x, (float)rectP3.y);
+
+		b2PolygonShape triShape;
+		triShape.Set(vertices, 3);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &triShape;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
+		((BodyPolygon*)poly)->setPhysicsBody(body);
 	} 
 	else if (gesture.compare("Rectangle") == 0 || gesture.compare("Diamond") == 0)
 	{
@@ -147,49 +174,73 @@ void MainInputListener::processGesture( std::string gesture )
 		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
 		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
 		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
-		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
-
-		//poly = new Polygon(Polygon::DM_LINE_LOOP, Polygon::CS_Pixel);
-		//poly->addVertex(rectP1);
-		//poly->addVertex(rectP2);
-		//poly->addVertex(rectP3);
-		//poly->addVertex(rectP4);
-		
-		poly = Polygon::CreateSquare(Polygon::CS_Pixel);
-		AABB aabb = _gesturePolygon->getAABB();
-		poly->setPosition(aabb.getCenter());
-		Vector2 scale(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		poly->setScale(scale);
+// 		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
+						
+		Vector2 position =  _gesturePolygon->getAABB().getCenter();
+		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 		Vector2 vectToOrient = rectP2 - rectP1;
 		double angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
 		if(vectToOrient.y < 0)
 		{
 			angle = 180 - angle;
 		}
-		poly->setAngle(angle);
+
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set((float)position.x, (float)position.y);
+		bodyDef.angle = (float)degreesToRadians(angle);
+		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2PolygonShape dynamicBox;
+		dynamicBox.SetAsBox((float)size.x*0.5f, (float)size.y*0.5f);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &dynamicBox;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
+		((BodyPolygon*)poly)->setPhysicsBody(body);
 	} 
 	else if (gesture.compare("Circle") == 0 || gesture.compare("Ellipse") == 0)
 	{
+		bValid = true;
+
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
 		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
 		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
-		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
+//		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
 
-		poly = Polygon::CreateCircle(Polygon::CS_Pixel, Vector2(0,0), 0.5f, 180);
-		AABB aabb = _gesturePolygon->getAABB();
-		poly->setPosition(aabb.getCenter());
-		Vector2 scale(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		poly->setScale(scale);
-		Vector2 vectToOrient = rectP2 - rectP1;
-		double angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
-		if(vectToOrient.y < 0)
-		{
-			angle = 180 - angle;
-		}
-		poly->setAngle(angle);
-		bValid = true;
+		Vector2 position = _gesturePolygon->getAABB().getCenter();
+		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set((float)position.x, (float)position.y);
+		bodyDef.angle = 0;
+		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2CircleShape circleShape;
+		circleShape.m_p.Set(0.0, 0.0);
+		circleShape.m_radius = (float)size.x * 0.5f;
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &circleShape;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
+		((BodyPolygon*)poly)->setPhysicsBody(body);
+
 	} 
+// 	else if(gesture.compare("Ellipse") == 0)
+// 	{
+// 		//bValid = true;
+// 	} 
 	else if(gesture.compare("WavyLine") == 0)
 	{
 		//bValid = true;
