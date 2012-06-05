@@ -1,6 +1,6 @@
 
 #include "PhySketchLogger.h"
-
+#include "PhySketchUtils.h"
 
 #ifndef PHYSKETCH_LOG_WARNING
 	#define PHYSKETCH_LOG_WARNING "[WARNING] " 
@@ -11,6 +11,21 @@
 
 namespace PhySketch
 {
+
+	void __physketch_assert__(const char * file, unsigned line, const char * expr, bool dump)
+	{
+		Logger *l = Logger::getSingletonPtr();
+		if(l)
+		{
+			l->writeError(std::string(file) + ":" + toString(line), std::string("Assertion failed: ") + expr);
+		}
+		else
+		{
+			std::fprintf(stderr, "Assertion failed at line %u in file %s: %s\n", line, file, expr);		
+		}
+		std::fflush(NULL);
+		if (dump) std::abort();
+	}
 
 template<> Logger* Singleton<Logger>::ms_Singleton = 0;
 

@@ -21,6 +21,15 @@ namespace PhySketch
 		#define M_PI 3.14159265358979323846  
 	#endif
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Custom ASSERT macro
+	void __physketch_assert__(const char * file, unsigned line, const char * expr, bool dump);
+
+	#ifndef NDEBUG
+	#define ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, true); 
+	#else 
+	#define ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, false); 
+	#endif
 
 	// type defs
 	typedef unsigned int uint;
@@ -55,7 +64,6 @@ namespace PhySketch
 #include <list>
 #include <set>
 #include <sstream>
-#include <assert.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 
