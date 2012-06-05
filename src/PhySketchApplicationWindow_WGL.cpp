@@ -274,8 +274,9 @@ namespace PhySketch
 
 	void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 	{
-		_renderer->_viewportSize.x = width;
-		_renderer->_viewportSize.y = height;
+		_renderer->_windowSize.x = width;
+		_renderer->_windowSize.y = height;
+
 		GLint x = 0, y = 0;
 
 		//taller
