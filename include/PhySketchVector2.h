@@ -105,8 +105,8 @@ namespace PhySketch
 
 		virtual Vector2& operator=(const b2Vec2& right)
 		{
-			this->x -= right.x;
-			this->y -= right.y;
+			this->x = right.x;
+			this->y = right.y;
 			return *this;
 		}
 
