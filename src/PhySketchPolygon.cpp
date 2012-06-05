@@ -75,8 +75,25 @@ Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radi
 {
 	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
 
+	std::vector<Vector2> circleVec = GetCircleVertices(center, radius, num_segments);
+
+	poly->_vertexIndexes.reserve(num_segments);
+	poly->_vertices.reserve(num_segments);
+	for (int i = 0; i < num_segments; i++)
+	{
+		poly->addVertex(circleVec[i]);
+	}
+
+
+	return poly;
+}
+
+std::vector<Vector2> Polygon::GetCircleVertices( Vector2 center, double radius, int num_segments )
+{
 	//////////////////////////////////////////////////////////////////////////
 	// Code from http://slabode.exofire.net/circle_draw.shtml
+	std::vector<Vector2> circleVec;
+	
 	double theta = 2.0 * M_PI / double(num_segments); 
 	double c = cos(theta);//precalculate the sine and cosine
 	double s = sin(theta);
@@ -85,9 +102,10 @@ Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radi
 	double x = radius;//we start at angle = 0 
 	double y = 0; 
 
+	circleVec.reserve(num_segments);
 	for(int ii = 0; ii < num_segments; ii++) 
 	{ 
-		poly->addVertex(Vector2(x + center.x, y + center.y));
+		circleVec.push_back(Vector2(x + center.x, y + center.y));
 
 		//apply the rotation matrix
 		t = x;
@@ -95,8 +113,9 @@ Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radi
 		y = s * t + c * y;
 	} 
 
-	return poly;
+	return circleVec;
 }
+
 
 const Polygon::DrawingMode& Polygon::getDrawingMode() const
 {
