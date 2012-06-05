@@ -91,7 +91,7 @@ namespace PhySketch
 		// change the view to pixel coordinates
 		glMatrixMode(GL_PROJECTION);						
 		glLoadIdentity();									
-		gluOrtho2D(0, _windowSize.x, _windowSize.y, 0);
+		gluOrtho2D(0, _viewportSize.x, _viewportSize.y, 0);
 		glMatrixMode(GL_MODELVIEW);	
 		glLoadIdentity();			
 
@@ -202,10 +202,10 @@ namespace PhySketch
 
 	PhySketch::Vector2 Renderer::pixelToScene( const Vector2 &vec, bool translate /*= true*/ )
 	{
-		ASSERT(_windowSize > Vector2(0,0));
+		ASSERT(_viewportSize > Vector2(0,0));
 		Vector2 sceneVec;
 		Vector2 sceneSize = _sceneViewMax - _sceneViewMin;
-		Vector2 pixelToSceneScale = sceneSize / _windowSize;
+		Vector2 pixelToSceneScale = sceneSize / _viewportSize;
 		Vector2 halfSceneSize = sceneSize / 2.0f;
 				
 		sceneVec = vec * pixelToSceneScale;
@@ -221,10 +221,10 @@ namespace PhySketch
 
 	PhySketch::Vector2 Renderer::sceneToPixel( const Vector2 &vec, bool translate /*= true*/ )
 	{
-		ASSERT(_windowSize > Vector2(0,0));
+		ASSERT(_viewportSize > Vector2(0,0));
 		Vector2 pixelVec(vec);
-		Vector2 sceneToPixelScale = _windowSize / (_sceneViewMax - _sceneViewMin);
-		Vector2 halfWindowSize = _windowSize / 2.0f;
+		Vector2 sceneToPixelScale = _viewportSize / (_sceneViewMax - _sceneViewMin);
+		Vector2 halfWindowSize = _viewportSize / 2.0f;
 
 		pixelVec *= sceneToPixelScale;
 		

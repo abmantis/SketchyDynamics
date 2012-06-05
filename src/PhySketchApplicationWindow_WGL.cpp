@@ -274,27 +274,27 @@ namespace PhySketch
 
 	void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 	{
-		_renderer->_windowSize.x = width;
-		_renderer->_windowSize.y = height;
+		_renderer->_viewportSize.x = width;
+		_renderer->_viewportSize.y = height;
 		GLint x = 0, y = 0;
 
 		//taller
 		if (((float)width/(float)height) < _aspectRatio)
 		{
-			_renderer->_windowSize.x = width;
-			_renderer->_windowSize.y = width/_aspectRatio;
-			y = (int)(height - _renderer->_windowSize.y) / 2;
+			_renderer->_viewportSize.x = width;
+			_renderer->_viewportSize.y = width/_aspectRatio;
+			y = (int)(height - _renderer->_viewportSize.y) / 2;
 		}
 		//wider
 		else
 		{
-			_renderer->_windowSize.x = height*_aspectRatio;
-			_renderer->_windowSize.y = height;
+			_renderer->_viewportSize.x = height*_aspectRatio;
+			_renderer->_viewportSize.y = height;
 
-			x = (int)(width - _renderer->_windowSize.x) / 2;
+			x = (int)(width - _renderer->_viewportSize.x) / 2;
 		}
 
-		glViewport(x, y, (int)_renderer->_windowSize.x, (int)_renderer->_windowSize.y);						// Reset The Current Viewport
+		glViewport(x, y, (int)_renderer->_viewportSize.x, (int)_renderer->_viewportSize.y);						// Reset The Current Viewport
 
 		glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 		glLoadIdentity();									// Reset The Projection Matrix

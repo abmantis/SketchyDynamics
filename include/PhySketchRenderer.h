@@ -60,7 +60,7 @@ namespace PhySketch
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
-		Vector2 _windowSize;
+		Vector2 _viewportSize;
 
 		typedef std::set<Polygon*>::iterator polygon_set_iterator;
 		
