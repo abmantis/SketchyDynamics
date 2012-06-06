@@ -113,7 +113,6 @@ void Core::startLoop()
 
 		// compute ellapsed time in milliseconds
 		ellapsedTime = (end - start) * 1000 / CLOCKS_PER_SEC;
-		std::cout << "FPS: " << 1000/ellapsedTime << std::endl;
 	}	
 }
 
