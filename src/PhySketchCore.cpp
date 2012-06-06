@@ -98,9 +98,27 @@ void Core::startLoop()
 	clock_t start, end;
 	ulong ellapsedTime = 0;
 
+	ulong fpsloopCount = 0;
+	ulong fpstimeacum = 0;
+	float avgframetime = 0;
+
 	while(!done)
 	{
+		// DO NOT put any code before this line since it will not be counted as "frame time"
 		start = clock();
+
+#pragma region Print FPS
+		fpsloopCount++;
+		fpstimeacum += ellapsedTime;
+		if(fpstimeacum >= 1000)
+		{			
+			avgframetime = (float)fpstimeacum/(float)fpsloopCount;
+			std::cout << " AVG FPS: " << 1000/avgframetime 
+				<< " AVG FRAME TIME (ms): " <<  avgframetime << std::endl;
+			fpstimeacum = 0;
+			fpsloopCount = 0;
+		}	
+#pragma endregion
 
 		stepPhysics(ellapsedTime);
 
@@ -109,8 +127,9 @@ void Core::startLoop()
 			std::cout << "Window closing" << std::endl;
 			done = true;
 		}	
-		end = clock();
 
+		// DO NOT put any code after this line since it will not be counted as "frame time"
+		end = clock();
 		// compute ellapsed time in milliseconds
 		ellapsedTime = (end - start) * 1000 / CLOCKS_PER_SEC;
 	}	
