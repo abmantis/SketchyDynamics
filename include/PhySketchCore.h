@@ -40,6 +40,9 @@ namespace PhySketch
 		static Core& getSingleton(void);
 
 	protected:
+		virtual void stepPhysics(ulong ellapsedMillisec);
+
+	protected:
 		ApplicationWindow* _window;
 		Logger *_logger;
 		Renderer *_renderer;
