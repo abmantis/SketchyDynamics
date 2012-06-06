@@ -10,13 +10,7 @@ namespace PhySketch
 {
 	class Vector2
 	{
-	public:
-		static const Vector2 ZERO;
-		static const Vector2 UNIT_X;
-		static const Vector2 UNIT_Y;
-		static const Vector2 NEGATIVE_UNIT_X;
-		static const Vector2 NEGATIVE_UNIT_Y;
-		static const Vector2 UNIT_SCALE;
+	
 
 	public:
 		Vector2(void) : x(0), y(0)
@@ -201,6 +195,14 @@ namespace PhySketch
 	public:
 		double x;
 		double y;
+
+	public:
+		static const Vector2 ZERO;
+		static const Vector2 UNIT_X;
+		static const Vector2 UNIT_Y;
+		static const Vector2 NEGATIVE_UNIT_X;
+		static const Vector2 NEGATIVE_UNIT_Y;
+		static const Vector2 UNIT_SCALE;
 	};
 } // namespace PhySketch
 
