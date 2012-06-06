@@ -56,13 +56,13 @@ Logger::~Logger(void)
 
 Logger* Logger::getSingletonPtr(void)
 {
-	assert(ms_Singleton != NULL);
+	ASSERT(ms_Singleton != NULL);
 	return ms_Singleton;
 }
 
 Logger& Logger::getSingleton(void)
 {
-	assert(ms_Singleton != NULL);
+	ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
 }
 

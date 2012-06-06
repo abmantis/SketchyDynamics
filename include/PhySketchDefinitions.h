@@ -56,7 +56,6 @@ namespace PhySketch
 // include files
 //
 #include <string>
-#include <assert.h>
 #include <iostream>
 #include <fstream>
 #include <time.h>

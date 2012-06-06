@@ -78,13 +78,13 @@ void Core::startLoop()
 
 Core* Core::getSingletonPtr( void )
 {
-	assert(ms_Singleton != NULL);
+	ASSERT(ms_Singleton != NULL);
 	return ms_Singleton;
 }
 
 Core& Core::getSingleton( void )
 {
-	assert(ms_Singleton != NULL);
+	ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
 }
 

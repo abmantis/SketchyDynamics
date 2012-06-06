@@ -65,7 +65,7 @@ namespace PhySketch
     public:
         Singleton( void )
         {
-            assert( !ms_Singleton );
+            ASSERT( !ms_Singleton );
 #if defined( _MSC_VER ) && _MSC_VER < 1200	 
             int offset = (int)(T*)1 - (int)(Singleton <T>*)(T*)1;
             ms_Singleton = (T*)((int)this + offset);
@@ -74,9 +74,9 @@ namespace PhySketch
 #endif
         }
         ~Singleton( void )
-            {  assert( ms_Singleton );  ms_Singleton = 0;  }
+            {  ASSERT( ms_Singleton );  ms_Singleton = 0;  }
         static T& getSingleton( void )
-		{	assert( ms_Singleton );  return ( *ms_Singleton ); }
+		{	ASSERT( ms_Singleton );  return ( *ms_Singleton ); }
         static T* getSingletonPtr( void )
 		{ return ms_Singleton; }
     };
