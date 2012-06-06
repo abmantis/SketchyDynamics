@@ -186,11 +186,7 @@ namespace PhySketch
 		polygonVertexCount = poly->_vertices.size();
 		for (int j = 0; j < polygonIndexCount; j++)
 		{
-			if(poly->_vertexIndexes[j] >= polygonVertexCount)
-			{
-				Logger::getSingletonPtr()->writeError("Renderer::renderPolygon",
-					"Vertex index out of range");
-			}
+			ASSERT(poly->_vertexIndexes[j] < polygonVertexCount && "Vertex index out of range")
 
 			vec = &poly->_vertices[poly->_vertexIndexes[j]];
 			glVertex2d(vec->x, vec->y);
