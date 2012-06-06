@@ -45,6 +45,11 @@ namespace PhySketch
 		virtual void addInputListener(InputListener * inputListener);
 		virtual void removeInputListener(InputListener * inputListener);
 
+
+		/// <summary> Turns VSync on/off. </summary>
+		/// <param name="on"> true to turn VSync on. </param>
+		virtual void setVSync(bool on) = 0;
+
 	protected:
 		virtual void updateInputListeners();
 		virtual void callInputListenersKeyDown(Key key);

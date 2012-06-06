@@ -235,6 +235,7 @@ namespace PhySketch
 		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+		setVSync(false);
 		
 		return TRUE;										// Initialization Went OK
 	}
@@ -667,6 +668,28 @@ namespace PhySketch
 		
 		glColor3f(0,0,0);
 		_renderer->render();
+	}
+
+	void ApplicationWindow_WGL::setVSync( bool on )
+	{
+		// Function pointer for the wgl extention function we need to enable/disable
+		// vsync
+		typedef BOOL (APIENTRY *PFNWGLSWAPINTERVALPROC)( int );
+		PFNWGLSWAPINTERVALPROC wglSwapIntervalEXT = 0;
+
+		const char *extensions = (char*)glGetString( GL_EXTENSIONS );
+
+		if( strstr( extensions, "WGL_EXT_swap_control" ) == 0 )
+		{
+			return;
+		}
+		else
+		{
+			wglSwapIntervalEXT = (PFNWGLSWAPINTERVALPROC)wglGetProcAddress( "wglSwapIntervalEXT" );
+
+			if( wglSwapIntervalEXT )
+				wglSwapIntervalEXT(on);
+		}
 	}
 
 

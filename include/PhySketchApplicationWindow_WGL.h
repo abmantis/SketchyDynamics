@@ -32,6 +32,10 @@ namespace PhySketch
 
 		virtual bool updateWindow();
 
+		/// <summary> Turns VSync on/off. </summary>
+		/// <param name="on"> true to turn VSync on. </param>
+		virtual void setVSync(bool on);
+
 	protected:
 
 		/**
