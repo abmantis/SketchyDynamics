@@ -13,6 +13,12 @@ BodyPolygon::BodyPolygon(DrawingMode dm /*= DM_LINES*/)
 {
 }
 
+BodyPolygon::BodyPolygon( b2Body *body, DrawingMode dm /*= DM_LINES*/ )
+	: Polygon(dm, CS_Scene)
+{
+	setPhysicsBody(body);
+}
+
 BodyPolygon::~BodyPolygon()
 {
 }

@@ -10,6 +10,7 @@ namespace PhySketch
 	{	
 	public:
 		BodyPolygon(DrawingMode dm = DM_LINES);
+		BodyPolygon(b2Body *body, DrawingMode dm = DM_LINES);
 		virtual ~BodyPolygon();
 		
 
