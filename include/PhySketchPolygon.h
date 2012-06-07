@@ -106,10 +106,8 @@ namespace PhySketch
 		/// <param name="num_segments"> The number of segments that compose the circle.  </param>
 		/// <returns> The circle polygon. </returns>
 		static Polygon* CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments);
-
-	protected:
 		static std::vector<Vector2> GetCircleVertices(Vector2 center, double radius, int num_segments);
-
+	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<int> _vertexIndexes;
 		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies
