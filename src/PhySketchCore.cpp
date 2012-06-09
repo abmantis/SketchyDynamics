@@ -5,6 +5,7 @@
 #endif
 #include "PhySketchLogger.h"
 #include "PhySketchRenderer.h"
+#include "PhySketchPhysicsManager.h"
 
 
 namespace PhySketch
@@ -18,6 +19,7 @@ Core::Core( void )
 	_mainInputListener = nullptr;
 	_renderer = nullptr;
 	_physicsWorld = nullptr;
+	_physicsMgr = nullptr;
 }
 
 Core::~Core( void )
@@ -41,6 +43,10 @@ Core::~Core( void )
 	if(_physicsWorld != nullptr)
 	{
 		delete _physicsWorld; _physicsWorld = nullptr;
+	}
+	if (_physicsMgr != nullptr)
+	{
+		delete _physicsMgr; _physicsMgr = nullptr;
 	}
 }
 
@@ -70,6 +76,7 @@ void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGr
 	createPhysicsWorld(physicsGravity);
 
 	_renderer = new Renderer();
+	_physicsMgr = new PhysicsManager();
 	_mainInputListener = new MainInputListener();
 
 }
@@ -120,6 +127,7 @@ void Core::startLoop()
 		}	
 #pragma endregion
 
+		_physicsMgr->Update(ellapsedTime);
 		stepPhysics(ellapsedTime);
 
 		if(!_window->updateWindow())

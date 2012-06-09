@@ -147,6 +147,12 @@
     <ClInclude Include="..\include\PhySketchBodyPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchPhysicsBody.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\PhySketchPhysicsManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -240,6 +246,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchBodyPolygon.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchPhysicsBody.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchPhysicsManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

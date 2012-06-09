@@ -42,6 +42,8 @@ namespace PhySketch
 	class ApplicationWindow;
 	class ApplicationWindow_WGL;
 	class Core;
+	class PhysicsBody;
+	class PhysicsManager;
 	class InputListener;
 	class Logger;
 	class MainInputListener;

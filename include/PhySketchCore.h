@@ -47,6 +47,7 @@ namespace PhySketch
 		Logger *_logger;
 		Renderer *_renderer;
 		MainInputListener *_mainInputListener;
+		PhysicsManager *_physicsMgr;
 		b2World *_physicsWorld;
 
 	};
