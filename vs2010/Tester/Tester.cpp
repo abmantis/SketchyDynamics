@@ -30,7 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(0.0f, -4.0f);
-	b2Body *body = _core.getPhysicsWorld()->CreateBody(&bodyDef);
+	b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(7.0f, 0.3f);

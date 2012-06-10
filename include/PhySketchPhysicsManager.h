@@ -3,13 +3,15 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
+#include "Box2D/Box2D.h"
+
 
 namespace PhySketch
 {
 	class PhysicsManager : public Singleton<PhysicsManager>
 	{	
 	public:
-		PhysicsManager();
+		PhysicsManager(Vector2 gravity);
 		virtual ~PhysicsManager();
 
 		/// <summary> Adds a physics body. </summary>
@@ -28,16 +30,24 @@ namespace PhySketch
 		/// 	by 'advanceTime' millisecconds. </summary>
 		/// <param name="advanceTime"> Millisecconds to advance in the
 		/// 	simulation. </param>
-		virtual void Update(double advanceTime);
+		virtual void Update(ulong advanceTime);
+
+		/// <summary> Gets the physics world. </summary>
+		/// <returns> The physics world. </returns>
+		virtual b2World* getPhysicsWorld() const;
 
 		static PhysicsManager* getSingletonPtr(void);
 		static PhysicsManager& getSingleton(void);
+
+	protected:
+		virtual void stepPhysics(ulong ellapsedMillisec);
 		
 	protected:
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
 
 		PhysicsBodyList _physicsBodies;
 		Renderer* _renderer;
+		b2World *_physicsWorld;
 		
 	};
 }

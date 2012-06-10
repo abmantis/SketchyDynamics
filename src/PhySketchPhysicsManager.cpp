@@ -9,14 +9,18 @@ namespace PhySketch
 
 template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
-PhysicsManager::PhysicsManager()
+PhysicsManager::PhysicsManager(Vector2 gravity)
 {
 	_renderer = Renderer::getSingletonPtr();
+	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
 }
 
 PhysicsManager::~PhysicsManager()
 {
-
+	if(_physicsWorld != nullptr)
+	{
+		delete _physicsWorld; _physicsWorld = nullptr;
+	}
 }
 
 PhysicsManager* PhysicsManager::getSingletonPtr( void )
@@ -47,13 +51,15 @@ void PhysicsManager::RemoveBody( PhysicsBody *b )
 	}
 }
 
-void PhysicsManager::Update( double advanceTime )
+void PhysicsManager::Update( ulong advanceTime )
 {
 	PhysicsBody *pb = nullptr;
 	Polygon *poly = nullptr;
 	int polygonCount = 0;
 	int polygonToRemoveCount = 0;
 	int i = 0;
+
+	stepPhysics(advanceTime);
 
 	PhysicsBodyList::iterator itEnd = _physicsBodies.end();
 	for (PhysicsBodyList::iterator it = _physicsBodies.begin(); it != itEnd; ++it)
@@ -79,9 +85,28 @@ void PhysicsManager::Update( double advanceTime )
 			}
 		}
 		pb->update();
-	}
+	}	
+}
 
-	// TODO: update b2d world here
+void PhysicsManager::stepPhysics( ulong ellapsedMillisec )
+{
+
+	const ulong millistep = 16;
+	const float timeStep = float(millistep)/1000; // 16 milliseconds ~= 60Hz
+	const int velIterations = 8;
+	const int posIterations = 3;
+	static ulong acumulator = 0;
+	acumulator += ellapsedMillisec;
+	while(acumulator>=millistep)
+	{
+		_physicsWorld->Step(timeStep, velIterations, posIterations);
+		acumulator-=millistep;
+	}
+}
+
+b2World* PhysicsManager::getPhysicsWorld() const
+{
+	return _physicsWorld;
 }
 
 } // namespace PhySketch

@@ -148,7 +148,7 @@ void MainInputListener::processGesture( std::string gesture )
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set((float)position.x, (float)position.y);
 		bodyDef.angle = 0;
-		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2Vec2 vertices[3];
 		vertices[0].Set((float)rectP1.x, (float)rectP1.y);
@@ -189,7 +189,7 @@ void MainInputListener::processGesture( std::string gesture )
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set((float)position.x, (float)position.y);
 		bodyDef.angle = (float)degreesToRadians(angle);
-		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2PolygonShape dynamicBox;
 		dynamicBox.SetAsBox((float)size.x*0.5f, (float)size.y*0.5f);
@@ -220,7 +220,7 @@ void MainInputListener::processGesture( std::string gesture )
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set((float)position.x, (float)position.y);
 		bodyDef.angle = 0;
-		b2Body *body = Core::getSingletonPtr()->getPhysicsWorld()->CreateBody(&bodyDef);
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2CircleShape circleShape;
 		circleShape.m_p.Set(0.0, 0.0);

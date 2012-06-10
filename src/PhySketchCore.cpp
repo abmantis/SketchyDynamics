@@ -18,7 +18,6 @@ Core::Core( void )
 	_logger = nullptr;
 	_mainInputListener = nullptr;
 	_renderer = nullptr;
-	_physicsWorld = nullptr;
 	_physicsMgr = nullptr;
 }
 
@@ -39,10 +38,6 @@ Core::~Core( void )
 	if(_logger != nullptr)
 	{
 		delete _logger; _logger = nullptr;
-	}
-	if(_physicsWorld != nullptr)
-	{
-		delete _physicsWorld; _physicsWorld = nullptr;
 	}
 	if (_physicsMgr != nullptr)
 	{
@@ -73,10 +68,8 @@ void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGr
 		_logger = new Logger(logfile, logToConsole);
 	}
 
-	createPhysicsWorld(physicsGravity);
-
 	_renderer = new Renderer();
-	_physicsMgr = new PhysicsManager();
+	_physicsMgr = new PhysicsManager(physicsGravity);
 	_mainInputListener = new MainInputListener();
 
 }
@@ -128,8 +121,7 @@ void Core::startLoop()
 #pragma endregion
 
 		_physicsMgr->Update(ellapsedTime);
-		stepPhysics(ellapsedTime);
-
+		
 		if(!_window->updateWindow())
 		{
 			std::cout << "Window closing" << std::endl;
@@ -146,33 +138,6 @@ void Core::startLoop()
 ApplicationWindow* Core::getWindow() const
 {
 	return _window;
-}
-
-b2World* Core::getPhysicsWorld() const
-{
-	return _physicsWorld;
-}
-
-b2World* Core::createPhysicsWorld( Vector2 gravity )
-{
-	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
-	return _physicsWorld;
-}
-
-void Core::stepPhysics( ulong ellapsedMillisec )
-{
-	
-	const ulong millistep = 16;
-	const float timeStep = float(millistep)/1000; // 16 milliseconds ~= 60Hz
-	const int velIterations = 8;
-	const int posIterations = 3;
-	static ulong acumulator = 0;
-	acumulator += ellapsedMillisec;
-	while(acumulator>=millistep)
-	{
-		_physicsWorld->Step(timeStep, velIterations, posIterations);
-		acumulator-=millistep;
-	}
 }
 
 

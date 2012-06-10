@@ -4,7 +4,6 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
-#include "Box2D/Box2D.h"
 
 namespace PhySketch
 {
@@ -28,19 +27,10 @@ namespace PhySketch
 		/// <returns> The window, or NULL if createWindow() was not called. </returns>
 		virtual ApplicationWindow* getWindow() const;
 
-		virtual b2World* createPhysicsWorld(Vector2 gravity);
-
-		/// <summary> Gets the physics world. </summary>
-		/// <returns> The physics world. </returns>
-		virtual b2World* getPhysicsWorld() const;
-		
 		virtual void startLoop();
 
 		static Core* getSingletonPtr(void);
 		static Core& getSingleton(void);
-
-	protected:
-		virtual void stepPhysics(ulong ellapsedMillisec);
 
 	protected:
 		ApplicationWindow* _window;
@@ -48,8 +38,6 @@ namespace PhySketch
 		Renderer *_renderer;
 		MainInputListener *_mainInputListener;
 		PhysicsManager *_physicsMgr;
-		b2World *_physicsWorld;
-
 	};
 }
 #endif // PhySketchCore_h__
