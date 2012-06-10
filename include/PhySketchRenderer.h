@@ -49,6 +49,7 @@ namespace PhySketch
 		virtual void renderPolygon(Polygon *poly) const;
 
 	protected:
+		// TODO: Use list instead of set (speed!)
 		std::set<Polygon*> _pixelPolygons;
 		std::set<Polygon*> _percentPolygons;
 		std::set<Polygon*> _scenePolygons;

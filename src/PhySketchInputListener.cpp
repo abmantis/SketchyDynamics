@@ -4,8 +4,9 @@
 #include "PhySketchRenderer.h"
 #include "CALI\CIRecognizer.h"
 #include "CALI\CIScribble.h"
-#include "PhySketchBodyPolygon.h"
 #include "PhySketchCore.h"
+#include "PhySketchPhysicsManager.h"
+#include "PhySketchPhysicsBody.h"
 
 namespace PhySketch
 {
@@ -14,6 +15,7 @@ namespace PhySketch
 MainInputListener::MainInputListener() : InputListener()
 {
 	_renderer = Renderer::getSingletonPtr();
+	_physicsMgr = PhysicsManager::getSingletonPtr();
 	_isLeftMouseDown = false;
 	_caliStroke = nullptr;
 	_caliScribble = nullptr;
@@ -126,7 +128,6 @@ void MainInputListener::stopDrawingGesture()
 
 void MainInputListener::processGesture( std::string gesture )
 {
-	Polygon *poly;
 	bool bValid = false;
 	if (gesture.compare("Triangle") == 0)
 	{
@@ -163,8 +164,8 @@ void MainInputListener::processGesture( std::string gesture )
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
-		((BodyPolygon*)poly)->setPhysicsBody(body);
+		PhysicsBody *pb = new PhysicsBody(body);
+		_physicsMgr->AddBody(pb);
 	} 
 	else if (gesture.compare("Rectangle") == 0 || gesture.compare("Diamond") == 0)
 	{
@@ -174,7 +175,6 @@ void MainInputListener::processGesture( std::string gesture )
 		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
 		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
 		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
-// 		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
 						
 		Vector2 position =  _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
@@ -200,8 +200,9 @@ void MainInputListener::processGesture( std::string gesture )
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
-		((BodyPolygon*)poly)->setPhysicsBody(body);
+		PhysicsBody *pb = new PhysicsBody(body);
+		_physicsMgr->AddBody(pb);
+
 	} 
 	else if (gesture.compare("Circle") == 0 || gesture.compare("Ellipse") == 0)
 	{
@@ -211,7 +212,6 @@ void MainInputListener::processGesture( std::string gesture )
 		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
 		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
 		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
-//		Vector2 rectP4((*enclosingRect)[3].x, (*enclosingRect)[3].y);
 
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
@@ -233,8 +233,8 @@ void MainInputListener::processGesture( std::string gesture )
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		poly = new BodyPolygon(Polygon::DM_LINE_LOOP);
-		((BodyPolygon*)poly)->setPhysicsBody(body);
+		PhysicsBody *pb = new PhysicsBody(body);
+		_physicsMgr->AddBody(pb);
 
 	} 
 // 	else if(gesture.compare("Ellipse") == 0)
@@ -252,7 +252,7 @@ void MainInputListener::processGesture( std::string gesture )
 
 	if (bValid)
 	{
-		_renderer->addPolygon(poly);
+
 	}
 }
 

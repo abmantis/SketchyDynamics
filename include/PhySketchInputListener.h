@@ -181,6 +181,7 @@ namespace PhySketch
 		CIRecognizer *_caliRecognizer;
 		Polygon *_gesturePolygon;
 		Renderer *_renderer;
+		PhysicsManager *_physicsMgr;
 
 
 	};

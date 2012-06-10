@@ -144,9 +144,6 @@
     <ClInclude Include="..\include\PhySketchPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\PhySketchBodyPolygon.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\PhySketchPhysicsBody.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -243,9 +240,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchVector2.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\PhySketchBodyPolygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchPhysicsBody.cpp">
