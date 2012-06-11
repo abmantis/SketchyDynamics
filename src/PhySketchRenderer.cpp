@@ -211,7 +211,7 @@ namespace PhySketch
 		glGetIntegerv( GL_VIEWPORT, viewport );
 
 		winX = vec.x;
-		winY = viewport[3] - vec.y;
+		winY = _windowSize.y - vec.y;
 		glReadPixels( (int)vec.x, (int)winY, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &winZ );
 
 		gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
