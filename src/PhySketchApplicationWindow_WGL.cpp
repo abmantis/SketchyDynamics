@@ -25,6 +25,7 @@ namespace PhySketch
 	{
 		_renderer = Renderer::getSingletonPtr();
 
+		HWND		parentWnd = nullptr;
 		int			bpp = 32;
 		int			PixelFormat;			// Holds The Results After Searching For A Match
 		WNDCLASS	wc;						// Windows Class Structure
@@ -34,6 +35,19 @@ namespace PhySketch
 		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
 		dwStyle = WS_OVERLAPPEDWINDOW;
 
+		if(parameters != nullptr)
+		{
+			ParameterMap::const_iterator it;
+			ParameterMap::const_iterator itEnd = parameters->end();
+			if ( (it = parameters->find("parent_window")) != itEnd )
+			{
+				parentWnd = (HWND) atoi(it->second.c_str());
+				dwStyle = WS_CHILD;
+			}
+		}
+
+		Vector2 sceneSize = _renderer->_sceneViewMax - _renderer->_sceneViewMin;
+		_aspectRatio = sceneSize.x / sceneSize.y;
 
 		_fullscreen = fullscreen;			
 
@@ -100,7 +114,7 @@ namespace PhySketch
 			(int)position.x, (int)position.y,	// Window Position
 			WindowRect.right-WindowRect.left,	// Calculate Window Width
 			WindowRect.bottom-WindowRect.top,	// Calculate Window Height
-			NULL,								// No Parent Window
+			parentWnd,							// Parent Window
 			NULL,								// No Menu
 			_hInstance,							// Instance
 			this)))								// Pass To WM_CREATE
@@ -166,10 +180,7 @@ namespace PhySketch
 			Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Can't Activate The GL Rendering Context");
 			return FALSE;								// Return FALSE
 		}
-
-		Vector2 sceneSize = _renderer->_sceneViewMax - _renderer->_sceneViewMin;
-		_aspectRatio = sceneSize.x / sceneSize.y;
-		
+				
 		ShowWindow(_hWnd, SW_SHOW);						// Show The Window
 		SetForegroundWindow(_hWnd);						// Slightly Higher Priority
 		SetFocus(_hWnd);								// Sets Keyboard Focus To The Window
@@ -296,7 +307,7 @@ namespace PhySketch
 			x = (int)(width - _renderer->_viewportSize.x) / 2;
 		}
 
-		glViewport(x, y, (int)_renderer->_viewportSize.x, (int)_renderer->_viewportSize.y);						// Reset The Current Viewport
+		glViewport(x, y, round(_renderer->_viewportSize.x), round(_renderer->_viewportSize.y));						// Reset The Current Viewport
 
 		glMatrixMode(GL_PROJECTION);						// Select The Projection Matrix
 		glLoadIdentity();									// Reset The Projection Matrix
