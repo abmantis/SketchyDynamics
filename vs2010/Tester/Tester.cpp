@@ -26,6 +26,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
 		
 	_inputListener = new TestInputListener();
+	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 		
 	b2BodyDef bodyDef;
