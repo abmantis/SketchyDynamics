@@ -28,9 +28,14 @@ namespace PhySketch
 		virtual ApplicationWindow* getWindow() const;
 
 		virtual void startLoop();
+		
+		virtual bool doOneFrame();
 
 		static Core* getSingletonPtr(void);
 		static Core& getSingleton(void);
+
+	protected:
+		virtual inline bool _doOneFrame(ulong timeSinceLastFrame);
 
 	protected:
 		ApplicationWindow* _window;
@@ -38,6 +43,7 @@ namespace PhySketch
 		Renderer *_renderer;
 		MainInputListener *_mainInputListener;
 		PhysicsManager *_physicsMgr;
+		clock_t _currentFrame, _lastFrame;
 	};
 }
 #endif // PhySketchCore_h__

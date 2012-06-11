@@ -94,18 +94,21 @@ ApplicationWindow* Core::createWindow( std::string title, Vector2 position, Vect
 
 void Core::startLoop()
 {
-	bool done = false;
-	clock_t start, end;
+	bool dontStop = true;	
 	ulong ellapsedTime = 0;
 
 	ulong fpsloopCount = 0;
 	ulong fpstimeacum = 0;
 	float avgframetime = 0;
 
-	while(!done)
+	while(dontStop)
 	{
 		// DO NOT put any code before this line since it will not be counted as "frame time"
-		start = clock();
+		_currentFrame = clock();
+		ellapsedTime = (_currentFrame - _lastFrame) * 1000 / CLOCKS_PER_SEC;
+		_lastFrame = clock();
+
+		dontStop = _doOneFrame(ellapsedTime);
 
 #pragma region Print FPS
 		fpsloopCount++;
@@ -120,24 +123,30 @@ void Core::startLoop()
 		}	
 #pragma endregion
 
-		_physicsMgr->Update(ellapsedTime);
-		
-		if(!_window->updateWindow())
-		{
-			std::cout << "Window closing" << std::endl;
-			done = true;
-		}	
 
-		// DO NOT put any code after this line since it will not be counted as "frame time"
-		end = clock();
-		// compute ellapsed time in milliseconds
-		ellapsedTime = (end - start) * 1000 / CLOCKS_PER_SEC;
 	}	
 }
 
 ApplicationWindow* Core::getWindow() const
 {
 	return _window;
+}
+
+bool Core::doOneFrame()
+{	
+	_currentFrame = clock();
+	ulong ellapsedTime = (_currentFrame - _lastFrame) * 1000 / CLOCKS_PER_SEC;
+	_lastFrame = clock();
+
+	return _doOneFrame(ellapsedTime);
+}
+
+bool Core::_doOneFrame( ulong timeSinceLastFrame )
+{
+
+	_physicsMgr->Update(timeSinceLastFrame);
+
+	return _window->updateWindow();	
 }
 
 
