@@ -26,7 +26,7 @@ namespace PhySketch
 		 *
 		 * <returns>	true if window was created successfully. </returns>
 		 */
-		virtual bool createWindow(std::string title, int width, int height, bool fullscreen) = 0;
+		virtual bool createWindow(std::string title, int width, int height, bool fullscreen, const ParameterMap *parameters) = 0;
 
 		/**
 		 * <summary> Properly destroy the window </summary>

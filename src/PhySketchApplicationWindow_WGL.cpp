@@ -21,7 +21,7 @@ namespace PhySketch
 		destroyWindow();
 	}
 
-	bool ApplicationWindow_WGL::createWindow( std::string title, int width, int height, bool fullscreen)
+	bool ApplicationWindow_WGL::createWindow( std::string title, int width, int height, bool fullscreen, const ParameterMap *parameters)
 	{
 		_renderer = Renderer::getSingletonPtr();
 

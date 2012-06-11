@@ -74,7 +74,7 @@ void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGr
 
 }
 
-ApplicationWindow* Core::createWindow( std::string title, int width, int height, bool fullscreen )
+ApplicationWindow* Core::createWindow( std::string title, int width, int height, bool fullscreen, const ParameterMap *parameters)
 {
 	if(_window != nullptr)
 	{
@@ -86,7 +86,7 @@ ApplicationWindow* Core::createWindow( std::string title, int width, int height,
 #endif
 	
 
-	_window->createWindow( title, width, height, fullscreen);
+	_window->createWindow( title, width, height, fullscreen, parameters);
 	_window->addInputListener(_mainInputListener);
 
 	return _window;

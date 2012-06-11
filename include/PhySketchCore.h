@@ -21,7 +21,7 @@ namespace PhySketch
 		/// <param name="height"> The height. </param>
 		/// <param name="fullscreen"> true to fullscreen. </param>
 		/// <returns> The new window. </returns>
-		virtual ApplicationWindow* createWindow(std::string title, int width, int height, bool fullscreen);
+		virtual ApplicationWindow* createWindow(std::string title, int width, int height, bool fullscreen, const ParameterMap *parameters = nullptr);
 
 		/// <summary> Gets the window. </summary>		
 		/// <returns> The window, or NULL if createWindow() was not called. </returns>

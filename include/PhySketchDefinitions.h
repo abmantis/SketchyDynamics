@@ -1,3 +1,35 @@
+//////////////////////////////////////////////////////////////////////////
+// include files
+//
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <time.h>
+#include <vector>
+#include <list>
+#include <set>
+#include <map>
+#include <sstream>
+
+//////////////////////////////////////////////////////////////////////////
+// Windows includes. 
+#ifdef PHYSKETCH_OS_WIN32
+
+#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+#define NOMINMAX						// Stop windows.h from messing up std::min
+
+// Including SDKDDKVer.h defines the highest available Windows platform.
+// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
+// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
+#include <SDKDDKVer.h>
+
+#include <windows.h>
+#include <windowsx.h>
+
+#endif //PHYSKETCH_OS_WIN32
+
+
+
 namespace PhySketch
 {
 	// Define current OS
@@ -35,6 +67,7 @@ namespace PhySketch
 	typedef unsigned int uint;
 	typedef unsigned long ulong;
 
+	typedef std::map<std::string, std::string> ParameterMap;
 
 	// Pre-declare classes so we can use pointers in header files 
 	// without including individual .h
@@ -54,32 +87,4 @@ namespace PhySketch
 } //namespace PhySketch
 
 
-//////////////////////////////////////////////////////////////////////////
-// include files
-//
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <time.h>
-#include <vector>
-#include <list>
-#include <set>
-#include <sstream>
-
-//////////////////////////////////////////////////////////////////////////
-// Windows includes. 
-#ifdef PHYSKETCH_OS_WIN32
-
-	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-	#define NOMINMAX						// Stop windows.h from messing up std::min
-
-	// Including SDKDDKVer.h defines the highest available Windows platform.
-	// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-	// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-	#include <SDKDDKVer.h>
-
-	#include <windows.h>
-	#include <windowsx.h>
-
-#endif //PHYSKETCH_OS_WIN32
 
