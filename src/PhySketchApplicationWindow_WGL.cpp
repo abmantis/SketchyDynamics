@@ -694,6 +694,11 @@ namespace PhySketch
 		}
 	}
 
+	HWND ApplicationWindow_WGL::getWindowHandler()
+	{
+		return _hWnd;
+	}
+
 
 
 } // namespace PhySketch

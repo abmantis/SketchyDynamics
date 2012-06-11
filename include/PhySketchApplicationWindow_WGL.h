@@ -36,6 +36,8 @@ namespace PhySketch
 		/// <param name="on"> true to turn VSync on. </param>
 		virtual void setVSync(bool on);
 
+		virtual HWND getWindowHandler();
+
 	protected:
 
 		/**
