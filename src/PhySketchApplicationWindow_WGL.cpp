@@ -21,20 +21,19 @@ namespace PhySketch
 		destroyWindow();
 	}
 
-	bool ApplicationWindow_WGL::createWindow( std::string title, int width, int height, bool fullscreen, const ParameterMap *parameters)
+	bool ApplicationWindow_WGL::createWindow( std::string title, Vector2 position, Vector2 size, bool fullscreen, const ParameterMap *parameters)
 	{
 		_renderer = Renderer::getSingletonPtr();
 
-		int bpp = 32;
+		int			bpp = 32;
 		int			PixelFormat;			// Holds The Results After Searching For A Match
 		WNDCLASS	wc;						// Windows Class Structure
 		DWORD		dwExStyle;				// Window Extended Style
 		DWORD		dwStyle;				// Window Style
-		RECT		WindowRect;				// Grabs Rectangle Upper Left / Lower Right Values
-		WindowRect.left	= (long)0;			// Set Left Value To 0
-		WindowRect.right = (long)width;		// Set Right Value To Requested Width
-		WindowRect.top = (long)0;			// Set Top Value To 0
-		WindowRect.bottom = (long)height;	// Set Bottom Value To Requested Height
+
+		dwExStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
+		dwStyle = WS_OVERLAPPEDWINDOW;
+
 
 		_fullscreen = fullscreen;			
 
@@ -62,8 +61,8 @@ namespace PhySketch
 			DEVMODE dmScreenSettings;								// Device Mode
 			memset(&dmScreenSettings,0,sizeof(dmScreenSettings));	// Makes Sure Memory's Cleared
 			dmScreenSettings.dmSize=sizeof(dmScreenSettings);		// Size Of The Devmode Structure
-			dmScreenSettings.dmPelsWidth	= width;				// Selected Screen Width
-			dmScreenSettings.dmPelsHeight	= height;				// Selected Screen Height
+			dmScreenSettings.dmPelsWidth	= (long)size.x;			// Selected Screen Width
+			dmScreenSettings.dmPelsHeight	= (long)size.y;			// Selected Screen Height
 			dmScreenSettings.dmBitsPerPel	= bpp;					// Selected Bits Per Pixel
 			dmScreenSettings.dmFields=DM_BITSPERPEL|DM_PELSWIDTH|DM_PELSHEIGHT;
 
@@ -81,12 +80,13 @@ namespace PhySketch
 			dwExStyle=WS_EX_APPWINDOW;								// Window Extended Style
 			dwStyle=WS_POPUP;										// Windows Style
 			ShowCursor(FALSE);										// Hide Mouse Pointer
-		}
-		else
-		{
-			dwExStyle=WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;			// Window Extended Style
-			dwStyle=WS_OVERLAPPEDWINDOW;							// Windows Style
-		}
+		}		
+
+		RECT		WindowRect;				
+		WindowRect.left	= (long)position.x;
+		WindowRect.right = (long)(position.x + size.x);
+		WindowRect.top = (long)position.y;
+		WindowRect.bottom = (long)(position.y + size.y);
 
 		AdjustWindowRectEx(&WindowRect, dwStyle, FALSE, dwExStyle);		// Adjust Window To True Requested Size
 
@@ -97,13 +97,13 @@ namespace PhySketch
 			dwStyle |							// Defined Window Style
 			WS_CLIPSIBLINGS |					// Required Window Style
 			WS_CLIPCHILDREN,					// Required Window Style
-			0, 0,								// Window Position
+			(int)position.x, (int)position.y,	// Window Position
 			WindowRect.right-WindowRect.left,	// Calculate Window Width
 			WindowRect.bottom-WindowRect.top,	// Calculate Window Height
 			NULL,								// No Parent Window
 			NULL,								// No Menu
 			_hInstance,							// Instance
-			this)))								// Dont Pass Anything To WM_CREATE
+			this)))								// Pass To WM_CREATE
 		{
 			destroyWindow();								// Reset The Display
 			Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Window Creation Error");
@@ -173,7 +173,7 @@ namespace PhySketch
 		ShowWindow(_hWnd, SW_SHOW);						// Show The Window
 		SetForegroundWindow(_hWnd);						// Slightly Higher Priority
 		SetFocus(_hWnd);								// Sets Keyboard Focus To The Window
-		resizeGLScene(width, height);					// Set Up Our Perspective GL Screen
+		resizeGLScene((int)size.x, (int)size.y);					// Set Up Our Perspective GL Screen
 
 		if (!initGL())									// Initialize Our Newly Created GL Window
 		{
