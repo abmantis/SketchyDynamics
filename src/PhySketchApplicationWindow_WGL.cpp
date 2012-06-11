@@ -522,6 +522,7 @@ namespace PhySketch
 				default:
 					break;
 				}
+				break;
 			}
 		case WM_KEYUP:
 			{
@@ -640,6 +641,7 @@ namespace PhySketch
 				default:
 					break;
 				}
+				break;
 			}
 #pragma endregion
 
