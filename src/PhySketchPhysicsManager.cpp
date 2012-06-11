@@ -26,19 +26,19 @@ PhysicsManager::~PhysicsManager()
 
 PhysicsManager* PhysicsManager::getSingletonPtr( void )
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return ms_Singleton;
 }
 
 PhysicsManager& PhysicsManager::getSingleton( void )
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
 }
 
 void PhysicsManager::AddBody( PhysicsBody *b )
 {
-	ASSERT(b != nullptr && "PhysicsBody is NULL");
+	PHYSKETCH_ASSERT(b != nullptr && "PhysicsBody is NULL");
 	_physicsBodies.push_back(b);
 }
 

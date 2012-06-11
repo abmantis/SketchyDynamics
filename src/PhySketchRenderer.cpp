@@ -19,13 +19,13 @@ namespace PhySketch
 
 	Renderer* Renderer::getSingletonPtr(void)
 	{
-		ASSERT(ms_Singleton != NULL);
+		PHYSKETCH_ASSERT(ms_Singleton != NULL);
 		return ms_Singleton;
 	}
 
 	Renderer& Renderer::getSingleton(void)
 	{
-		ASSERT(ms_Singleton != NULL);
+		PHYSKETCH_ASSERT(ms_Singleton != NULL);
 		return *ms_Singleton;
 	}
 
@@ -186,7 +186,7 @@ namespace PhySketch
 		polygonVertexCount = poly->_vertices.size();
 		for (int j = 0; j < polygonIndexCount; j++)
 		{
-			ASSERT(poly->_vertexIndexes[j] < polygonVertexCount && "Vertex index out of range")
+			PHYSKETCH_ASSERT(poly->_vertexIndexes[j] < polygonVertexCount && "Vertex index out of range")
 
 			vec = &poly->_vertices[poly->_vertexIndexes[j]];
 			glVertex2d(vec->x, vec->y);
@@ -198,7 +198,7 @@ namespace PhySketch
 
 	PhySketch::Vector2 Renderer::windowToScene( const Vector2 &vec )
 	{
-		ASSERT(_viewportSize > Vector2(0,0));
+		PHYSKETCH_ASSERT(_viewportSize > Vector2(0,0));
 			
 		GLint viewport[4];
 		GLdouble modelview[16];

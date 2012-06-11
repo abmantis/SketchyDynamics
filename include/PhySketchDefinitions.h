@@ -58,9 +58,9 @@ namespace PhySketch
 	void __physketch_assert__(const char * file, unsigned line, const char * expr, bool dump);
 
 	#ifndef NDEBUG
-	#define ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, true); 
+	#define PHYSKETCH_ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, true); 
 	#else 
-	#define ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, false); 
+	#define PHYSKETCH_ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, false); 
 	#endif
 
 	// type defs

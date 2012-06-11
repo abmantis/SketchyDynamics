@@ -56,13 +56,13 @@ Logger::~Logger(void)
 
 Logger* Logger::getSingletonPtr(void)
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return ms_Singleton;
 }
 
 Logger& Logger::getSingleton(void)
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
 }
 

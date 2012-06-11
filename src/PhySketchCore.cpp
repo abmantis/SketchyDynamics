@@ -47,13 +47,13 @@ Core::~Core( void )
 
 Core* Core::getSingletonPtr( void )
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return ms_Singleton;
 }
 
 Core& Core::getSingleton( void )
 {
-	ASSERT(ms_Singleton != NULL);
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
 }
 
