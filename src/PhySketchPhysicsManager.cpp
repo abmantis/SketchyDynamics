@@ -13,6 +13,7 @@ PhysicsManager::PhysicsManager(Vector2 gravity)
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
+	_simulationPaused = false;
 }
 
 PhysicsManager::~PhysicsManager()
@@ -59,7 +60,10 @@ void PhysicsManager::Update( ulong advanceTime )
 	int polygonToRemoveCount = 0;
 	int i = 0;
 
-	stepPhysics(advanceTime);
+	if(!_simulationPaused)
+	{
+		stepPhysics(advanceTime);
+	}
 
 	PhysicsBodyList::iterator itEnd = _physicsBodies.end();
 	for (PhysicsBodyList::iterator it = _physicsBodies.begin(); it != itEnd; ++it)
@@ -107,6 +111,21 @@ void PhysicsManager::stepPhysics( ulong ellapsedMillisec )
 b2World* PhysicsManager::getPhysicsWorld() const
 {
 	return _physicsWorld;
+}
+
+void PhysicsManager::pauseSimulation()
+{
+	_simulationPaused = true;
+}
+
+void PhysicsManager::playSimulation()
+{
+	_simulationPaused = false;
+}
+
+void PhysicsManager::toggleSimulation()
+{
+	_simulationPaused = !_simulationPaused;
 }
 
 } // namespace PhySketch

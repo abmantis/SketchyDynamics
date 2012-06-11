@@ -32,6 +32,17 @@ namespace PhySketch
 		/// 	simulation. </param>
 		virtual void Update(ulong advanceTime);
 
+		/// <summary> Pause the physics simulation. </summary>		
+		virtual void pauseSimulation();
+
+		/// <summary> Play/resume the physics simulation. </summary>
+		virtual void playSimulation();
+
+		/// <summary> Pauses the simulation if it was playing or plays it if it
+		/// 	was paused. </summary>
+		/// <remarks> Deadvirus, 6/10/2012. </remarks>
+		virtual void toggleSimulation();
+
 		/// <summary> Gets the physics world. </summary>
 		/// <returns> The physics world. </returns>
 		virtual b2World* getPhysicsWorld() const;
@@ -48,6 +59,7 @@ namespace PhySketch
 		PhysicsBodyList _physicsBodies;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
+		bool _simulationPaused;
 		
 	};
 }
