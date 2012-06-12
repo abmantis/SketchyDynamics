@@ -128,8 +128,8 @@ void CTesterMFCDlg::initPhySketch()
 	b2PolygonShape groundBox;
 	groundBox.SetAsBox(7.0f, 0.3f);
 	body->CreateFixture(&groundBox, 0.0f);
-	PhySketch::PhysicsBody *phyBody = new PhySketch::PhysicsBody(body);
-	_physicsMgr->AddBody(phyBody);
+	_phyGroundBody = new PhySketch::PhysicsBody(body);
+	_physicsMgr->AddBody(_phyGroundBody);
 
 }
 
@@ -175,4 +175,12 @@ BOOL CTesterMFCDlg::PreTranslateMessage(MSG* pMsg)
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+CTesterMFCDlg::~CTesterMFCDlg()
+{
+	delete _phyGroundBody;
+	_phyGroundBody = nullptr;
+	delete _inputListener;
+	_inputListener = nullptr;
 }

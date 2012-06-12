@@ -18,7 +18,7 @@ class CTesterMFCDlg : public CDialogEx
 // Construction
 public:
 	CTesterMFCDlg(CWnd* pParent = NULL);	// standard constructor
-
+	~CTesterMFCDlg();
 // Dialog Data
 	enum { IDD = IDD_TESTERMFC_DIALOG };
 
@@ -35,6 +35,7 @@ protected:
 	PhySketch::Renderer *_renderer;
 	PhySketch::PhysicsManager *_physicsMgr;
 	TestInputListener *_inputListener;
+	PhySketch::PhysicsBody *_phyGroundBody;
 
 protected:
 	HICON m_hIcon;
