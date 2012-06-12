@@ -163,3 +163,16 @@ void CTesterMFCDlg::OnSize(UINT nType, int cx, int cy)
 
 	// TODO: Add your message handler code here
 }
+
+
+BOOL CTesterMFCDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: Add your specialized code here and/or call the base class
+	if(pMsg->hwnd == _stOpenGL.GetSafeHwnd())
+	{
+		//std::cout << "lalala" << std::endl;
+		::SendMessage(((PhySketch::ApplicationWindow_WGL*)_window)->getWindowHandler(), pMsg->message, pMsg->wParam, pMsg->lParam);
+	}
+
+	return CDialogEx::PreTranslateMessage(pMsg);
+}
