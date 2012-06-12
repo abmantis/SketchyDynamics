@@ -42,6 +42,9 @@
     <ClInclude Include="BPCtrlAnchorMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Tester\TestInputListener.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TesterMFC.cpp">

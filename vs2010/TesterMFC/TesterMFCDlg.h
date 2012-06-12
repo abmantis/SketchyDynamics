@@ -10,6 +10,7 @@
 #include "PhySketchApplicationWindow.h"
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsManager.h"
+#include "..\Tester\TestInputListener.h"
 
 // CTesterMFCDlg dialog
 class CTesterMFCDlg : public CDialogEx
@@ -33,7 +34,7 @@ protected:
 	PhySketch::ApplicationWindow *_window;
 	PhySketch::Renderer *_renderer;
 	PhySketch::PhysicsManager *_physicsMgr;
-//	TestInputListener *_inputListener;
+	TestInputListener *_inputListener;
 
 protected:
 	HICON m_hIcon;
@@ -49,4 +50,5 @@ public:
 	CStatic _stOpenGL;
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 };

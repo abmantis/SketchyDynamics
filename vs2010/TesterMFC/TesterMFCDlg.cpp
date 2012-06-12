@@ -117,9 +117,9 @@ void CTesterMFCDlg::initPhySketch()
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
 
-// 	_inputListener = new TestInputListener();
-// 	_inputListener->_physicsMgr = _physicsMgr;
-// 	_window->addInputListener(_inputListener);
+	_inputListener = new TestInputListener();
+	_inputListener->_physicsMgr = _physicsMgr;
+	_window->addInputListener(_inputListener);
 
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(0.0f, -4.0f);
