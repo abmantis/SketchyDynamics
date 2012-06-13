@@ -2,12 +2,16 @@
 #include "PhySketchLogger.h"
 #include "PhySketchUtils.h"
 
-#ifndef PHYSKETCH_LOG_WARNING
-	#define PHYSKETCH_LOG_WARNING "[WARNING] " 
+#ifndef PHYSKETCH_LOGWARNINGMSG
+	#define PHYSKETCH_LOGWARNINGMSG "[WARNING] " 
 #endif
-#ifndef PHYSKETCH_LOG_ERROR
-	#define PHYSKETCH_LOG_ERROR "[ERROR] " 
+#ifndef PHYSKETCH_LOGERRORMSG
+	#define PHYSKETCH_LOGERRORMSG "[ERROR] " 
 #endif
+
+#define PHYSKETCH_LOG_MESSAGE(msg)	PhySketch::Logger::getSingletonPtr()->writeMessage( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
+#define PHYSKETCH_LOG_WARNING(msg)	PhySketch::Logger::getSingletonPtr()->writeWarning( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
+#define PHYSKETCH_LOG_ERROR(msg)	PhySketch::Logger::getSingletonPtr()->writeError( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
 
 namespace PhySketch
 {
@@ -92,13 +96,18 @@ void Logger::writeMessage( std::string msg )
 	}
 }
 
+void Logger::writeMessage( std::string location, std::string msg )
+{
+	writeMessage("{" + location + "} " + msg);
+}
+
 void Logger::writeWarning( std::string warning )
 {
-	writeToFile(PHYSKETCH_LOG_WARNING + warning);
+	writeToFile(PHYSKETCH_LOGWARNINGMSG + warning);
 
 	if(_printToConsole)
 	{
-		std::cout << PHYSKETCH_LOG_WARNING << warning << std::endl;
+		std::cout << PHYSKETCH_LOGWARNINGMSG << warning << std::endl;
 	}
 }
 
@@ -109,11 +118,11 @@ void Logger::writeWarning( std::string location, std::string warning )
 
 void Logger::writeError( std::string error )
 {
-	writeToFile(PHYSKETCH_LOG_ERROR + error);
+	writeToFile(PHYSKETCH_LOGERRORMSG + error);
 	
 	if(_printToConsole)
 	{
-		std::cerr << PHYSKETCH_LOG_ERROR << error << std::endl;
+		std::cerr << PHYSKETCH_LOGERRORMSG << error << std::endl;
 	}	
 }
 

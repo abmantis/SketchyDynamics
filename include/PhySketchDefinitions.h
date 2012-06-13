@@ -63,6 +63,13 @@ namespace PhySketch
 	#define PHYSKETCH_ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, false); 
 	#endif
 
+	//////////////////////////////////////////////////////////////////////////
+	/// Stringize macro
+	//////////////////////////////////////////////////////////////////////////
+	/// two macros ensures any macro passed will be expanded before being stringified
+	#define STRINGIZE_DETAIL(x) #x
+	#define STRINGIZE(x) STRINGIZE_DETAIL(x)
+
 	// type defs
 	typedef unsigned int uint;
 	typedef unsigned long ulong;

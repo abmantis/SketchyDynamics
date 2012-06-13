@@ -18,6 +18,11 @@ namespace PhySketch
 		/// <param name="msg"> The message. </param>
 		virtual void writeMessage(std::string msg);		
 
+		/// <summary> Writes a message to the log. </summary>
+		/// <param name="location"> The location of the error (class/function). </param>
+		/// <param name="msg"> The message. </param>
+		virtual void writeMessage(std::string location, std::string msg);		
+
 		/// <summary> Writes a warning to the log. </summary>
 		/// <param name="warning"> The warning. </param>
 		virtual void writeWarning(std::string warning);
