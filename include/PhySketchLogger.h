@@ -7,6 +7,10 @@
 
 namespace PhySketch
 {
+#define PHYSKETCH_LOG_MESSAGE(msg)	Logger::getSingletonPtr()->writeMessage( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
+#define PHYSKETCH_LOG_WARNING(msg)	Logger::getSingletonPtr()->writeWarning( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
+#define PHYSKETCH_LOG_ERROR(msg)	Logger::getSingletonPtr()->writeError( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
+
 	class Logger : public Singleton<Logger>
 	{
 	public:

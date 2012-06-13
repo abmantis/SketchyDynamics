@@ -9,9 +9,6 @@
 	#define PHYSKETCH_LOGERRORMSG "[ERROR] " 
 #endif
 
-#define PHYSKETCH_LOG_MESSAGE(msg)	PhySketch::Logger::getSingletonPtr()->writeMessage( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
-#define PHYSKETCH_LOG_WARNING(msg)	PhySketch::Logger::getSingletonPtr()->writeWarning( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
-#define PHYSKETCH_LOG_ERROR(msg)	PhySketch::Logger::getSingletonPtr()->writeError( STRINGIZE(__FILE__) ":" STRINGIZE(__LINE__), #msg)
 
 namespace PhySketch
 {
