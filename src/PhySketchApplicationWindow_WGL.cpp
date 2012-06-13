@@ -246,6 +246,7 @@ namespace PhySketch
 		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+		glDisable(GL_CULL_FACE);
 		setVSync(false);
 		
 		return TRUE;										// Initialization Went OK
