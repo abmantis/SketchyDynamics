@@ -31,6 +31,7 @@
 #include <set>
 #include <map>
 #include <sstream>
+#include <GL/glew.h>
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 
