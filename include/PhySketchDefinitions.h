@@ -92,6 +92,8 @@ namespace PhySketch
 	class MainInputListener;
 	class Polygon;
 	class Renderer;
+	class Shader_GL;
+	class ShaderProgram_GL;
 	class Vector2;
 
 } //namespace PhySketch
