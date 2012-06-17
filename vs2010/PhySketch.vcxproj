@@ -126,6 +126,7 @@
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
     <ClInclude Include="..\include\PhySketchPolygon.h" />
     <ClInclude Include="..\include\PhySketchRenderer.h" />
+    <ClInclude Include="..\include\PhySketchShader_GL.h" />
     <ClInclude Include="..\include\PhySketchSingleton.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow.h" />
     <ClInclude Include="..\include\PhySketchUtils.h" />
@@ -164,6 +165,7 @@
     <ClCompile Include="..\src\PhySketchPhysicsManager.cpp" />
     <ClCompile Include="..\src\PhySketchPolygon.cpp" />
     <ClCompile Include="..\src\PhySketchRenderer.cpp" />
+    <ClCompile Include="..\src\PhySketchShader_GL.cpp" />
     <ClCompile Include="..\src\PhySketchVector2.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
