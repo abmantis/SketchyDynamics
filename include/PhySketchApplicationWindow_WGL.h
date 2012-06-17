@@ -63,11 +63,6 @@ namespace PhySketch
 		static LRESULT CALLBACK staticWndProc(HWND hWnd, UINT Msg, WPARAM wParam, LPARAM lParam);
 	
 		/**
-		 * <summary> Setup OpenGL </summary>
-		 */		
-		virtual int initGL(void);
-
-		/**
 		 * <summary> Resize And Initialize The GL Window </summary>
 		 */		
 		virtual void resizeGLScene(int width, int height);

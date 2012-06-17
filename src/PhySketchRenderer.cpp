@@ -27,6 +27,21 @@ namespace PhySketch
 		return *ms_Singleton;
 	}
 
+	bool Renderer::initGL()
+	{
+		glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
+		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Black Background
+		//glClearDepth(1.0f);									// Depth Buffer Setup
+		//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
+		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
+		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
+		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
+		glDisable(GL_CULL_FACE);
+
+
+		return true;		
+	}
+
 	void Renderer::render() const
 	{
 		renderPixelPolygons();

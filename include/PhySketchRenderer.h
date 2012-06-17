@@ -43,6 +43,8 @@ namespace PhySketch
 		static Renderer& getSingleton(void);
 
 	protected:
+		virtual bool initGL();
+
 		virtual void renderPixelPolygons() const;
 		virtual void renderPercentPolygons() const;
 		virtual void renderScenePolygons() const;

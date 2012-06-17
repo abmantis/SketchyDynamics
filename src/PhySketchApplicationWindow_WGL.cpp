@@ -184,12 +184,14 @@ namespace PhySketch
 		SetFocus(_hWnd);								// Sets Keyboard Focus To The Window
 		resizeGLScene((int)size.x, (int)size.y);					// Set Up Our Perspective GL Screen
 
-		if (!initGL())									// Initialize Our Newly Created GL Window
+		if(!_renderer->initGL())
 		{
-			destroyWindow();					// Reset The Display
-			Logger::getSingletonPtr()->writeError("{ApplicationWindow_WGL}Initialization Failed.");
-			return FALSE;								// Return FALSE
+			PHYSKETCH_LOG_ERROR("OpenGL init failed");
+			destroyWindow();
+			return FALSE;
 		}
+
+		setVSync(false);
 
 		return TRUE;									// Success
 	}
@@ -234,22 +236,7 @@ namespace PhySketch
 			_hInstance=NULL;									// Set hInstance To NULL
 		}
 	}
-
-	int ApplicationWindow_WGL::initGL( void )
-	{
-		glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
-		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Black Background
-		//glClearDepth(1.0f);									// Depth Buffer Setup
-		//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
-		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
-		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
-		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
-		glDisable(GL_CULL_FACE);
-		setVSync(false);
-		
-		return TRUE;										// Initialization Went OK
-	}
-
+	
 	bool ApplicationWindow_WGL::updateWindow()
 	{
 		MSG	msg;
