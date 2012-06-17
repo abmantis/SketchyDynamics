@@ -110,9 +110,13 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 	_caliStroke = new CIStroke();
 	_caliStroke->addPoint(startPoint.x, startPoint.y);
 
-	_renderer->removePolygon(_gesturePolygon);
-	delete _gesturePolygon;
-	_gesturePolygon = new Polygon(Polygon::DM_LINE_STRIP, Polygon::CS_Scene);
+	if(_gesturePolygon !=nullptr)
+	{
+		_renderer->removePolygon(_gesturePolygon);
+		delete _gesturePolygon;
+		_gesturePolygon = nullptr;
+	}
+	_gesturePolygon = new Polygon(Polygon::VV_Stream, Polygon::DM_LINE_STRIP, Polygon::CS_Scene);
 	_gesturePolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }
@@ -124,6 +128,8 @@ void MainInputListener::stopDrawingGesture()
 	processGesture((*recGests)[0]->getName());
 
 	_renderer->removePolygon(_gesturePolygon);
+	delete _gesturePolygon;
+	_gesturePolygon = nullptr;
 }
 
 void MainInputListener::processGesture( std::string gesture )
