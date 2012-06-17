@@ -121,6 +121,7 @@
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
+    <ClInclude Include="..\include\PhySketchMatrix3.h" />
     <ClInclude Include="..\include\PhySketchPhysicsBody.h" />
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
     <ClInclude Include="..\include\PhySketchPolygon.h" />
@@ -158,6 +159,7 @@
     <ClCompile Include="..\src\PhySketchInputListener.cpp" />
     <ClCompile Include="..\src\PhySketchLogger.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
+    <ClCompile Include="..\src\PhySketchMatrix3.cpp" />
     <ClCompile Include="..\src\PhySketchPhysicsBody.cpp" />
     <ClCompile Include="..\src\PhySketchPhysicsManager.cpp" />
     <ClCompile Include="..\src\PhySketchPolygon.cpp" />
