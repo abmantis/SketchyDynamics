@@ -29,6 +29,23 @@ namespace PhySketch
 
 	bool Renderer::initGL()
 	{
+		// Initialise GLEW
+		GLenum err = glewInit();
+		if (GLEW_OK != err)
+		{
+			std::string glewErrorStr = "GLEW Error: ";
+			glewErrorStr = glewErrorStr + (char*)glewGetErrorString(err);
+			PHYSKETCH_LOG_ERROR(glewErrorStr);
+			return FALSE;
+		}
+
+		// Check for OpenGL 2.0 support
+		if (!GLEW_VERSION_2_0) {
+			PHYSKETCH_LOG_ERROR("OpenGL 2.0 not available");
+			return FALSE;
+		}
+
+
 		glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Black Background
 		//glClearDepth(1.0f);									// Depth Buffer Setup
