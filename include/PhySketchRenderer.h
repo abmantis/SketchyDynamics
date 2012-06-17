@@ -50,6 +50,9 @@ namespace PhySketch
 		virtual void renderScenePolygons() const;
 		virtual void renderPolygon(Polygon *poly) const;
 
+		virtual void updateOpenGLBuffers(Polygon *polygon) const;
+		
+
 	protected:
 		// TODO: Use list instead of set (speed!)
 		std::set<Polygon*> _pixelPolygons;
@@ -60,6 +63,24 @@ namespace PhySketch
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _viewportSize;
 		Vector2 _windowSize;
+
+		Shader_GL* _mainVertexShader;
+		Shader_GL* _mainFragmentShader;
+		ShaderProgram_GL* _mainShaderProgram;
+
+		struct
+		{
+			struct 
+			{
+				GLint position;
+			} attributes;
+			
+			struct
+			{
+				GLint transformation;
+			} uniforms;
+
+		} _shaderVars;
 
 		typedef std::set<Polygon*>::iterator polygon_set_iterator;
 		

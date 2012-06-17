@@ -3,9 +3,13 @@
 namespace PhySketch
 {
 
-Polygon::Polygon(DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) 
-	: _angle(0), _position(0, 0), _scale(1, 1), _coordSystem(cs), _drawingMode(dm)
+Polygon::Polygon(VertexVariance vv, DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) 
+	: _angle(0), _position(0, 0), _scale(1, 1), _vertexVariance(vv), 
+	_coordSystem(cs), _drawingMode(dm), _vertexBuffer(0), _elementBuffer(0)
 {
+	_hasNewVertices = false;
+
+	_transformMatrix = Matrix3::IDENTITY;
 }
 
 Polygon::~Polygon()
@@ -19,7 +23,11 @@ double Polygon::getAngle( void ) const
 
 void Polygon::setAngle( double angle )
 {
-	_angle = angle;
+	if (angle != _angle)
+	{
+		_angle = angle;
+		computeTransformationMatrix();
+	}	
 }
 
 const Vector2& Polygon::getPosition( void ) const
@@ -29,7 +37,11 @@ const Vector2& Polygon::getPosition( void ) const
 
 void Polygon::setPosition( const Vector2& position )
 {
-	_position = position;
+	if(position != _position)
+	{
+		_position = position;
+		computeTransformationMatrix();
+	}
 }
 
 const Vector2& Polygon::getScale( void ) const
@@ -39,12 +51,17 @@ const Vector2& Polygon::getScale( void ) const
 
 void Polygon::setScale( const Vector2& scale )
 {
-	_scale = scale;
+	if (scale != _scale)
+	{
+		_scale = scale;
+		computeTransformationMatrix();
+	}	
 }
 
 void Polygon::translate( const Vector2& amount )
 {
 	_position += amount;
+	computeTransformationMatrix();
 }
 
 void Polygon::addVertex( const Vector2& vertex )
@@ -53,6 +70,8 @@ void Polygon::addVertex( const Vector2& vertex )
 	_vertices.push_back(vertex);	
 
 	_aabb.update(vertex);
+
+	_hasNewVertices = true;
 }
 
 const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
@@ -62,7 +81,7 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 
 Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 {
-	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
+	Polygon *poly = new Polygon(VV_Static, DM_LINE_LOOP, cs);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
@@ -73,7 +92,7 @@ Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 
 Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments )
 {
-	Polygon *poly = new Polygon(DM_LINE_LOOP, cs);
+	Polygon *poly = new Polygon(VV_Static, DM_LINE_LOOP, cs);
 
 	std::vector<Vector2> circleVec = GetCircleVertices(center, radius, num_segments);
 
@@ -136,6 +155,23 @@ void Polygon::updateAABB()
 const AABB& Polygon::getAABB() const
 {
 	return _aabb;
+}
+
+const Polygon::VertexVariance& Polygon::GetVertexVariance() const
+{
+	return(_vertexVariance);
+}
+
+void Polygon::computeTransformationMatrix()
+{
+	Matrix3 translation, rotation, scale;
+	
+	translation.fromPosition(_position);
+	rotation.fromAngle(degreesToRadians(_angle));
+	scale.fromScale(_scale);
+
+	_transformMatrix = translation*rotation*scale;
+
 }
 
 

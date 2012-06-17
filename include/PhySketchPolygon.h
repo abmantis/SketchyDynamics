@@ -4,6 +4,8 @@
 #include "PhySketchDefinitions.h"
 #include "PhySketchVector2.h"
 #include "PhySketchAABB.h"
+#include "PhySketchMatrix3.h"
+
 
 namespace PhySketch
 {
@@ -29,8 +31,18 @@ namespace PhySketch
 			DM_TRIANGLE_STRIP, 
 			DM_TRIANGLE_FAN
 		};
+
+		/// <summary> Values that represent how much the vertices vary. </summary>
+		/// <remarks> The variance is only related to vertices and not Polygon's
+		/// 	position, scale or angle. </remarks>
+		enum VertexVariance
+		{
+			VV_Static,	// For polygons with static vertices
+			VV_Dynamic,	// For polygons that change vertices frequently
+			VV_Stream	// For polygons that change vertices almost every frame
+		};
 	public:
-		Polygon(DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
+		Polygon(VertexVariance vv, DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
 		virtual ~Polygon();
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
@@ -91,9 +103,12 @@ namespace PhySketch
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual const AABB& getAABB() const;
 
+		
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
 		virtual void update() {}
+
+		const VertexVariance& GetVertexVariance() const;
 
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
@@ -107,17 +122,29 @@ namespace PhySketch
 		/// <returns> The circle polygon. </returns>
 		static Polygon* CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments);
 		static std::vector<Vector2> GetCircleVertices(Vector2 center, double radius, int num_segments);
+
+	protected:
+		void computeTransformationMatrix();
+
 	protected:
 		std::vector<Vector2> _vertices;
-		std::vector<int> _vertexIndexes;
+		std::vector<uint> _vertexIndexes;
 		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies
-		
+		bool _hasNewVertices;
+
 		double _angle;
 		Vector2 _position;
 		Vector2 _scale;
+
+		Matrix3 _transformMatrix;
+
 		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
 		DrawingMode _drawingMode;		
+		VertexVariance _vertexVariance;
 		AABB _aabb;
+
+		UINT _vertexBuffer;	
+		UINT _elementBuffer;	
 		
 	};
 }

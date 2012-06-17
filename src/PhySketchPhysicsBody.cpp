@@ -78,7 +78,7 @@ void PhysicsBody::reconstructPolygons()
 
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{		
-		poly = new Polygon(Polygon::DM_LINE_LOOP);
+		poly = new Polygon(Polygon::VV_Static, Polygon::DM_LINE_LOOP);
 		poly->setPosition(position);
 		poly->setAngle(angle);
 
