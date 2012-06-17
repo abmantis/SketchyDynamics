@@ -1,8 +1,6 @@
 #include "PhySketchRenderer.h"
 #include "PhySketchPolygon.h"
 
-#include <gl\gl.h>			// Header File For The OpenGL32 Library
-#include <gl\glu.h>			// Header File For The GLu32 Library
 #include "PhySketchLogger.h"
 
 namespace PhySketch

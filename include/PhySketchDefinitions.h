@@ -47,6 +47,8 @@
 
 #include <windows.h>
 #include <windowsx.h>
+#include <GL/gl.h>
+//#include <GL/glu.h>
 
 #endif //PHYSKETCH_OS_WIN32
 
