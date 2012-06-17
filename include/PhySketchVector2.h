@@ -38,6 +38,10 @@ namespace PhySketch
 		{
 			return (x == right.x) && (y == right.y);
 		}
+		virtual bool operator!=(const Vector2& right) const
+		{
+			return !((*this) == right);
+		}
 		virtual bool operator<(const Vector2& right) const
 		{
 			return (x < right.x) && (y < right.y);
