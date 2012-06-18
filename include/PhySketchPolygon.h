@@ -42,7 +42,7 @@ namespace PhySketch
 			VV_Stream	// For polygons that change vertices almost every frame
 		};
 	public:
-		Polygon(VertexVariance vv, DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
+		Polygon(VertexVariance vv = VV_Static , DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
 		virtual ~Polygon();
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
