@@ -96,6 +96,10 @@ namespace PhySketch
 		/// <returns> The drawing mode. </returns>
 		virtual const DrawingMode& getDrawingMode() const;
 
+		/// <summary> Sets the drawing mode. </summary>
+		/// <param name="dm"> The DrawingMode. </param>
+		virtual void setDrawingMode(DrawingMode dm);
+
 		/// <summary> Updates the axis aligned bounding box. </summary>
 		virtual void updateAABB();
 

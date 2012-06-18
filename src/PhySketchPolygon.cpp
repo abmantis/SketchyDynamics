@@ -141,6 +141,13 @@ const Polygon::DrawingMode& Polygon::getDrawingMode() const
 	return(_drawingMode);
 }
 
+
+void Polygon::setDrawingMode( DrawingMode dm )
+{
+	_drawingMode = dm;
+}
+
+
 void Polygon::updateAABB()
 {
 	_aabb.invalidate();
