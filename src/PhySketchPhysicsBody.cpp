@@ -44,7 +44,7 @@ void PhysicsBody::update()
 	for (size_t i = 0; i < polyCount; i++)
 	{
 		_polygons[i]->setPosition(_body->GetPosition());
-		_polygons[i]->setAngle(radiansToDegrees(_body->GetAngle()));
+		_polygons[i]->setAngle(_body->GetAngle());
 	}
 }
 
@@ -66,7 +66,7 @@ void PhysicsBody::reconstructPolygons()
 	_needsPolygonUpdate = true;
 
 	Vector2 position = _body->GetPosition();
-	float angle = radiansToDegrees(_body->GetAngle());
+	float angle = _body->GetAngle();
 	Polygon *poly = nullptr;
 	Polygon *linePoly = nullptr;
 

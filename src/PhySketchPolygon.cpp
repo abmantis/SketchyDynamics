@@ -195,7 +195,7 @@ void Polygon::computeTransformationMatrix()
 	Matrix3 translation, rotation, scale;
 	
 	translation.fromPosition(_position);
-	rotation.fromAngle(degreesToRadians(_angle));
+	rotation.fromAngle(_angle);
 	scale.fromScale(_scale);
 
 	_transformMatrix = translation*rotation*scale;

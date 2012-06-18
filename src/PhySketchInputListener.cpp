@@ -194,7 +194,7 @@ void MainInputListener::processGesture( std::string gesture )
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set(position.x, position.y);
-		bodyDef.angle = degreesToRadians(angle);
+		bodyDef.angle = angle;
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2PolygonShape dynamicBox;

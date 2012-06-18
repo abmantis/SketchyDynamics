@@ -187,7 +187,7 @@ namespace PhySketch
 
 			float val = v1.dotProduct(v2) / len;
 
-			return radiansToDegrees(acos(val));
+			return acos(val);
 		}
 
 		friend std::ostream& operator<<(std::ostream& out, const Vector2& vector)

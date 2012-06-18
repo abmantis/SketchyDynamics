@@ -50,14 +50,14 @@ namespace PhySketch
 		//virtual void optimizeVertexList(); // TODO
 		
 
-		/// <summary> Gets the rotation angle of the polygon in degrees. </summary>
+		/// <summary> Gets the rotation angle of the polygon in radians. </summary>
 		/// 
-		/// <returns> The angle in degrees. </returns>
+		/// <returns> The angle in radians. </returns>
 		virtual float getAngle(void) const;
 
-		/// <summary> Sets the rotation angle of the polygon in degrees. </summary>
+		/// <summary> Sets the rotation angle of the polygon in radians. </summary>
 		///
-		/// <param name="angle"> The new angle in degrees. </param>
+		/// <param name="angle"> The new angle in radians. </param>
 		virtual void setAngle(float angle);
 
 		/// <summary> Gets the position of the polygon. </summary>
