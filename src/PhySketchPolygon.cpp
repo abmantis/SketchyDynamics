@@ -3,13 +3,18 @@
 namespace PhySketch
 {
 
-Polygon::Polygon(VertexVariance vv, DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) 
-	: _angle(0), _position(0, 0), _scale(1, 1), _vertexVariance(vv), 
-	_coordSystem(cs), _drawingMode(dm), _vertexBuffer(0), _elementBuffer(0)
+Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) :
+	_hasNewVertices	(false), 
+	_angle			(0.0f), 
+	_position		(Vector2::ZERO), 
+	_scale			(Vector2::UNIT_SCALE), 
+	_transformMatrix(Matrix3::IDENTITY),
+	_coordSystem	(cs), 
+	_drawingMode	(dm), 
+	_vertexVariance	(vv),
+	_vertexBuffer	(0), 
+	_elementBuffer	(0)	
 {
-	_hasNewVertices = false;
-
-	_transformMatrix = Matrix3::IDENTITY;
 }
 
 Polygon::~Polygon()
