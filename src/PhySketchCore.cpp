@@ -115,7 +115,7 @@ void Core::startLoop()
 		fpstimeacum += ellapsedTime;
 		if(fpstimeacum >= 1000)
 		{			
-			avgframetime = (float)fpstimeacum/(float)fpsloopCount;
+			avgframetime = static_cast<float>(fpstimeacum)/static_cast<float>(fpsloopCount);
 			std::cout << " AVG FPS: " << 1000/avgframetime 
 				<< " AVG FRAME TIME (ms): " <<  avgframetime << std::endl;
 			fpstimeacum = 0;

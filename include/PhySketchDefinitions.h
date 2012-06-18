@@ -16,7 +16,7 @@
 #ifndef M_PI
 // You can extend this approximation as far as you need to;
 // this version was copied from the MINGW GCC headers
-#define M_PI 3.14159265358979323846  
+#define M_PI 3.14159265358979323846f  
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,7 +58,7 @@ namespace PhySketch
 {
 	//////////////////////////////////////////////////////////////////////////
 	/// Custom ASSERT macro
-	void __physketch_assert__(const char * file, unsigned line, const char * expr, bool dump);
+	void __physketch_assert__(const char * file, unsigned int line, const char * expr, bool dump);
 
 	#ifndef NDEBUG
 	#define PHYSKETCH_ASSERT(expr) if (!(expr)) __physketch_assert__(__FILE__, __LINE__, #expr, true); 

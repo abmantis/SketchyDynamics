@@ -17,7 +17,7 @@ namespace PhySketch
 		{
 		}
 
-		Vector2(double x, double y) : x(x), y(y)
+		Vector2(float x, float y) : x(x), y(y)
 		{
 		}
 
@@ -108,24 +108,24 @@ namespace PhySketch
 			return *this;
 		}
 
-		virtual Vector2 operator*(const double& scalar) const
+		virtual Vector2 operator*(const float& scalar) const
 		{
 			return Vector2(x * scalar, y * scalar);
 		}	
-		virtual Vector2 operator/(const double& scalar) const
+		virtual Vector2 operator/(const float& scalar) const
 		{
 			return Vector2(x / scalar, y / scalar);
 		}
-		virtual Vector2 operator+(const double& scalar) const
+		virtual Vector2 operator+(const float& scalar) const
 		{
 			return Vector2(x + scalar, y + scalar);
 		}	
-		virtual Vector2 operator-(const double& scalar) const
+		virtual Vector2 operator-(const float& scalar) const
 		{
 			return Vector2(x - scalar, y - scalar);
 		}
 
-		virtual double dotProduct(Vector2 vec) const
+		virtual float dotProduct(Vector2 vec) const
 		{
 			return x * vec.x + y * vec.y;
 		}
@@ -136,37 +136,37 @@ namespace PhySketch
 		}
 
 		// Squared length of this vector
-		virtual double sqrdLength() const
+		virtual float sqrdLength() const
 		{
 			return x*x + y*y;
 		}
 
 		// Length of this vector
-		virtual double length() const
+		virtual float length() const
 		{
 			return std::sqrt( sqrdLength() );
 		}
 
 		// Squared distance between this vector and vector p
-		virtual double sqrdDistanceTo(const Vector2& p) const
+		virtual float sqrdDistanceTo(const Vector2& p) const
 		{
 			return sqrdDistance(*this, p);
 		}
 
 		// Distance between this vector and vector p
-		virtual double distanceTo(const Vector2& p) const
+		virtual float distanceTo(const Vector2& p) const
 		{
 			return distance(*this, p);
 		}
 
 		// Squared distance between two vectors
-		static double sqrdDistance(const Vector2& p1, const Vector2& p2)
+		static float sqrdDistance(const Vector2& p1, const Vector2& p2)
 		{
 			return (p2 - p1).sqrdLength();
 		}
 
 		// Distance between two vectors
-		static double distance(const Vector2& p1, const Vector2& p2)
+		static float distance(const Vector2& p1, const Vector2& p2)
 		{
 			return (p2 - p1).length();
 		}
@@ -175,9 +175,9 @@ namespace PhySketch
 		/// <param name="v1"> The first Vector2; </param>
 		/// <param name="v2"> The second  Vector2 </param>
 		/// <returns> The angle </returns>
-		static double angleBetween(const Vector2& v1, const Vector2& v2)
+		static float angleBetween(const Vector2& v1, const Vector2& v2)
 		{
-			double len = v1.length() * v2.length();
+			float len = v1.length() * v2.length();
 			
 			// prevent divide by zero 
 			if(len < 1e-7f)
@@ -185,7 +185,7 @@ namespace PhySketch
 				len = 1e-7f;
 			}
 
-			double val = v1.dotProduct(v2) / len;
+			float val = v1.dotProduct(v2) / len;
 
 			return radiansToDegrees(acos(val));
 		}
@@ -197,8 +197,8 @@ namespace PhySketch
 		}
 
 	public:
-		double x;
-		double y;
+		float x;
+		float y;
 
 	public:
 		static const Vector2 ZERO;

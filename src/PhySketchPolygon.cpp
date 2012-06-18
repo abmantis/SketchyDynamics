@@ -16,12 +16,12 @@ Polygon::~Polygon()
 {
 }
 
-double Polygon::getAngle( void ) const
+float Polygon::getAngle( void ) const
 {
 	return(_angle);
 }
 
-void Polygon::setAngle( double angle )
+void Polygon::setAngle( float angle )
 {
 	if (angle != _angle)
 	{
@@ -90,7 +90,7 @@ Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 	return poly;
 }
 
-Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments )
+Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, float radius, int num_segments )
 {
 	Polygon *poly = new Polygon(VV_Static, DM_LINE_LOOP, cs);
 
@@ -107,19 +107,19 @@ Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, double radi
 	return poly;
 }
 
-std::vector<Vector2> Polygon::GetCircleVertices( Vector2 center, double radius, int num_segments )
+std::vector<Vector2> Polygon::GetCircleVertices( Vector2 center, float radius, int num_segments )
 {
 	//////////////////////////////////////////////////////////////////////////
 	// Code from http://slabode.exofire.net/circle_draw.shtml
 	std::vector<Vector2> circleVec;
 	
-	double theta = 2.0 * M_PI / double(num_segments); 
-	double c = cos(theta);//precalculate the sine and cosine
-	double s = sin(theta);
-	double t;
+	float theta = 2.0f * M_PI / float(num_segments); 
+	float c = cos(theta);//precalculate the sine and cosine
+	float s = sin(theta);
+	float t;
 
-	double x = radius;//we start at angle = 0 
-	double y = 0; 
+	float x = radius;//we start at angle = 0 
+	float y = 0; 
 
 	circleVec.reserve(num_segments);
 	for(int ii = 0; ii < num_segments; ii++) 

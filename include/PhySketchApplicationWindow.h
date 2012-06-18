@@ -65,7 +65,7 @@ namespace PhySketch
 		std::set<InputListener*> _inputListeners;			// input listeners that wold be called
 		std::set<InputListener*> _inputListenersToRemove;	// input listeners that should be removed from the IL list
 		Renderer *_renderer;
-		double _aspectRatio;
+		float _aspectRatio;
 	};
 
 }// namespace PhySketch

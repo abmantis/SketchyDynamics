@@ -52,12 +52,12 @@ namespace PhySketch
 		/// <summary> Gets the rotation angle of the polygon in degrees. </summary>
 		/// 
 		/// <returns> The angle in degrees. </returns>
-		virtual double getAngle(void) const;
+		virtual float getAngle(void) const;
 
 		/// <summary> Sets the rotation angle of the polygon in degrees. </summary>
 		///
 		/// <param name="angle"> The new angle in degrees. </param>
-		virtual void setAngle(double angle);
+		virtual void setAngle(float angle);
 
 		/// <summary> Gets the position of the polygon. </summary>
 		///
@@ -120,8 +120,8 @@ namespace PhySketch
 		/// <param name="radius"> The radius. </param>
 		/// <param name="num_segments"> The number of segments that compose the circle.  </param>
 		/// <returns> The circle polygon. </returns>
-		static Polygon* CreateCircle( CoordinateSystem cs, Vector2 center, double radius, int num_segments);
-		static std::vector<Vector2> GetCircleVertices(Vector2 center, double radius, int num_segments);
+		static Polygon* CreateCircle( CoordinateSystem cs, Vector2 center, float radius, int num_segments);
+		static std::vector<Vector2> GetCircleVertices(Vector2 center, float radius, int num_segments);
 
 	protected:
 		void computeTransformationMatrix();
@@ -132,7 +132,7 @@ namespace PhySketch
 		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies
 		bool _hasNewVertices;
 
-		double _angle;
+		float _angle;
 		Vector2 _position;
 		Vector2 _scale;
 

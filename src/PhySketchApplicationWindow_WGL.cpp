@@ -272,23 +272,26 @@ namespace PhySketch
 
 	void ApplicationWindow_WGL::resizeGLScene(int width, int height)		// Resize And Initialize The GL Window
 	{
-		_renderer->_windowSize.x = width;
-		_renderer->_windowSize.y = height;
+		float fwidth = static_cast<float>(width);
+		float fheight = static_cast<float>(height);
+
+		_renderer->_windowSize.x = fwidth;
+		_renderer->_windowSize.y = fheight;
 
 		GLint x = 0, y = 0;
 
 		//taller
-		if (((float)width/(float)height) < _aspectRatio)
+		if ((fwidth/fheight) < _aspectRatio)
 		{
-			_renderer->_viewportSize.x = width;
-			_renderer->_viewportSize.y = width/_aspectRatio;
+			_renderer->_viewportSize.x = fwidth;
+			_renderer->_viewportSize.y = fwidth/_aspectRatio;
 			y = (int)(height - _renderer->_viewportSize.y) / 2;
 		}
 		//wider
 		else
 		{
-			_renderer->_viewportSize.x = height*_aspectRatio;
-			_renderer->_viewportSize.y = height;
+			_renderer->_viewportSize.x = fheight*_aspectRatio;
+			_renderer->_viewportSize.y = fheight;
 
 			x = (int)(width - _renderer->_viewportSize.x) / 2;
 		}
@@ -367,37 +370,51 @@ namespace PhySketch
 			//} 
 		case WM_LBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Left, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseDown( MB_Left, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_LBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Left, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseUp( MB_Left, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_MBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Middle, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseDown( MB_Middle, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_MBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Middle, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseUp( MB_Middle, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_RBUTTONDOWN:
 			{				
-				callInputListenersMouseDown( MB_Right, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseDown( MB_Right, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_RBUTTONUP:
 			{				
-				callInputListenersMouseUp( MB_Right, Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseUp( MB_Right, Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 		case WM_MOUSEMOVE:
 			{				
-				callInputListenersMouseMoved( Vector2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)) );
+				callInputListenersMouseMoved( Vector2(
+					static_cast<float>(GET_X_LPARAM(lParam)), 
+					static_cast<float>(GET_Y_LPARAM(lParam)) ) );
 				break;
 			}
 

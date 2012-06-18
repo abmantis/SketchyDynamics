@@ -13,7 +13,7 @@
 namespace PhySketch
 {
 
-	void __physketch_assert__(const char * file, unsigned line, const char * expr, bool dump)
+	void __physketch_assert__(const char * file, unsigned int line, const char * expr, bool dump)
 	{
 		Logger *l = Logger::getSingletonPtr();
 		if(l)

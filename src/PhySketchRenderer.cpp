@@ -175,7 +175,7 @@ namespace PhySketch
 			break;
 		}
 
-		double *vertBuff = new double[polygon->_vertices.size()*2];
+		float *vertBuff = new float[polygon->_vertices.size()*2];
 		for (uint i = 0, j = 0; i < polygon->_vertices.size(); i++, j = j+2)
 		{
 			vertBuff[j] = polygon->_vertices[i].x;
@@ -190,7 +190,7 @@ namespace PhySketch
 
 		// Create vertex buffers
 		glBindBuffer(GL_ARRAY_BUFFER, polygon->_vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, polygon->_vertices.size()*sizeof(double)*2, 
+		glBufferData(GL_ARRAY_BUFFER, polygon->_vertices.size()*sizeof(float)*2, 
 			vertBuff, usageHint);
 
 		// Create element buffers
@@ -325,8 +325,8 @@ namespace PhySketch
 		glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE, poly->_transformMatrix[0]);
 
 		glBindBuffer(GL_ARRAY_BUFFER, poly->_vertexBuffer);
-		glVertexAttribPointer(_shaderVars.attributes.position, 2, GL_DOUBLE, 
-			GL_FALSE, sizeof(GLdouble)*2, (void*)0);
+		glVertexAttribPointer(_shaderVars.attributes.position, 2, GL_FLOAT, 
+			GL_FALSE, sizeof(GLfloat)*2, (void*)0);
 		glEnableVertexAttribArray(_shaderVars.attributes.position);
 
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, poly->_elementBuffer);
@@ -355,7 +355,7 @@ namespace PhySketch
 
 		gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
-		return Vector2(posX, posY);
+		return Vector2(static_cast<float>(posX), static_cast<float>(posY));
 	}
 
 }

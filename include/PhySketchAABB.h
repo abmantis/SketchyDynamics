@@ -47,12 +47,12 @@ namespace PhySketch
 		}
 
 		// The height of the bounding box (along the vertical YY axis)
-		double getHeight() const
+		float getHeight() const
 		{
 			return _max.y - _min.y; 
 		}
 		// The width of the bounding box (along the horizontal XX axis)
-		double getWidth() const
+		float getWidth() const
 		{
 			return _max.x - _min.x; 
 		}

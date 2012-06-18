@@ -140,9 +140,9 @@ void MainInputListener::processGesture( std::string gesture )
 		bValid = true;
 
 		CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
-		Vector2 rectP1((*tri)[0].x, (*tri)[0].y);
-		Vector2 rectP2((*tri)[1].x, (*tri)[1].y);
-		Vector2 rectP3((*tri)[2].x, (*tri)[2].y);
+		Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
+		Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
+		Vector2 rectP3(static_cast<float>((*tri)[2].x), static_cast<float>((*tri)[2].y));
 
 		// get "centroid" of the triangle and translate it to origin
 		Vector2 position = (rectP1 + rectP2 + rectP3) / 3.0;
@@ -152,14 +152,14 @@ void MainInputListener::processGesture( std::string gesture )
 		
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set((float)position.x, (float)position.y);
+		bodyDef.position.Set(position.x, position.y);
 		bodyDef.angle = 0;
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2Vec2 vertices[3];
-		vertices[0].Set((float)rectP1.x, (float)rectP1.y);
-		vertices[1].Set((float)rectP2.x, (float)rectP2.y);
-		vertices[2].Set((float)rectP3.x, (float)rectP3.y);
+		vertices[0].Set(rectP1.x, rectP1.y);
+		vertices[1].Set(rectP2.x, rectP2.y);
+		vertices[2].Set(rectP3.x, rectP3.y);
 
 		b2PolygonShape triShape;
 		triShape.Set(vertices, 3);
@@ -178,14 +178,14 @@ void MainInputListener::processGesture( std::string gesture )
 		bValid = true;
 
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
-		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
-		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
-		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
+		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
 						
 		Vector2 position =  _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 		Vector2 vectToOrient = rectP2 - rectP1;
-		double angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
+		float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
 		if(vectToOrient.y < 0)
 		{
 			angle = 180 - angle;
@@ -193,12 +193,12 @@ void MainInputListener::processGesture( std::string gesture )
 
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set((float)position.x, (float)position.y);
-		bodyDef.angle = (float)degreesToRadians(angle);
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = degreesToRadians(angle);
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2PolygonShape dynamicBox;
-		dynamicBox.SetAsBox((float)size.x*0.5f, (float)size.y*0.5f);
+		dynamicBox.SetAsBox(size.x*0.5f, size.y*0.5f);
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &dynamicBox;
 		fixtureDef.density = 1.0f;
@@ -215,22 +215,22 @@ void MainInputListener::processGesture( std::string gesture )
 		bValid = true;
 
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
-		Vector2 rectP1((*enclosingRect)[0].x, (*enclosingRect)[0].y);
-		Vector2 rectP2((*enclosingRect)[1].x, (*enclosingRect)[1].y);
-		Vector2 rectP3((*enclosingRect)[2].x, (*enclosingRect)[2].y);
+		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
 
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set((float)position.x, (float)position.y);
-		bodyDef.angle = 0;
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = 0.0f;
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2CircleShape circleShape;
-		circleShape.m_p.Set(0.0, 0.0);
-		circleShape.m_radius = (float)size.x * 0.5f;
+		circleShape.m_p.Set(0.0f, 0.0f);
+		circleShape.m_radius = size.x * 0.5f;
 
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &circleShape;

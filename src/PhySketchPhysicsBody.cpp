@@ -66,7 +66,7 @@ void PhysicsBody::reconstructPolygons()
 	_needsPolygonUpdate = true;
 
 	Vector2 position = _body->GetPosition();
-	double angle = radiansToDegrees(_body->GetAngle());
+	float angle = radiansToDegrees(_body->GetAngle());
 	Polygon *poly = nullptr;
 
 	// Remove old polygons	

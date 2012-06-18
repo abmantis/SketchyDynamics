@@ -5,37 +5,44 @@
 
 namespace PhySketch
 {
-	static std::string toString(double d)
+	static std::string toString(float f)
 	{
 		std::ostringstream stream;
-		stream << d;
+		stream << f;
+		return stream.str();
+	}
+	
+	static std::string toString(unsigned int i)
+	{
+		std::ostringstream stream;
+		stream << i;
 		return stream.str();
 	}
 
-	static double stringToDouble(const char* str)
+	static float stringToFloat(const char* str)
 	{
 		std::istringstream stm;
 		stm.str(str);
-		double d;
-		stm >> d;
-		return d;
+		float f;
+		stm >> f;
+		return f;
 	}
 
-	static double degreesToRadians (double degrees)
+	static float degreesToRadians (float degrees)
 	{
-		double radians = (M_PI / 180.0f) * degrees;
+		float radians = (M_PI / 180.0f) * degrees;
 		return (radians);
 	}
 
-	static double radiansToDegrees (double radians)
+	static float radiansToDegrees (float radians)
 	{
-		double degrees = (180.0f / M_PI) * radians;
+		float degrees = (180.0f / M_PI) * radians;
 		return (degrees);
 	}
 
-	static long round(double d)
+	static long round(float f)
 	{
-		return (long)floor(d + 0.5);
+		return (long)floor(f + 0.5);
 	}
 
 	/// <summary> Reads a file contents. </summary>
