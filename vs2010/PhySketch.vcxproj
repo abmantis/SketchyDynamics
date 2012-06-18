@@ -122,6 +122,7 @@
     <ClInclude Include="..\include\PhySketchDefinitions.h" />
     <ClInclude Include="..\include\PhySketchInputListener.h" />
     <ClInclude Include="..\include\PhySketchLogger.h" />
+    <ClInclude Include="..\include\PhySketchMaterial.h" />
     <ClInclude Include="..\include\PhySketchMatrix3.h" />
     <ClInclude Include="..\include\PhySketchPhysicsBody.h" />
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
