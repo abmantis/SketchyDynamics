@@ -68,6 +68,7 @@ void PhysicsBody::reconstructPolygons()
 	Vector2 position = _body->GetPosition();
 	float angle = radiansToDegrees(_body->GetAngle());
 	Polygon *poly = nullptr;
+	Polygon *linePoly = nullptr;
 
 	// Remove old polygons	
 	for (size_t i = 0; i < _polygons.size(); i++)
@@ -78,7 +79,7 @@ void PhysicsBody::reconstructPolygons()
 
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{		
-		poly = new Polygon(Polygon::VV_Static, Polygon::DM_LINE_LOOP);
+		poly = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
 		poly->setPosition(position);
 		poly->setAngle(angle);
 
@@ -120,6 +121,10 @@ void PhysicsBody::reconstructPolygons()
 		default:
 			break;
 		}
+
+		linePoly = new Polygon(*poly);
+		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);
+		_polygons.push_back(linePoly);
 
 		_polygons.push_back(poly);
 	}
