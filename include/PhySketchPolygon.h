@@ -43,6 +43,7 @@ namespace PhySketch
 		};
 	public:
 		Polygon(VertexVariance vv = VV_Static , DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
+		Polygon(const Polygon& poly);
 		virtual ~Polygon();
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
