@@ -9,7 +9,9 @@ namespace PhySketch
 	/// <summary> Represents a RGBA color, with values in the [0,1] range. </summary>
 	class Color 
 	{
-		Color() : r(0), g(0), b(0), a(0) {}
+	public:
+		Color() : r(0.0f), g(0.0f), b(0.0f), a(0.0f) {}
+		Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
 		float r;
 		float g;
