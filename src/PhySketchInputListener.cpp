@@ -188,7 +188,7 @@ void MainInputListener::processGesture( std::string gesture )
 		float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
 		if(vectToOrient.y < 0)
 		{
-			angle = 180 - angle;
+			angle = M_PI - angle;
 		}
 
 		b2BodyDef bodyDef;
