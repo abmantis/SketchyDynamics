@@ -14,12 +14,19 @@ PhysicsBody::PhysicsBody()
 {
 	_body = nullptr;
 	_needsPolygonUpdate = false;
+	
+	_solidMaterial.setColor(Color(0.3f, 0.3f, 0.3f, 0.0f));
+	_lineMaterial.setColor(Color(0.3f, 0.0f, 1.0f, 0.0f));
 }
 
 PhysicsBody::PhysicsBody( b2Body *body ) 
 	:_body(body)
 {
+	_solidMaterial.setColor(Color(0.3f, 0.3f, 0.3f, 0.0f));
+	_lineMaterial.setColor(Color(0.3f, 0.0f, 1.0f, 0.0f));
+
 	_needsPolygonUpdate = false;
+
 	_body->SetUserData(this);
 	reconstructPolygons();
 }
@@ -69,7 +76,7 @@ void PhysicsBody::reconstructPolygons()
 	float angle = _body->GetAngle();
 	Polygon *poly = nullptr;
 	Polygon *linePoly = nullptr;
-
+	
 	// Remove old polygons	
 	for (size_t i = 0; i < _polygons.size(); i++)
 	{
@@ -82,6 +89,7 @@ void PhysicsBody::reconstructPolygons()
 		poly = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
 		poly->setPosition(position);
 		poly->setAngle(angle);
+		poly->SetMaterial(_solidMaterial);
 
 		switch (fixture->GetType())
 		{
@@ -123,7 +131,8 @@ void PhysicsBody::reconstructPolygons()
 		}
 
 		linePoly = new Polygon(*poly);
-		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);
+		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);		
+		linePoly->SetMaterial(_lineMaterial);
 		_polygons.push_back(linePoly);
 
 		_polygons.push_back(poly);

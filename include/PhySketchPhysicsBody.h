@@ -3,6 +3,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "Box2D/Dynamics/b2Body.h"
+#include "PhySketchMaterial.h"
 
 namespace PhySketch
 {
@@ -34,6 +35,9 @@ namespace PhySketch
 		b2Body* _body;
 		std::vector<Polygon*> _polygons;
 		std::vector<Polygon*> _oldPolygons;
+
+		Material _solidMaterial;
+		Material _lineMaterial;
 	};
 }
 #endif // PhySketchPhysicsBody_h__
