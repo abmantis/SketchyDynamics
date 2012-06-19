@@ -672,17 +672,7 @@ namespace PhySketch
 	{
 		glClear(GL_COLOR_BUFFER_BIT);	// Since we're in 2D, only clear Screen Buffer and not the depth buffer
 		glLoadIdentity();									// Reset The Current Modelview Matrix
-
-		// draw a background quad
-		glColor3f(1,1,1);
-		glBegin(GL_QUADS);                      // Draw A Quad
-		glVertex3f(-8.0f, 4.5f, 0.0f);              // Top Left
-		glVertex3f( 8.0f, 4.5f, 0.0f);              // Top Right
-		glVertex3f( 8.0f,-4.5f, 0.0f);              // Bottom Right
-		glVertex3f(-8.0f,-4.5f, 0.0f);              // Bottom Left
-		glEnd();                            // Done Drawing The Quad
-		
-		glColor3f(0,0,0);
+			
 		_renderer->render();
 	}
 

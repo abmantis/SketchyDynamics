@@ -9,14 +9,13 @@
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsManager.h"
 #include "PhySketchPhysicsBody.h"
+#include "PhySketchPolygon.h"
 
 PhySketch::Core _core;
 PhySketch::ApplicationWindow *_window;
 PhySketch::Renderer *_renderer;
 PhySketch::PhysicsManager *_physicsMgr;
 TestInputListener *_inputListener;
-
-
 
 int _tmain(int argc, _TCHAR* argv[])
 {	
@@ -28,6 +27,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	_inputListener = new TestInputListener();
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
+
+	// create white background
+	PhySketch::Polygon *backgroundPoly = PhySketch::Polygon::CreateSquare(PhySketch::Polygon::CS_Scene);
+	backgroundPoly->setScale(_renderer->getSceneViewAxisMin() - _renderer->getSceneViewAxisMax());
+	PhySketch::Material mat;
+	mat.setColor(PhySketch::Color(1.0f, 1.0f, 1.0f, 0.0f));
+	backgroundPoly->SetMaterial(mat);
+	_renderer->addPolygon(backgroundPoly);
+	
 		
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(0.0f, -4.0f);
