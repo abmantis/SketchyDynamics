@@ -78,6 +78,7 @@ namespace PhySketch
 			struct
 			{
 				GLint transformation;
+				GLint color;
 			} uniforms;
 
 		} _shaderVars;

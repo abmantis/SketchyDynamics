@@ -110,6 +110,8 @@ namespace PhySketch
 			= glGetAttribLocation(_mainShaderProgram->getProgramID(), "position");
 		_shaderVars.uniforms.transformation	
 			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "trans_mat");
+		_shaderVars.uniforms.color
+			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "color");
 
 		return true;		
 	}
@@ -285,9 +287,15 @@ namespace PhySketch
 	{
 		// make sure the polygon is updated before being rendered
 		poly->update();
+		if(poly->_hasNewVertices)		
+		{
+			updateOpenGLBuffers(poly);
+		}
 
-		uint polygonIndexCount = 0;
+		uint polygonIndexCount = poly->_vertexIndexes.size();
+		Color color = poly->_material.getColor();
 		GLenum mode;
+
 		switch(poly->_drawingMode)
 		{
 		case Polygon::DM_POINTS:
@@ -314,15 +322,12 @@ namespace PhySketch
 		default:
 			mode = GL_POINTS;
 		}
+				
 
-		if(poly->_hasNewVertices)		
-		{
-			updateOpenGLBuffers(poly);
-		}
-
-		polygonIndexCount = poly->_vertexIndexes.size();
-
-		glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE, poly->_transformMatrix[0]);
+		glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE,
+			poly->_transformMatrix[0]);
+		glUniform4f(_shaderVars.uniforms.color, color.r, color.g, color.b, 
+			color.a);
 
 		glBindBuffer(GL_ARRAY_BUFFER, poly->_vertexBuffer);
 		glVertexAttribPointer(_shaderVars.attributes.position, 2, GL_FLOAT, 
