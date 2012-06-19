@@ -122,8 +122,6 @@ namespace PhySketch
 	{
 		_mainShaderProgram->useProgram();
 
- 		renderPixelPolygons();
- 		renderPercentPolygons();
 		renderScenePolygons();
 
 		glUseProgram(NULL);
@@ -134,21 +132,7 @@ namespace PhySketch
 	{
 		std::pair<polygon_set_iterator, bool> res;
 		
-		switch(polygon->_coordSystem)
-		{
-		case Polygon::CS_Pixel:
-			res = _pixelPolygons.insert(polygon);
-			break;
-		case Polygon::CS_Percent:
-			res = _percentPolygons.insert(polygon);
-			break;
-		case Polygon::CS_Scene:
-			res = _scenePolygons.insert(polygon);
-			break;
-		default:
-			return;
-			break;
-		}
+		res = _scenePolygons.insert(polygon);
 
 		if(res.second == false)
 		{
@@ -212,61 +196,19 @@ namespace PhySketch
 		glDeleteBuffers(1, &polygon->_vertexBuffer);
 		glDeleteBuffers(1, &polygon->_elementBuffer);
 
-		if(_pixelPolygons.erase(polygon) == 0)
-		{
-			if(_percentPolygons.erase(polygon) == 0)
-			{
-				_scenePolygons.erase(polygon);
-			}
-		}
+		_scenePolygons.erase(polygon);
 	}
 
 	Vector2 Renderer::getSceneViewAxisMin() const
 	{
 		return _sceneViewMin;
 	}
-
-
+	
 	Vector2 Renderer::getSceneViewAxisMax() const
 	{
 		return _sceneViewMax;
 	}
-
-
-	void Renderer::renderPixelPolygons() const
-	{
-		// change the view to pixel coordinates
-		glMatrixMode(GL_PROJECTION);						
-		glLoadIdentity();									
-		gluOrtho2D(0, _viewportSize.x, _viewportSize.y, 0);
-		glMatrixMode(GL_MODELVIEW);	
-		glLoadIdentity();			
-
-		polygon_set_iterator it = _pixelPolygons.begin();
-		polygon_set_iterator it_end = _pixelPolygons.end();
-		for(; it != _pixelPolygons.end(); it++)
-		{
-			renderPolygon(*it);	
-		}
-	}
-
-	void Renderer::renderPercentPolygons() const
-	{
-		// change the view to percent coordinates
-		glMatrixMode(GL_PROJECTION);						
-		glLoadIdentity();									
-		gluOrtho2D(0, 100, 100, 0);
-		glMatrixMode(GL_MODELVIEW);	
-		glLoadIdentity();
-
-		polygon_set_iterator it = _percentPolygons.begin();
-		polygon_set_iterator it_end = _percentPolygons.end();
-		for(; it != _percentPolygons.end(); it++)
-		{
-			renderPolygon(*it);	
-		}
-	}
-
+	
 	void Renderer::renderScenePolygons() const
 	{
 		// change the view to scene coordinates

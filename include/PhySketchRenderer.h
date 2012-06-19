@@ -45,8 +45,6 @@ namespace PhySketch
 	protected:
 		virtual bool initGL();
 
-		virtual void renderPixelPolygons() const;
-		virtual void renderPercentPolygons() const;
 		virtual void renderScenePolygons() const;
 		virtual void renderPolygon(Polygon *poly) const;
 
@@ -54,9 +52,6 @@ namespace PhySketch
 		
 
 	protected:
-		// TODO: Use list instead of set (speed!)
-		std::set<Polygon*> _pixelPolygons;
-		std::set<Polygon*> _percentPolygons;
 		std::set<Polygon*> _scenePolygons;
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
