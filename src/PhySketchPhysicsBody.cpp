@@ -15,15 +15,15 @@ PhysicsBody::PhysicsBody()
 	_body = nullptr;
 	_needsPolygonUpdate = false;
 	
-	_solidMaterial.setColor(Color(0.3f, 0.3f, 0.3f, 0.0f));
-	_lineMaterial.setColor(Color(0.3f, 0.0f, 1.0f, 0.0f));
+	_solidMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
+	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
 }
 
 PhysicsBody::PhysicsBody( b2Body *body ) 
 	:_body(body)
 {
-	_solidMaterial.setColor(Color(0.3f, 0.3f, 0.3f, 0.0f));
-	_lineMaterial.setColor(Color(0.3f, 0.0f, 1.0f, 0.0f));
+	_solidMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
+	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
 
 	_needsPolygonUpdate = false;
 
