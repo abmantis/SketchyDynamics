@@ -202,6 +202,16 @@ void Polygon::computeTransformationMatrix()
 
 }
 
+const Material& Polygon::GetMaterial( void ) const
+{
+	return(_material);
+}
+
+void Polygon::SetMaterial( const Material& material )
+{
+	_material = material;
+}
+
 
 }
 

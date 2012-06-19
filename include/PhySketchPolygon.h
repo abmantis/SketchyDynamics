@@ -5,6 +5,7 @@
 #include "PhySketchVector2.h"
 #include "PhySketchAABB.h"
 #include "PhySketchMatrix3.h"
+#include "PhySketchMaterial.h"
 
 
 namespace PhySketch
@@ -108,7 +109,15 @@ namespace PhySketch
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual const AABB& getAABB() const;
 
-		
+		/// <summary> Gets this Polygon's material. </summary>
+		/// <returns> The material. </returns>
+		const Material& GetMaterial(void) const;
+
+		/// <summary> Sets this Polygon's material. </summary>
+		/// <remarks> Deadvirus, 6/19/2012. </remarks>
+		/// <param name="material"> The material. </param>
+		void SetMaterial(const Material& material);
+
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
 		virtual void update() {}
@@ -130,11 +139,13 @@ namespace PhySketch
 
 	protected:
 		void computeTransformationMatrix();
+		
 
 	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<uint> _vertexIndexes;
 		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies
+		Material _material;
 		bool _hasNewVertices;
 
 		float _angle;
