@@ -102,7 +102,7 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 
 Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 {
-	Polygon *poly = new Polygon(VV_Static, DM_LINE_LOOP, cs);
+	Polygon *poly = new Polygon(VV_Static, DM_TRIANGLE_FAN, cs);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
@@ -113,7 +113,7 @@ Polygon* Polygon::CreateSquare( CoordinateSystem cs )
 
 Polygon* Polygon::CreateCircle( CoordinateSystem cs, Vector2 center, float radius, int num_segments )
 {
-	Polygon *poly = new Polygon(VV_Static, DM_LINE_LOOP, cs);
+	Polygon *poly = new Polygon(VV_Static, DM_TRIANGLE_FAN, cs);
 
 	std::vector<Vector2> circleVec = GetCircleVertices(center, radius, num_segments);
 
