@@ -8,6 +8,4 @@ void main()
 	vec3 transformedPos = trans_mat*vec3(position, 1);
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(transformedPos, 1.0);
 //	gl_Position = vec4(position, 0.0, 1.0);
-	gl_FrontColor = gl_Color;  
-	gl_BackColor = gl_Color;  
 }
