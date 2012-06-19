@@ -78,6 +78,8 @@ namespace PhySketch
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
 		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 		glDisable(GL_CULL_FACE);
+		//glEnable(GL_LINE_SMOOTH);
+		glLineWidth(2.0f);
 
 
 
