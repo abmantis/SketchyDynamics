@@ -20,6 +20,7 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*
 Polygon::Polygon( const Polygon& poly ) :
 	_vertices		(poly._vertices),
 	_vertexIndexes	(poly._vertexIndexes),
+	_material		(poly._material),
 	_hasNewVertices	(poly._hasNewVertices), 
 	_angle			(poly._angle), 
 	_position		(poly._position), 
