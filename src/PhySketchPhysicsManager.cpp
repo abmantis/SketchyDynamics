@@ -80,7 +80,7 @@ void PhysicsManager::Update( ulong advanceTime )
 			for(i = 0; i < polygonToRemoveCount; i++)
 			{
 				poly = pb->_oldPolygons[i];
-				_renderer->removePolygon(poly);
+				_renderer->removePolygon(poly, RQT_Scene);
 				delete poly;
 				poly = nullptr;
 			}
@@ -88,7 +88,7 @@ void PhysicsManager::Update( ulong advanceTime )
 			polygonCount = pb->_polygons.size();
 			for(i = 0; i < polygonCount; i++)
 			{
-				_renderer->addPolygon(pb->_polygons[i]);
+				_renderer->addPolygon(pb->_polygons[i], pb->_id, RQT_Scene);
 			}
 		}
 		pb->update();
