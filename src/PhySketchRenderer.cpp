@@ -122,7 +122,7 @@ namespace PhySketch
 	{
 		_mainShaderProgram->useProgram();
 
-		renderScenePolygons();
+		renderPolygons();
 
 		glUseProgram(NULL);
 		//glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE, Matrix3::IDENTITY[0]);
@@ -132,7 +132,7 @@ namespace PhySketch
 	{
 		std::pair<polygon_set_iterator, bool> res;
 		
-		res = _scenePolygons.insert(polygon);
+		res = _polygons.insert(polygon);
 
 		if(res.second == false)
 		{
@@ -196,7 +196,7 @@ namespace PhySketch
 		glDeleteBuffers(1, &polygon->_vertexBuffer);
 		glDeleteBuffers(1, &polygon->_elementBuffer);
 
-		_scenePolygons.erase(polygon);
+		_polygons.erase(polygon);
 	}
 
 	Vector2 Renderer::getSceneViewAxisMin() const
@@ -209,7 +209,7 @@ namespace PhySketch
 		return _sceneViewMax;
 	}
 	
-	void Renderer::renderScenePolygons() const
+	void Renderer::renderPolygons() const
 	{
 		// change the view to scene coordinates
 		glMatrixMode(GL_PROJECTION);						
@@ -219,9 +219,9 @@ namespace PhySketch
 		glMatrixMode(GL_MODELVIEW);	
 		glLoadIdentity();
 
-		polygon_set_iterator it = _scenePolygons.begin();
-		polygon_set_iterator it_end = _scenePolygons.end();
-		for(; it != _scenePolygons.end(); it++)
+		polygon_set_iterator it = _polygons.begin();
+		polygon_set_iterator it_end = _polygons.end();
+		for(; it != _polygons.end(); it++)
 		{
 			renderPolygon(*it);			
 		}

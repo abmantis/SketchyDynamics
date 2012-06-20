@@ -45,14 +45,13 @@ namespace PhySketch
 	protected:
 		virtual bool initGL();
 
-		virtual void renderScenePolygons() const;
+		virtual void renderPolygons() const;
 		virtual void renderPolygon(Polygon *poly) const;
 
 		virtual void updateOpenGLBuffers(Polygon *polygon) const;
 		
 
 	protected:
-		std::set<Polygon*> _scenePolygons;
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
