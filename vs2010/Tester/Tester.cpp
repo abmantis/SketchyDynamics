@@ -28,24 +28,39 @@ int _tmain(int argc, _TCHAR* argv[])
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 
-	// create white background
-	PhySketch::Polygon *backgroundPoly = PhySketch::Polygon::CreateSquare(PhySketch::Polygon::CS_Scene);
-	backgroundPoly->setScale(_renderer->getSceneViewAxisMin() - _renderer->getSceneViewAxisMax());
-	PhySketch::Material mat;
-	mat.setColor(PhySketch::Color(1.0f, 1.0f, 1.0f, 0.0f));
-	backgroundPoly->SetMaterial(mat);
-	_renderer->addPolygon(backgroundPoly);
+	{
+		PhySketch::Material backgroundMat;
+		backgroundMat.setColor(PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
+		b2BodyDef backgroundbodyDef;
+		backgroundbodyDef.position.Set(0.0f, 0.0f);
+		b2Body *backgroundBody = _physicsMgr->getPhysicsWorld()->CreateBody(&backgroundbodyDef);
+
+		b2PolygonShape backgroundBox;
+		backgroundBox.SetAsBox((_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).x*0.5f,
+			(_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).y*0.5f);
+		b2FixtureDef backgroundFixtureDef;
+		backgroundFixtureDef.shape = &backgroundBox;
+		backgroundFixtureDef.filter.categoryBits = 0x0;
+		backgroundBody->CreateFixture(&backgroundFixtureDef);
+		PhySketch::PhysicsBody *backgroundPhyBody = new PhySketch::PhysicsBody(backgroundBody);
+		backgroundPhyBody->setFillMaterial(backgroundMat);
+		backgroundPhyBody->setLineMaterial(backgroundMat);
+		backgroundPhyBody->reconstructPolygons();
+		_physicsMgr->AddBody(backgroundPhyBody);
+	}
 	
 		
-	b2BodyDef bodyDef;
-	bodyDef.position.Set(0.0f, -4.0f);
-	b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+	{
+		b2BodyDef bodyDef;
+		bodyDef.position.Set(0.0f, -4.0f);
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(7.0f, 0.3f);
-	body->CreateFixture(&groundBox, 0.0f);
-	PhySketch::PhysicsBody *phyBody = new PhySketch::PhysicsBody(body);
-	_physicsMgr->AddBody(phyBody);
+		b2PolygonShape groundBox;
+		groundBox.SetAsBox(7.0f, 0.3f);
+		body->CreateFixture(&groundBox, 0.0f);
+		PhySketch::PhysicsBody *phyBody = new PhySketch::PhysicsBody(body);
+		_physicsMgr->AddBody(phyBody);
+	}
 	
 	
 	_core.startLoop();
