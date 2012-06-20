@@ -130,12 +130,12 @@ void PhysicsBody::reconstructPolygons()
 			break;
 		}
 
+		_polygons.push_back(poly);
+
 		linePoly = new Polygon(*poly);
 		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);		
 		linePoly->SetMaterial(_lineMaterial);
-		_polygons.push_back(linePoly);
-
-		_polygons.push_back(poly);
+		_polygons.push_back(linePoly);		
 	}
 }
 
