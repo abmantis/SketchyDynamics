@@ -76,6 +76,7 @@ void PhysicsBody::reconstructPolygons()
 	float angle = _body->GetAngle();
 	Polygon *poly = nullptr;
 	Polygon *linePoly = nullptr;
+	Polygon *extraPoly = nullptr;
 	
 	// Remove old polygons	
 	for (size_t i = 0; i < _polygons.size(); i++)
@@ -103,6 +104,20 @@ void PhysicsBody::reconstructPolygons()
 				{
 					poly->addVertex(circleVec[i]);
 				}
+
+				// Add circle inner cross
+				extraPoly = new Polygon(Polygon::VV_Static, Polygon::DM_LINES);
+				extraPoly->addVertex(Vector2(0.0f, 0.0f));
+				extraPoly->addVertex(Vector2(circle->m_radius, 0.0f));
+				extraPoly->addVertex(Vector2(-circle->m_radius, 0.0f));
+				extraPoly->addVertex(Vector2(0.0f, 0.0f));				
+
+				extraPoly->addVertex(Vector2(0.0f, 0.0f));
+				extraPoly->addVertex(Vector2(0.0f, circle->m_radius));
+				extraPoly->addVertex(Vector2(0.0f, -circle->m_radius));
+				extraPoly->addVertex(Vector2(0.0f, 0.0f));		
+
+				extraPoly->SetMaterial(_lineMaterial);
 			}
 			break;
 
@@ -135,7 +150,12 @@ void PhysicsBody::reconstructPolygons()
 		linePoly = new Polygon(*poly);
 		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);		
 		linePoly->SetMaterial(_lineMaterial);
-		_polygons.push_back(linePoly);		
+		_polygons.push_back(linePoly);	
+
+		if(extraPoly)
+		{
+			_polygons.push_back(extraPoly);
+		}
 	}
 }
 
