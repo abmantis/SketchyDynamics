@@ -7,21 +7,45 @@
 
 namespace PhySketch
 {
+	enum RenderQueueType
+	{
+		RQT_Background,
+		RQT_Scene,
+		RQT_UI
+	};
+
 	class Renderer : public Singleton<Renderer>
 	{
 		friend class ApplicationWindow_WGL;
+		
+		struct RenderQueueParams
+		{
+			RenderQueueParams(Polygon *p, ulong depth) : polygon(p), depth(depth) {}
+
+			Polygon *polygon;
+			ulong depth;
+		};
+		typedef std::list<RenderQueueParams> RenderQueue;
+
 	public:
 		Renderer();
 		virtual ~Renderer();
 
 		/// <summary> Adds a polygon to the rendering list. </summary>
 		/// <param name="polygon"> The new polygon. </param>
-		virtual void addPolygon(Polygon *polygon);
+		/// <param name="depth"> The depth/position of the polygon in the queue. </param>
+		/// <param name="rq"> Which render queue the polygon should be added to. </param>
+		virtual void addPolygon(Polygon *polygon, ulong depth, RenderQueueType rq = RQT_Scene);
+	
+		/// <summary> Adds a polygon to the rendering list. </summary>
+		/// <param name="polygon"> The new polygon. </param>
+		/// <param name="rq"> Which render queue the polygon should be added to. </param>
+		virtual void addPolygon(Polygon *polygon, RenderQueueType rq = RQT_Scene);
 
 		/// <summary> Removes the polygon from the rendering list. </summary>
 		/// <param name="polygon"> The polygon to remove. </param>
-		/// <remarks> This function will not clear any of the polygon's resources </remakrs>
-		virtual void removePolygon(Polygon *polygon);
+		/// <param name="rq"> Which render queue the polygon should be added to. </param>
+		virtual void removePolygon(Polygon *polygon, RenderQueueType rq = RQT_Scene);
 	
 		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
 		virtual void render();
@@ -49,17 +73,14 @@ namespace PhySketch
 		virtual void renderPolygon(Polygon *poly) const;
 
 		virtual void updateOpenGLBuffers(Polygon *polygon) const;
+
+		virtual RenderQueue* getRenderQueuePtr(RenderQueueType rqp);
 		
 
 	protected:
-		struct PolygonParams
-		{
-			Polygon *polygon;
-			ulong depth;
-		};
-		typedef std::list<PolygonParams>::iterator polygon_list_iterator;
-
-		std::list<PolygonParams> _polygons;
+		RenderQueue _backgroundRenderQueue;
+		RenderQueue _sceneRenderQueue;
+		RenderQueue _uiRenderQueue;
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)

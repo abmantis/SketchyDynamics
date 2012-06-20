@@ -128,30 +128,90 @@ namespace PhySketch
 		//glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE, Matrix3::IDENTITY[0]);
 	}
 
-	void Renderer::addPolygon( Polygon *polygon )
+	void Renderer::addPolygon( Polygon *polygon, ulong depth, RenderQueueType rq /*= RQT_Scene*/ )
 	{
 #ifdef _DEBUG
-		polygon_list_iterator it = _polygons.begin();
-		polygon_list_iterator it_end = _polygons.end();
-		for(; it != it_end; it++)
 		{
-			if(it->polygon == polygon)
+			RenderQueue::iterator it;
+			RenderQueue::iterator it_end;
+
+			it = _backgroundRenderQueue.begin();
+			it_end = _backgroundRenderQueue.end();
+			for(; it != it_end; it++)
 			{
-				PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the rendering list");
+				if(it->polygon == polygon)
+				{
+					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the background rendering list");
+					break;
+				}
+			}
+
+			it = _sceneRenderQueue.begin();
+			it_end = _sceneRenderQueue.end();
+			for(; it != it_end; it++)
+			{
+				if(it->polygon == polygon)
+				{
+					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the scene rendering list");
+					break;
+				}
+			}
+
+			it = _uiRenderQueue.begin();
+			it_end = _uiRenderQueue.end();		
+			for(; it != it_end; it++)
+			{
+				if(it->polygon == polygon)
+				{
+					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the ui rendering list");
+					break;
+				}
+			}	
+		}
+#endif // _DEBUG
+
+		RenderQueue::iterator it_begin;
+		RenderQueue::iterator it;
+		RenderQueue *currentQueue = getRenderQueuePtr(rq);
+
+		if(currentQueue == nullptr)
+		{
+			return;
+		}
+		
+		it_begin = currentQueue->begin();
+		it = currentQueue->end();
+
+		for(; it != it_begin; /* we'll update the iterator inside the loop */)
+		{
+			it--;
+
+			if(it->depth <= depth)
+			{
+				it++;	// advance one element because list::insert inserts *before* the iterator position
 				break;
 			}
-		}		
-#endif // _DEBUG
+		}	
 		
-		PolygonParams pp;
-		pp.polygon = polygon;
-		pp.depth = 1;
-		_polygons.push_back(pp);
+		currentQueue->insert(it, RenderQueueParams(polygon, depth));
 
 		glGenBuffers(1, &polygon->_vertexBuffer);
 		glGenBuffers(1, &polygon->_elementBuffer);
 		updateOpenGLBuffers(polygon);
 		polygon->_hasNewVertices = false;
+	}
+
+	void Renderer::addPolygon( Polygon *polygon, RenderQueueType rq /*= RQT_Scene*/ )
+	{
+		RenderQueue *currentQueue = getRenderQueuePtr(rq);
+		ulong depth = 0;
+
+		if (!currentQueue->empty())
+		{
+			depth = currentQueue->back().depth+1;
+		}
+
+		addPolygon(polygon, depth, rq);
 	}
 
 	void Renderer::updateOpenGLBuffers( Polygon *polygon ) const
@@ -198,18 +258,20 @@ namespace PhySketch
 		delete[] elemBuff;
 	}
 
-	void Renderer::removePolygon( Polygon *polygon )
+	void Renderer::removePolygon( Polygon *polygon, RenderQueueType rq /*= RQT_Scene*/ )
 	{
 		glDeleteBuffers(1, &polygon->_vertexBuffer);
 		glDeleteBuffers(1, &polygon->_elementBuffer);
 
-		polygon_list_iterator it = _polygons.begin();
-		polygon_list_iterator it_end = _polygons.end();
+		RenderQueue *currentQueue = getRenderQueuePtr(rq);
+
+		RenderQueue::iterator it = currentQueue->begin();
+		RenderQueue::iterator it_end = currentQueue->end();
 		for(; it != it_end; it++)
 		{
 			if(it->polygon == polygon)
 			{
-				_polygons.erase(it);
+				currentQueue->erase(it);
 				break;
 			}
 		}
@@ -235,8 +297,24 @@ namespace PhySketch
 		glMatrixMode(GL_MODELVIEW);	
 		glLoadIdentity();
 
-		polygon_list_iterator it = _polygons.begin();
-		polygon_list_iterator it_end = _polygons.end();
+		RenderQueue::iterator it, it_end;
+
+		it = _backgroundRenderQueue.begin();
+		it_end = _backgroundRenderQueue.end();
+		for(; it != it_end; it++)
+		{
+			renderPolygon(it->polygon);			
+		}
+
+		it = _sceneRenderQueue.begin();
+		it_end = _sceneRenderQueue.end();
+		for(; it != it_end; it++)
+		{
+			renderPolygon(it->polygon);			
+		}
+
+		it = _uiRenderQueue.begin();
+		it_end = _uiRenderQueue.end();
 		for(; it != it_end; it++)
 		{
 			renderPolygon(it->polygon);			
@@ -321,6 +399,25 @@ namespace PhySketch
 		gluUnProject( winX, winY, winZ, modelview, projection, viewport, &posX, &posY, &posZ);
 
 		return Vector2(static_cast<float>(posX), static_cast<float>(posY));
+	}
+
+	Renderer::RenderQueue* Renderer::getRenderQueuePtr( RenderQueueType rqp )
+	{
+		switch(rqp)
+		{
+		case RQT_Background:
+			return &_backgroundRenderQueue;
+			break;
+		case RQT_Scene:
+			return &_sceneRenderQueue;
+			break;
+		case RQT_UI:
+			return &_uiRenderQueue;
+			break;
+		default:
+			PHYSKETCH_LOG_ERROR("Invalid render queue");
+			return nullptr;
+		}
 	}
 
 }
