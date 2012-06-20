@@ -32,6 +32,15 @@ namespace PhySketch
 
 		virtual ulong getId() const { return _id; }
 
+		// Access the FillMaterial
+		const Material& getFillMaterial(void) const;
+		void setFillMaterial(const Material& fillMaterial);
+		
+		// Access the LineMaterial
+		const Material& getLineMaterial(void) const;
+		void setLineMaterial(const Material& lineMaterial);
+
+
 	protected:
 		bool _needsPolygonUpdate;
 		b2Body* _body;
@@ -39,7 +48,7 @@ namespace PhySketch
 		std::vector<Polygon*> _oldPolygons;
 		ulong _id;
 	
-		Material _solidMaterial;
+		Material _fillMaterial;
 		Material _lineMaterial;
 	};
 }

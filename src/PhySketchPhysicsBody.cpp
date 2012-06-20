@@ -15,14 +15,14 @@ PhysicsBody::PhysicsBody()
 	_body = nullptr;
 	_needsPolygonUpdate = false;
 	
-	_solidMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
+	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
 }
 
 PhysicsBody::PhysicsBody( b2Body *body ) 
 	:_body(body)
 {
-	_solidMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
+	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
 
 	_needsPolygonUpdate = false;
@@ -90,7 +90,7 @@ void PhysicsBody::reconstructPolygons()
 		poly = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
 		poly->setPosition(position);
 		poly->setAngle(angle);
-		poly->SetMaterial(_solidMaterial);
+		poly->SetMaterial(_fillMaterial);
 
 		switch (fixture->GetType())
 		{
@@ -157,6 +157,26 @@ void PhysicsBody::reconstructPolygons()
 			_polygons.push_back(extraPoly);
 		}
 	}
+}
+
+const Material& PhysicsBody::getFillMaterial( void ) const
+{
+	return(_fillMaterial);
+}
+
+void PhysicsBody::setFillMaterial( const Material& fillMaterial )
+{
+	_fillMaterial = fillMaterial;
+}
+
+const Material& PhysicsBody::getLineMaterial( void ) const
+{
+	return(_lineMaterial);
+}
+
+void PhysicsBody::setLineMaterial( const Material& lineMaterial )
+{
+	_lineMaterial = lineMaterial;
 }
 
 
