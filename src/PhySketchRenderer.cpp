@@ -118,7 +118,7 @@ namespace PhySketch
 		return true;		
 	}
 
-	void Renderer::render() const
+	void Renderer::render()
 	{
 		_mainShaderProgram->useProgram();
 
@@ -130,16 +130,23 @@ namespace PhySketch
 
 	void Renderer::addPolygon( Polygon *polygon )
 	{
-		std::pair<polygon_set_iterator, bool> res;
-		
-		res = _polygons.insert(polygon);
-
-		if(res.second == false)
+#ifdef _DEBUG
+		polygon_list_iterator it = _polygons.begin();
+		polygon_list_iterator it_end = _polygons.end();
+		for(; it != it_end; it++)
 		{
-			Logger::getSingletonPtr()->writeWarning("Renderer::addPolygon",
-				"Tried do add a polygon that was already in the rendering list");
-		}
-				
+			if(it->polygon == polygon)
+			{
+				PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the rendering list");
+				break;
+			}
+		}		
+#endif // _DEBUG
+		
+		PolygonParams pp;
+		pp.polygon = polygon;
+		pp.depth = 1;
+		_polygons.push_back(pp);
 
 		glGenBuffers(1, &polygon->_vertexBuffer);
 		glGenBuffers(1, &polygon->_elementBuffer);
@@ -196,7 +203,16 @@ namespace PhySketch
 		glDeleteBuffers(1, &polygon->_vertexBuffer);
 		glDeleteBuffers(1, &polygon->_elementBuffer);
 
-		_polygons.erase(polygon);
+		polygon_list_iterator it = _polygons.begin();
+		polygon_list_iterator it_end = _polygons.end();
+		for(; it != it_end; it++)
+		{
+			if(it->polygon == polygon)
+			{
+				_polygons.erase(it);
+				break;
+			}
+		}
 	}
 
 	Vector2 Renderer::getSceneViewAxisMin() const
@@ -209,7 +225,7 @@ namespace PhySketch
 		return _sceneViewMax;
 	}
 	
-	void Renderer::renderPolygons() const
+	void Renderer::renderPolygons()
 	{
 		// change the view to scene coordinates
 		glMatrixMode(GL_PROJECTION);						
@@ -219,11 +235,11 @@ namespace PhySketch
 		glMatrixMode(GL_MODELVIEW);	
 		glLoadIdentity();
 
-		polygon_set_iterator it = _polygons.begin();
-		polygon_set_iterator it_end = _polygons.end();
-		for(; it != _polygons.end(); it++)
+		polygon_list_iterator it = _polygons.begin();
+		polygon_list_iterator it_end = _polygons.end();
+		for(; it != it_end; it++)
 		{
-			renderPolygon(*it);			
+			renderPolygon(it->polygon);			
 		}
 	}
 

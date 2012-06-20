@@ -24,7 +24,7 @@ namespace PhySketch
 		virtual void removePolygon(Polygon *polygon);
 	
 		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
-		virtual void render() const;
+		virtual void render();
 
 		/// <summary> Gets the minimum limit for the current view of the scene. </summary>
 		/// <returns> The scene view axis minimum limit. </returns>
@@ -45,13 +45,21 @@ namespace PhySketch
 	protected:
 		virtual bool initGL();
 
-		virtual void renderPolygons() const;
+		virtual void renderPolygons();
 		virtual void renderPolygon(Polygon *poly) const;
 
 		virtual void updateOpenGLBuffers(Polygon *polygon) const;
 		
 
 	protected:
+		struct PolygonParams
+		{
+			Polygon *polygon;
+			ulong depth;
+		};
+		typedef std::list<PolygonParams>::iterator polygon_list_iterator;
+
+		std::list<PolygonParams> _polygons;
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
@@ -75,10 +83,7 @@ namespace PhySketch
 				GLint color;
 			} uniforms;
 
-		} _shaderVars;
-
-		typedef std::set<Polygon*>::iterator polygon_set_iterator;
-		
+		} _shaderVars;		
 	};
 }
 #endif // PhySketchRenderer_h__
