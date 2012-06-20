@@ -9,11 +9,12 @@ namespace PhySketch
 
 template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
-PhysicsManager::PhysicsManager(Vector2 gravity)
+PhysicsManager::PhysicsManager(Vector2 gravity) :
+	_physicsBodiesIDSeed(0),
+	_simulationPaused	(false)
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
-	_simulationPaused = false;
 }
 
 PhysicsManager::~PhysicsManager()
@@ -39,6 +40,8 @@ PhysicsManager& PhysicsManager::getSingleton( void )
 void PhysicsManager::AddBody( PhysicsBody *b )
 {
 	PHYSKETCH_ASSERT(b != nullptr && "PhysicsBody is NULL");
+
+	b->_id = ++_physicsBodiesIDSeed;
 	_physicsBodies.push_back(b);
 }
 

@@ -57,6 +57,7 @@ namespace PhySketch
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
 
 		PhysicsBodyList _physicsBodies;
+		ulong _physicsBodiesIDSeed;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
 		bool _simulationPaused;

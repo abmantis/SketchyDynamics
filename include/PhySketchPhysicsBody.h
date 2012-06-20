@@ -22,20 +22,23 @@ namespace PhySketch
 		
 		/// <summary> Gets the box2D body. </summary>
 		/// <returns> The box2D body. </returns>
-		b2Body* getBox2DBody();
+		virtual b2Body* getBox2DBody();
 
 		/// <summary> Sets the box2D body. </summary>
 		/// <param name="body"> The box2D body. </param>
-		void setBox2DBody(b2Body* body);
+		virtual void setBox2DBody(b2Body* body);
 
-		void reconstructPolygons();
+		virtual void reconstructPolygons();
+
+		virtual ulong getId() const { return _id; }
 
 	protected:
 		bool _needsPolygonUpdate;
 		b2Body* _body;
 		std::vector<Polygon*> _polygons;
 		std::vector<Polygon*> _oldPolygons;
-
+		ulong _id;
+	
 		Material _solidMaterial;
 		Material _lineMaterial;
 	};
