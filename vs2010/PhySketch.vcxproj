@@ -126,6 +126,7 @@
     <ClInclude Include="..\include\PhySketchMatrix3.h" />
     <ClInclude Include="..\include\PhySketchPhysicsBody.h" />
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
+    <ClInclude Include="..\include\PhySketchPhysicsQueryCallback.h" />
     <ClInclude Include="..\include\PhySketchPolygon.h" />
     <ClInclude Include="..\include\PhySketchRenderer.h" />
     <ClInclude Include="..\include\PhySketchShader_GL.h" />
