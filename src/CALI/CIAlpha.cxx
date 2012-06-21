@@ -100,6 +100,11 @@ double CIAlpha::evalLocalFeatures(CIScribble *sc, CIList<CIGesture *>* _shapesLi
 				float intersectPtsDist = (float)(j-i) / (float)nPts;
 				if(intersectPtsDist > 0.2f)
 				{
+					intersectStroke1_s = *(*pts)[i];
+					intersectStroke1_e = *(*pts)[i+1];
+					intersectStroke2_s = *(*pts)[j];
+					intersectStroke2_e = *(*pts)[j+1];
+					
 					return 1;
 				}
 				else
@@ -130,4 +135,12 @@ bool CIAlpha::intersect(CIPoint stroke1_s, CIPoint stroke1_e, CIPoint stroke2_s,
 	delete v2;
 
     return left1 && left2;
+}
+
+void CIAlpha::getIntersectionLines( CIPoint &stroke1_s, CIPoint &stroke1_e, CIPoint &stroke2_s, CIPoint &stroke2_e )
+{
+	stroke1_s = intersectStroke1_s;
+	stroke1_e = intersectStroke1_e;
+	stroke2_s = intersectStroke2_s;
+	stroke2_e = intersectStroke2_e;
 }

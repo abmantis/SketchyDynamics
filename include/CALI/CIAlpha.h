@@ -47,8 +47,15 @@ public:
     
     double evalLocalFeatures(CIScribble *sc, CIList<CIGesture *>* _shapesList);
 
+	void getIntersectionLines(CIPoint &stroke1_s, CIPoint &stroke1_e, CIPoint &stroke2_s, CIPoint &stroke2_e);
+
 private:
     bool intersect(CIPoint stroke1_s, CIPoint stroke1_e, CIPoint stroke2_s, CIPoint stroke2_e);
+
+	CIPoint intersectStroke1_s;
+	CIPoint intersectStroke1_e;
+	CIPoint intersectStroke2_s;
+	CIPoint intersectStroke2_e;
 };
 
 #endif
