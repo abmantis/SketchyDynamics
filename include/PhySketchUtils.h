@@ -1,6 +1,7 @@
 #pragma once
 #ifndef PhySketchUtils_h__
 #define PhySketchUtils_h__
+#include "PhySketchVector2.h"
 
 
 namespace PhySketch
@@ -69,6 +70,45 @@ namespace PhySketch
 		((char*)buffer)[length] = '\0';
 
 		return buffer;
+	}
+
+	/// <summary> Find the line-line intersection point. </summary>
+	/// <param name="start1"> The line 1 start point. </param>
+	/// <param name="end1"> The line 1 end point. </param>
+	/// <param name="start2"> The line 2 start point. </param>
+	/// <param name="end2"> The line 2 end point. </param>
+	/// <param name="intersection"> [out] The intersection (if it exists). </param>
+	/// <returns> True if an intersection point exists. </returns>
+	static bool lineLineIntersection(Vector2 start1, Vector2 end1, Vector2 start2, Vector2 end2, Vector2 &intersection) 
+	{
+		// Store the values for fast access and easy
+		// equations-to-code conversion
+		float x1 = start1.x, x2 = end1.x, x3 = start2.x, x4 = end2.x;
+		float y1 = start1.y, y2 = end1.y, y3 = start2.y, y4 = end2.y;
+
+		float s1_x, s1_y, s2_x, s2_y;
+		s1_x = x2 - x1;     s1_y = y2 - y1;
+		s2_x = x4 - x3;     s2_y = y4 - y3;
+
+		float s, t;
+		s = (-s1_y * (x1 - x3) + s1_x * (y1 - y3)) / (-s2_x * s1_y + s1_x * s2_y);
+		t = ( s2_x * (y1 - y3) - s2_y * (x1 - x3)) / (-s2_x * s1_y + s1_x * s2_y);
+
+		if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+		{
+			// intersection detected
+			intersection.x = x1 + (t * s1_x);
+			intersection.y = y1 + (t * s1_y);
+			return true;
+		}
+
+		return false; // No intersection		
+	}
+
+
+	static bool isCounterClockwise(Vector2 p1, Vector2 p2, Vector2 p3)
+	{
+		return ((p2.y-p1.y)*(p3.x-p2.x)<(p3.y-p2.y)*(p2.x-p1.x));
 	}
 }
 #endif // PhySketchUtils_h__
