@@ -125,6 +125,11 @@ namespace PhySketch
 			return Vector2(x - scalar, y - scalar);
 		}
 
+		virtual b2Vec2 tob2Vec2() const
+		{
+			return b2Vec2(x, y);
+		}
+
 		virtual float dotProduct(Vector2 vec) const
 		{
 			return x * vec.x + y * vec.y;
