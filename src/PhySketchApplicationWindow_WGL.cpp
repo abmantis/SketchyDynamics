@@ -3,6 +3,7 @@
 #include "PhySketchLogger.h"
 #include "PhySketchVector2.h"
 #include "PhySketchRenderer.h"
+#include "PhySketchUtils.h"
 
 namespace PhySketch
 {

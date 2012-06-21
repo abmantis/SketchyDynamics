@@ -3,7 +3,6 @@
 #define Vector2_h__
 
 #include "PhySketchDefinitions.h"
-#include "PhySketchUtils.h"
 #include "Box2D/Common/b2Math.h"
 
 namespace PhySketch
