@@ -7,6 +7,7 @@
 class CIScribble;
 class CIStroke;
 class CIRecognizer;
+class CIGesture;
 
 namespace PhySketch
 {	
@@ -172,7 +173,7 @@ namespace PhySketch
 	protected:
 		virtual void startDrawingGesture(Vector2 startPoint);
 		virtual void stopDrawingGesture();
-		virtual void processGesture(std::string gesture);
+		virtual void processGesture(CIGesture *gesture);
 
 	protected:
 		bool _isLeftMouseDown;

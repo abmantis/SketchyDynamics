@@ -7,6 +7,10 @@
 #include "PhySketchCore.h"
 #include "PhySketchPhysicsManager.h"
 #include "PhySketchPhysicsBody.h"
+#include "PhySketchPhysicsQueryCallback.h"
+#include "Box2D\Collision\b2Collision.h"
+#include "PhySketchUtils.h"
+#include "PhySketchLogger.h"
 
 namespace PhySketch
 {
@@ -125,20 +129,19 @@ void MainInputListener::stopDrawingGesture()
 {	
 	_caliScribble->addStroke(_caliStroke);
 	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
-	processGesture((*recGests)[0]->getName());
+	processGesture((*recGests)[0]);
 
 	_renderer->removePolygon(_gesturePolygon);
 	delete _gesturePolygon;
 	_gesturePolygon = nullptr;
 }
 
-void MainInputListener::processGesture( std::string gesture )
+void MainInputListener::processGesture( CIGesture *gesture )
 {
-	bool bValid = false;
-	if (gesture.compare("Triangle") == 0)
-	{
-		bValid = true;
+	std::string gestureName = gesture->getName();
 
+	if (gestureName.compare("Triangle") == 0)
+	{
 		CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
 		Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
 		Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
@@ -173,10 +176,8 @@ void MainInputListener::processGesture( std::string gesture )
 		PhysicsBody *pb = new PhysicsBody(body);
 		_physicsMgr->AddBody(pb);
 	} 
-	else if (gesture.compare("Rectangle") == 0 || gesture.compare("Diamond") == 0)
+	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
-		bValid = true;
-
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
 		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
@@ -210,10 +211,8 @@ void MainInputListener::processGesture( std::string gesture )
 		_physicsMgr->AddBody(pb);
 
 	} 
-	else if (gesture.compare("Circle") == 0 || gesture.compare("Ellipse") == 0)
+	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
 	{
-		bValid = true;
-
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
 		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
@@ -243,23 +242,55 @@ void MainInputListener::processGesture( std::string gesture )
 		_physicsMgr->AddBody(pb);
 
 	} 
-// 	else if(gesture.compare("Ellipse") == 0)
+// 	else if(gestureName.compare("Ellipse") == 0)
 // 	{
 // 		//bValid = true;
 // 	} 
-	else if(gesture.compare("WavyLine") == 0)
+	else if(gestureName.compare("WavyLine") == 0)
 	{
-		//bValid = true;
 	} 
-	else if(gesture.compare("Alpha") == 0)
+	else if(gestureName.compare("Alpha") == 0)
 	{
-		//bValid = true;
+		Vector2 intersectPt;
+		CIPoint p1, p2, p3, p4;
+		static_cast<CIAlpha*>(gesture)->getIntersectionLines(p1,p2,p3,p4);
+
+		Vector2 v1((float)p1.x, (float)p1.y);
+		Vector2 v2((float)p2.x, (float)p2.y);
+		Vector2 v3((float)p3.x, (float)p3.y);
+		Vector2 v4((float)p4.x, (float)p4.y);		
+		if(!lineLineIntersection(v1, v2, v3, v4, intersectPt))
+		{
+			PHYSKETCH_LOG_WARNING("Can't find alpha intersection?!");
+			return;
+		}
+
+		// Make a small box.
+		b2AABB aabb;
+		Vector2 d(0.00001f, 0.00001f);
+		aabb.lowerBound = (intersectPt - d).tob2Vec2();
+		aabb.upperBound = (intersectPt + d).tob2Vec2();
+
+		// Query the world for overlapping shapes.
+		PhysicsQueryCallback callback(intersectPt, true);
+		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+
+		// do we intersect at least two bodies?
+		if(callback._bodies.size() > 1)
+		{
+			PhysicsBody *b1, *b2;
+			std::list<PhysicsBody*>::iterator it = callback._bodies.end();
+			--it;
+			b1 = *it;
+			--it;
+			b2 = *it;
+
+			b2WeldJointDef jd;
+			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), intersectPt.tob2Vec2());
+			_physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+		}
 	} 
 
-	if (bValid)
-	{
-
-	}
 }
 
 
