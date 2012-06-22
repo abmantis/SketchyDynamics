@@ -211,7 +211,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		_physicsMgr->AddBody(pb);
 
 	} 
-	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
+	else if (gestureName.compare("Circle") == 0)
 	{
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
@@ -245,15 +245,41 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		}
 
 	} 
+	else if(gestureName.compare("Ellipse") == 0)
+	{
+		std::cout << "Ellipse" << std::endl;
+		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
 
-		PhysicsBody *pb = new PhysicsBody(body);
-		_physicsMgr->AddBody(pb);
+		Vector2 position = _gesturePolygon->getAABB().getCenter();
+		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 
+		if(checkForCircleJoint(size, position) == false)
+		{
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(position.x, position.y);
+			bodyDef.angle = 0.0f;
+			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+			b2CircleShape circleShape;	//TODO: ellipse and not circle
+			circleShape.m_p.Set(0.0f, 0.0f);
+			circleShape.m_radius = size.x * 0.5f;
+
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			fixtureDef.restitution = 0.2f;	
+			body->CreateFixture(&fixtureDef);
+
+			PhysicsBody *pb = new PhysicsBody(body);
+			_physicsMgr->AddBody(pb);
+		}
+		
 	} 
-// 	else if(gestureName.compare("Ellipse") == 0)
-// 	{
-// 		//bValid = true;
-// 	} 
 	else if(gestureName.compare("WavyLine") == 0)
 	{
 	} 
