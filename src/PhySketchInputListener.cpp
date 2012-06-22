@@ -220,23 +220,31 @@ void MainInputListener::processGesture( CIGesture *gesture )
 
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+		
+		if(checkForCircleJoint(size, position) == false)
+		{
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(position.x, position.y);
+			bodyDef.angle = 0.0f;
+			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(position.x, position.y);
-		bodyDef.angle = 0.0f;
-		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+			b2CircleShape circleShape;
+			circleShape.m_p.Set(0.0f, 0.0f);
+			circleShape.m_radius = size.x * 0.5f;
 
-		b2CircleShape circleShape;
-		circleShape.m_p.Set(0.0f, 0.0f);
-		circleShape.m_radius = size.x * 0.5f;
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &circleShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			fixtureDef.restitution = 0.2f;	
+			body->CreateFixture(&fixtureDef);
 
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &circleShape;
-		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
-		body->CreateFixture(&fixtureDef);
+			PhysicsBody *pb = new PhysicsBody(body);
+			_physicsMgr->AddBody(pb);
+		}
+
+	} 
 
 		PhysicsBody *pb = new PhysicsBody(body);
 		_physicsMgr->AddBody(pb);
@@ -291,6 +299,47 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		}
 	} 
 
+}
+
+bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
+{
+	std::cout << size.x << " " << size.y << std::endl;
+	if(size < Vector2(0.35f, 0.35f))
+	{
+		std::cout << "SMALLI" << std::endl;
+		//////////////////////////////////////////////////////////////////////////
+		// Since this is a small circle/ellipse, let's check if it intersects two bodies
+
+		// Make a small box.
+		b2AABB aabb;
+		Vector2 d(0.00001f, 0.00001f);
+		aabb.lowerBound = (position - d).tob2Vec2();
+		aabb.upperBound = (position + d).tob2Vec2();
+
+		// Query the world for overlapping shapes.
+		PhysicsQueryCallback callback(position, true);
+		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+
+		// do we intersect at least two bodies?
+		if(callback._bodies.size() > 1)
+		{
+			// Create a joint on the two latest/closest bodies
+			PhysicsBody *b1, *b2;
+			std::list<PhysicsBody*>::iterator it = callback._bodies.end();
+			--it;
+			b1 = *it;
+			--it;
+			b2 = *it;
+
+			b2RevoluteJointDef jd;
+			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), position.tob2Vec2());
+			_physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+
+			return true;
+		}
+	}
+
+	return false;
 }
 
 

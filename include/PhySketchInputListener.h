@@ -175,6 +175,14 @@ namespace PhySketch
 		virtual void stopDrawingGesture();
 		virtual void processGesture(CIGesture *gesture);
 
+		/// <summary> Check if a circle/ellipse represents a joint, and create the
+		/// 	joint if it does. </summary>
+		/// <remarks> This is called only for circle and ellipses gestures. </remarks>
+		/// <param name="size"> The size of the gesture. </param>
+		/// <param name="position"> The center of the gesture. </param>
+		/// <returns> true if the joint was created. </returns>
+		virtual bool checkForCircleJoint(Vector2 size, Vector2 position);
+
 	protected:
 		bool _isLeftMouseDown;
 		CIStroke *_caliStroke;
