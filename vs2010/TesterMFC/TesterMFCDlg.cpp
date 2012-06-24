@@ -39,6 +39,7 @@ BEGIN_MESSAGE_MAP(CTesterMFCDlg, CDialogEx)
 	ON_WM_QUERYDRAGICON()
 	ON_WM_TIMER()
 	ON_WM_SIZE()
+	ON_BN_CLICKED(IDC_BUTTON1, &CTesterMFCDlg::OnBnClickedButton1)
 END_MESSAGE_MAP()
 
 
@@ -113,7 +114,7 @@ void CTesterMFCDlg::initPhySketch()
 	ScreenToClient(&stRect);
 
 	_window = _core.createWindow("test", PhySketch::Vector2::ZERO, 
-		PhySketch::Vector2(stRect.Width(), stRect.Height()), false, &wndparams);
+		PhySketch::Vector2((float)stRect.Width(), (float)stRect.Height()), false, &wndparams);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
 
@@ -121,15 +122,39 @@ void CTesterMFCDlg::initPhySketch()
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 
-	b2BodyDef bodyDef;
-	bodyDef.position.Set(0.0f, -4.0f);
-	b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+	{
+		PhySketch::Material backgroundMat;
+		backgroundMat.setColor(PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
+		b2BodyDef backgroundbodyDef;
+		backgroundbodyDef.position.Set(0.0f, 0.0f);
+		b2Body *backgroundBody = _physicsMgr->getPhysicsWorld()->CreateBody(&backgroundbodyDef);
 
-	b2PolygonShape groundBox;
-	groundBox.SetAsBox(7.0f, 0.3f);
-	body->CreateFixture(&groundBox, 0.0f);
-	_phyGroundBody = new PhySketch::PhysicsBody(body);
-	_physicsMgr->AddBody(_phyGroundBody);
+		b2PolygonShape backgroundBox;
+		backgroundBox.SetAsBox((_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).x*0.5f,
+			(_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).y*0.5f);
+		b2FixtureDef backgroundFixtureDef;
+		backgroundFixtureDef.shape = &backgroundBox;
+		backgroundFixtureDef.filter.categoryBits = 0x0;
+		backgroundBody->CreateFixture(&backgroundFixtureDef);
+		PhySketch::PhysicsBody *backgroundPhyBody = new PhySketch::PhysicsBody(backgroundBody);
+		backgroundPhyBody->setFillMaterial(backgroundMat);
+		backgroundPhyBody->setLineMaterial(backgroundMat);
+		backgroundPhyBody->reconstructPolygons();
+		_physicsMgr->AddBody(backgroundPhyBody);
+	}
+
+
+	{
+		b2BodyDef bodyDef;
+		bodyDef.position.Set(0.0f, -4.0f);
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2PolygonShape groundBox;
+		groundBox.SetAsBox(7.0f, 0.3f);
+		body->CreateFixture(&groundBox, 0.0f);
+		_phyGroundBody = new PhySketch::PhysicsBody(body);
+		_physicsMgr->AddBody(_phyGroundBody);
+	}
 
 }
 
@@ -139,6 +164,15 @@ void CTesterMFCDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: Add your message handler code here and/or call default
 	_core.doOneFrame();
+	if(_physicsMgr->isSimulationPaused())
+	{
+		GetDlgItem(IDC_BT_PAUSE_PLAY)->SetWindowText(L"Play");
+	}
+	else
+	{
+		GetDlgItem(IDC_BT_PAUSE_PLAY)->SetWindowText(L"Pause");
+	}
+
 	CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -183,4 +217,10 @@ CTesterMFCDlg::~CTesterMFCDlg()
 	_phyGroundBody = nullptr;
 	delete _inputListener;
 	_inputListener = nullptr;
+}
+
+
+void CTesterMFCDlg::OnBnClickedButton1()
+{
+	_physicsMgr->toggleSimulation();
 }
