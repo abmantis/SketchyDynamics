@@ -335,7 +335,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 {
 	std::cout << size.x << " " << size.y << std::endl;
-	if(size < Vector2(0.35f, 0.35f))
+	if(size < Vector2(0.45f, 0.45f))
 	{
 		std::cout << "SMALLI" << std::endl;
 		//////////////////////////////////////////////////////////////////////////
