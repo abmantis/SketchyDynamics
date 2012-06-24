@@ -47,6 +47,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		backgroundPhyBody->setLineMaterial(backgroundMat);
 		backgroundPhyBody->reconstructPolygons();
 		_physicsMgr->AddBody(backgroundPhyBody);
+		_physicsMgr->SetUnselectableBody(backgroundPhyBody);
 	}
 	
 		
@@ -60,6 +61,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		body->CreateFixture(&groundBox, 0.0f);
 		PhySketch::PhysicsBody *phyBody = new PhySketch::PhysicsBody(body);
 		_physicsMgr->AddBody(phyBody);
+		_physicsMgr->SetUnselectableBody(phyBody);
 	}
 	
 	

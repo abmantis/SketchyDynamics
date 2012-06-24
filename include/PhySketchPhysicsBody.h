@@ -32,6 +32,9 @@ namespace PhySketch
 
 		virtual ulong getId() const { return _id; }
 
+		virtual bool isSelected() const;
+		virtual bool isSelectable() const;
+
 		// Access the FillMaterial
 		const Material& getFillMaterial(void) const;
 		void setFillMaterial(const Material& fillMaterial);
@@ -40,6 +43,11 @@ namespace PhySketch
 		const Material& getLineMaterial(void) const;
 		void setLineMaterial(const Material& lineMaterial);
 
+		// Access the SelectedMaterial
+		const Material& getSelectedMaterial(void) const;
+		void setSelectedMaterial(const Material& material);
+
+
 
 	protected:
 		bool _needsPolygonUpdate;
@@ -47,9 +55,12 @@ namespace PhySketch
 		std::vector<Polygon*> _polygons;
 		std::vector<Polygon*> _oldPolygons;
 		ulong _id;
+		bool _selectable;
+		bool _selected;
 	
 		Material _fillMaterial;
 		Material _lineMaterial;
+		Material _selectedMaterial;
 	};
 }
 #endif // PhySketchPhysicsBody_h__

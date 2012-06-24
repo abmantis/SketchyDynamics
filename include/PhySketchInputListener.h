@@ -160,6 +160,15 @@ namespace PhySketch
 	class MainInputListener : public InputListener
 	{
 	public:
+		enum InteractionStates
+		{
+			IS_NONE,
+			IS_GESTURING,
+			IS_SELECTING,
+			IS_MOVING,
+			IS_TRANSFORMING,
+		};
+	public:
 		MainInputListener();
 		virtual ~MainInputListener();;
 
@@ -191,8 +200,7 @@ namespace PhySketch
 		Polygon *_gesturePolygon;
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
-
-
+		InteractionStates _interactionState;
 	};
 }
 #endif // PhySketchInputListener_h__

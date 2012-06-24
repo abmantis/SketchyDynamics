@@ -27,6 +27,7 @@ MainInputListener::MainInputListener() : InputListener()
 	_caliScribble = nullptr;
 	_gesturePolygon = nullptr;	
 	_caliRecognizer = new CIRecognizer();
+	_interactionState = IS_NONE;
 }
 
 MainInputListener::~MainInputListener()
@@ -58,8 +59,7 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 	case MB_Left:
 		{
 			_isLeftMouseDown = true;
-
-			startDrawingGesture(_renderer->windowToScene(position));
+			
 			break;
 		}
 	case MB_Middle:
@@ -75,13 +75,68 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 
 void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 {
+	Vector2 sceneMousePos = _renderer->windowToScene(position);
 	switch(button)
 	{
 	case MB_Left:
 		{
 			if(_isLeftMouseDown)
 			{
-				stopDrawingGesture();	
+				switch(_interactionState)
+				{
+				case IS_NONE:
+				case IS_SELECTING:
+					{
+						bool onSelectableBody = false;
+						// Make a small box.
+						b2AABB aabb;
+						Vector2 d(0.00001f, 0.00001f);
+						aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
+						aabb.upperBound = (sceneMousePos + d).tob2Vec2();
+						// Query the world for overlapping shapes.
+						PhysicsQueryCallback callback(sceneMousePos, true);
+						_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+						// do we intersect at least two bodies?
+						if(!callback._bodies.empty())
+						{
+							PhysicsBody *pb = callback._bodies.back();
+							if(pb->isSelectable())
+							{
+								onSelectableBody = true;
+								if(pb->isSelected())
+								{
+									_physicsMgr->UnselectBody(pb);
+								}
+								else
+								{
+									_physicsMgr->SelectBody(pb);									
+								}
+							}
+						}
+
+						if(!onSelectableBody)
+						{
+							// clicked outside a bodie, deselect!
+							_physicsMgr->UnselectAllBodies();
+							_interactionState = IS_NONE;
+						}
+						else
+						{
+							_interactionState = IS_SELECTING;
+						}
+						
+						break;
+					}
+				case IS_GESTURING:
+					stopDrawingGesture();
+					_interactionState = IS_NONE;
+					break;
+				case IS_MOVING:
+					break;
+				case IS_TRANSFORMING:
+					break;
+				}
+
 			}		
 
 			_isLeftMouseDown = false;			
@@ -101,11 +156,28 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 
 void MainInputListener::mouseMoved( Vector2 position )
 {
+	Vector2 sceneMousePos = _renderer->windowToScene(position);
 	if(_isLeftMouseDown)
 	{
-		position = _renderer->windowToScene(position);
-		_caliStroke->addPoint(position.x, position.y);
-		_gesturePolygon->addVertex(position);
+		switch(_interactionState)
+		{
+		case IS_NONE:
+			startDrawingGesture(sceneMousePos);
+			_interactionState = IS_GESTURING;
+			break;
+		case IS_GESTURING:
+			_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
+			_gesturePolygon->addVertex(sceneMousePos);
+			break;
+		case IS_SELECTING:
+			break;
+		case IS_MOVING:
+			break;
+		case IS_TRANSFORMING:
+			break;
+		}
+
+		
 	}
 }
 
@@ -249,7 +321,6 @@ void MainInputListener::processGesture( CIGesture *gesture )
 	} 
 	else if(gestureName.compare("Ellipse") == 0)
 	{
-		std::cout << "Ellipse" << std::endl;
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
 		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
@@ -334,10 +405,8 @@ void MainInputListener::processGesture( CIGesture *gesture )
 
 bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 {
-	std::cout << size.x << " " << size.y << std::endl;
 	if(size < Vector2(0.45f, 0.45f))
 	{
-		std::cout << "SMALLI" << std::endl;
 		//////////////////////////////////////////////////////////////////////////
 		// Since this is a small circle/ellipse, let's check if it intersects two bodies
 

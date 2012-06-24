@@ -14,9 +14,12 @@ PhysicsBody::PhysicsBody()
 {
 	_body = nullptr;
 	_needsPolygonUpdate = false;
+	_selected = false;
+	_selectable = true;
 	
 	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
+	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
 }
 
 PhysicsBody::PhysicsBody( b2Body *body ) 
@@ -24,8 +27,11 @@ PhysicsBody::PhysicsBody( b2Body *body )
 {
 	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
+	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
 
 	_needsPolygonUpdate = false;
+	_selected = false;
+	_selectable = true;
 
 	_body->SetUserData(this);
 	reconstructPolygons();
@@ -149,7 +155,7 @@ void PhysicsBody::reconstructPolygons()
 
 		linePoly = new Polygon(*poly);
 		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);		
-		linePoly->SetMaterial(_lineMaterial);
+		linePoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
 		_polygons.push_back(linePoly);	
 
 		if(extraPoly)
@@ -177,6 +183,26 @@ const Material& PhysicsBody::getLineMaterial( void ) const
 void PhysicsBody::setLineMaterial( const Material& lineMaterial )
 {
 	_lineMaterial = lineMaterial;
+}
+
+const Material& PhysicsBody::getSelectedMaterial( void ) const
+{
+	return _selectedMaterial;
+}
+
+void PhysicsBody::setSelectedMaterial( const Material& material )
+{
+	_selectedMaterial = material;
+}
+
+bool PhysicsBody::isSelected() const
+{
+	return _selected;
+}
+
+bool PhysicsBody::isSelectable() const
+{
+	return _selectable;
 }
 
 

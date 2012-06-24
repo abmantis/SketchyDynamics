@@ -11,6 +11,10 @@ namespace PhySketch
 	class PhysicsManager : public Singleton<PhysicsManager>
 	{	
 	public:
+		typedef std::list<PhysicsBody*> PhysicsBodyList;
+		typedef std::list<PhysicsJoint*> PhysicsJointList;
+
+	public:
 		PhysicsManager(Vector2 gravity);
 		virtual ~PhysicsManager();
 
@@ -25,6 +29,15 @@ namespace PhySketch
 		/// 	destroys it. </remarks>
 		/// <param name="b"> The PhysicsBody to remove. </param>
 		virtual void RemoveBody(PhysicsBody *b);
+
+		virtual void SelectBody(PhysicsBody *b);
+		virtual void UnselectBody(PhysicsBody *b);
+		virtual void SetUnselectableBody(PhysicsBody *b);
+		virtual void SetSelectableBody(PhysicsBody *b);
+
+		virtual void UnselectAllBodies();
+
+		virtual const PhysicsBodyList& getSelectedBodies() const;
 
 		/// <summary> Adds a joint. </summary>
 		/// <remarks> This class saves this pointer! It should not be deleted
@@ -68,10 +81,8 @@ namespace PhySketch
 		virtual void stepPhysics(ulong ellapsedMillisec);
 		
 	protected:
-		typedef std::list<PhysicsBody*> PhysicsBodyList;
-		typedef std::list<PhysicsJoint*> PhysicsJointList;
-
 		PhysicsBodyList _physicsBodies;
+		PhysicsBodyList _selectedBodies;
 		PhysicsJointList _physicsJoints;
 		ulong _physicsBodiesIDSeed;
 		Renderer* _renderer;

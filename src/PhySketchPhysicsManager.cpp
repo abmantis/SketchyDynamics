@@ -178,5 +178,51 @@ bool PhysicsManager::isSimulationPaused() const
 	return _simulationPaused;
 }
 
+void PhysicsManager::SelectBody( PhysicsBody *b )
+{
+	if(b->_selectable == true && b->_selected == false)
+	{
+		b->_selected = true;
+		b->_polygons[1]->SetMaterial(b->_selectedMaterial);
+		_selectedBodies.push_back(b);
+	}
+}
+
+void PhysicsManager::UnselectBody( PhysicsBody *b )
+{
+	if(b->_selected)
+	{
+		b->_selected = false;
+		b->_polygons[1]->SetMaterial(b->_lineMaterial);
+
+		_selectedBodies.remove(b);
+	}
+}
+
+void PhysicsManager::SetUnselectableBody( PhysicsBody *b )
+{
+	b->_selectable = false;
+	UnselectBody(b);
+}
+
+void PhysicsManager::SetSelectableBody( PhysicsBody *b )
+{
+	b->_selectable = true;
+}
+
+void PhysicsManager::UnselectAllBodies()
+{
+	while(!_selectedBodies.empty())
+	{
+		UnselectBody(_selectedBodies.front());
+	}
+	
+}
+
+const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
+{
+	return _selectedBodies;
+}
+
 
 } // namespace PhySketch
