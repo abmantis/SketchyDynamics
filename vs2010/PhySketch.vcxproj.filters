@@ -162,6 +162,9 @@
     <ClInclude Include="..\include\PhySketchPhysicsQueryCallback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchPhysicsJoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -264,6 +267,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchMatrix3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchPhysicsJoint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

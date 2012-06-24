@@ -11,6 +11,8 @@
 #include "Box2D\Collision\b2Collision.h"
 #include "PhySketchUtils.h"
 #include "PhySketchLogger.h"
+#include "PhySketchPhysicsJoint.h"
+#include "Box2D\Dynamics\Joints\b2Joint.h"
 
 namespace PhySketch
 {
@@ -321,7 +323,10 @@ void MainInputListener::processGesture( CIGesture *gesture )
 
 			b2WeldJointDef jd;
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), intersectPt.tob2Vec2());
-			_physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+
+			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Cross);
+			_physicsMgr->AddJoint(pj);
 		}
 	} 
 
@@ -359,8 +364,9 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 
 			b2RevoluteJointDef jd;
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), position.tob2Vec2());
-			_physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
-
+			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Circle);
+			_physicsMgr->AddJoint(pj);
 			return true;
 		}
 	}

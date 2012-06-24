@@ -125,6 +125,7 @@
     <ClInclude Include="..\include\PhySketchMaterial.h" />
     <ClInclude Include="..\include\PhySketchMatrix3.h" />
     <ClInclude Include="..\include\PhySketchPhysicsBody.h" />
+    <ClInclude Include="..\include\PhySketchPhysicsJoint.h" />
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
     <ClInclude Include="..\include\PhySketchPhysicsQueryCallback.h" />
     <ClInclude Include="..\include\PhySketchPolygon.h" />
@@ -165,6 +166,7 @@
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp" />
     <ClCompile Include="..\src\PhySketchMatrix3.cpp" />
     <ClCompile Include="..\src\PhySketchPhysicsBody.cpp" />
+    <ClCompile Include="..\src\PhySketchPhysicsJoint.cpp" />
     <ClCompile Include="..\src\PhySketchPhysicsManager.cpp" />
     <ClCompile Include="..\src\PhySketchPolygon.cpp" />
     <ClCompile Include="..\src\PhySketchRenderer.cpp" />

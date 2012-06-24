@@ -26,6 +26,18 @@ namespace PhySketch
 		/// <param name="b"> The PhysicsBody to remove. </param>
 		virtual void RemoveBody(PhysicsBody *b);
 
+		/// <summary> Adds a joint. </summary>
+		/// <remarks> This class saves this pointer! It should not be deleted
+		/// 	without calling RemoveBody first. </remarks>
+		/// <param name="j"> The PhysicsJoint to add. </param>
+		virtual void AddJoint(PhysicsJoint *j);
+
+		/// <summary> Removes a joint. </summary>
+		/// <remarks> This only removes the joint from the bodies list and doesn't
+		/// 	destroys it. </remarks>
+		/// <param name="j"> The PhysicsJoint to remove. </param>
+		virtual void RemoveJoint(PhysicsJoint *j);
+
 		/// <summary> Updates the physics objects and advances in the simulation
 		/// 	by 'advanceTime' millisecconds. </summary>
 		/// <param name="advanceTime"> Millisecconds to advance in the
@@ -55,8 +67,10 @@ namespace PhySketch
 		
 	protected:
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
+		typedef std::list<PhysicsJoint*> PhysicsJointList;
 
 		PhysicsBodyList _physicsBodies;
+		PhysicsJointList _physicsJoints;
 		ulong _physicsBodiesIDSeed;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
