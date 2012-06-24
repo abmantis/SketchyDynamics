@@ -55,6 +55,8 @@ namespace PhySketch
 		/// <remarks> Deadvirus, 6/10/2012. </remarks>
 		virtual void toggleSimulation();
 
+		virtual bool isSimulationPaused() const;
+
 		/// <summary> Gets the physics world. </summary>
 		/// <returns> The physics world. </returns>
 		virtual b2World* getPhysicsWorld() const;

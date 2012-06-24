@@ -173,5 +173,10 @@ void PhysicsManager::toggleSimulation()
 	_simulationPaused = !_simulationPaused;
 }
 
+bool PhysicsManager::isSimulationPaused() const
+{
+	return _simulationPaused;
+}
+
 
 } // namespace PhySketch
