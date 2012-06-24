@@ -22,6 +22,14 @@ namespace PhySketch
 	class Material
 	{
 	public:
+		Material()
+		{
+		}
+		Material(Color c) 
+		{
+			_color = c;
+		}
+
 		virtual void setColor(Color c) { _color = c; }
 		virtual Color getColor() { return _color; }
 
