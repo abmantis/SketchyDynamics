@@ -161,6 +161,8 @@ namespace PhySketch
 
 		UINT _vertexBuffer;	
 		UINT _elementBuffer;	
+
+		bool _inRenderingQueue;
 		
 	};
 }

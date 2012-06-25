@@ -130,45 +130,7 @@ namespace PhySketch
 
 	void Renderer::addPolygon( Polygon *polygon, ulong depth, RenderQueueType rq /*= RQT_Scene*/ )
 	{
-#ifdef _DEBUG
-		{
-			RenderQueue::iterator it;
-			RenderQueue::iterator it_end;
-
-			it = _backgroundRenderQueue.begin();
-			it_end = _backgroundRenderQueue.end();
-			for(; it != it_end; it++)
-			{
-				if(it->polygon == polygon)
-				{
-					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the background rendering list");
-					break;
-				}
-			}
-
-			it = _sceneRenderQueue.begin();
-			it_end = _sceneRenderQueue.end();
-			for(; it != it_end; it++)
-			{
-				if(it->polygon == polygon)
-				{
-					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the scene rendering list");
-					break;
-				}
-			}
-
-			it = _uiRenderQueue.begin();
-			it_end = _uiRenderQueue.end();		
-			for(; it != it_end; it++)
-			{
-				if(it->polygon == polygon)
-				{
-					PHYSKETCH_LOG_WARNING("Adding a polygon that is already in the ui rendering list");
-					break;
-				}
-			}	
-		}
-#endif // _DEBUG
+		PHYSKETCH_ASSERT(!polygon->_inRenderingQueue && "Polygon is already in the rendering queue");
 
 		RenderQueue::iterator it_begin;
 		RenderQueue::iterator it;
@@ -199,6 +161,7 @@ namespace PhySketch
 		glGenBuffers(1, &polygon->_elementBuffer);
 		updateOpenGLBuffers(polygon);
 		polygon->_hasNewVertices = false;
+		polygon->_inRenderingQueue = true;
 	}
 
 	void Renderer::addPolygon( Polygon *polygon, RenderQueueType rq /*= RQT_Scene*/ )
@@ -275,6 +238,8 @@ namespace PhySketch
 				break;
 			}
 		}
+
+		polygon->_inRenderingQueue = false;
 	}
 
 	Vector2 Renderer::getSceneViewAxisMin() const

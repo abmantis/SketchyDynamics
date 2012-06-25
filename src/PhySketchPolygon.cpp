@@ -13,7 +13,8 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*
 	_drawingMode	(dm), 
 	_vertexVariance	(vv),
 	_vertexBuffer	(0), 
-	_elementBuffer	(0)	
+	_elementBuffer	(0),
+	_inRenderingQueue(false)
 {
 }
 
@@ -30,7 +31,8 @@ Polygon::Polygon( const Polygon& poly ) :
 	_drawingMode	(poly._drawingMode),
 	_vertexVariance	(poly._vertexVariance),
 	_vertexBuffer	(0), 
-	_elementBuffer	(0)	
+	_elementBuffer	(0),
+	_inRenderingQueue(false)
 {
 }
 
