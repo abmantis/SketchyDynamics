@@ -3,6 +3,7 @@
 #pragma once
 
 #include "PhySketchDefinitions.h"
+#include "PhySketchVector2.h"
 
 class CIScribble;
 class CIStroke;
@@ -201,6 +202,21 @@ namespace PhySketch
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
 		InteractionStates _interactionState;
+
+		// struct to store mouse positions. the positions are updated when 
+		// needed depending on the current state and are not synchronized
+		struct
+		{
+			// positions in pixel space
+			Vector2 left;			
+			Vector2 middle;
+			Vector2 right;
+
+			// positions in scene space
+			Vector2 leftScene;
+			Vector2 middleScene;
+			Vector2 rightScene;
+		} _lastMousePositions;	
 	};
 }
 #endif // PhySketchInputListener_h__

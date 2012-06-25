@@ -59,15 +59,21 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 	case MB_Left:
 		{
 			_isLeftMouseDown = true;
+			_lastMousePositions.left		= position;
+			_lastMousePositions.leftScene	= _renderer->windowToScene(position);
 			
 			break;
 		}
 	case MB_Middle:
 		{
+			_lastMousePositions.middle		= position;
+			_lastMousePositions.middleScene	= _renderer->windowToScene(position);
 			break;
 		}
 	case MB_Right:
 		{
+			_lastMousePositions.right		= position;
+			_lastMousePositions.rightScene	= _renderer->windowToScene(position);
 			break;
 		}
 	}
@@ -136,6 +142,8 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;
 				case IS_MOVING:
+					_physicsMgr->SetActiveOnSelectedBodies(true);
+					_physicsMgr->SetAwakeOnSelectedBodies(true);
 					_interactionState = IS_SELECTING;
 					break;
 				case IS_TRANSFORMING:
@@ -168,44 +176,58 @@ void MainInputListener::mouseMoved( Vector2 position )
 		switch(_interactionState)
 		{
 		case IS_NONE:
-			startDrawingGesture(sceneMousePos);
-			_interactionState = IS_GESTURING;
-			break;
-		case IS_GESTURING:
-			_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
-			_gesturePolygon->addVertex(sceneMousePos);
-			break;
-		case IS_SELECTING:
 			{
-				b2AABB aabb;
-				Vector2 d(0.00001f, 0.00001f);
-				aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
-				aabb.upperBound = (sceneMousePos + d).tob2Vec2();
-				PhysicsQueryCallback callback(sceneMousePos, true);
-				_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-				if(!callback._bodies.empty())
-				{
-					PhysicsBody *pb = callback._bodies.back();
-					if(pb->isSelected())
-					{
-						_interactionState = IS_MOVING;
-						std::cout << "moving" << std::endl;
-					}
-					else
-					{
-						_interactionState = IS_TRANSFORMING;
-						std::cout << "transforming" << std::endl;
-					}
-				}
+				startDrawingGesture(sceneMousePos);
+				_interactionState = IS_GESTURING;
 				break;
 			}
-		case IS_MOVING:
-			break;
-		case IS_TRANSFORMING:
+		case IS_GESTURING:
+			{
+				_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
+				_gesturePolygon->addVertex(sceneMousePos);
+				break;
+			}
+		case IS_SELECTING:
+		{
+			b2AABB aabb;
+			Vector2 d(0.00001f, 0.00001f);
+			aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
+			aabb.upperBound = (sceneMousePos + d).tob2Vec2();
+			PhysicsQueryCallback callback(sceneMousePos, true);
+			_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+			if(!callback._bodies.empty())
+			{
+				// When in the IS_SELECTING state and the left button 
+				// is pressed and the mouse is moved we need to check if it 
+				// was moved inside or outside a selected object and change
+				// to the IS_MOVING or IS_TRANSFORMING states accordingly
+
+				PhysicsBody *pb = callback._bodies.back();
+				if(pb->isSelected())
+				{						
+					_interactionState = IS_MOVING;
+					_physicsMgr->SetAwakeOnSelectedBodies(false);
+					_physicsMgr->SetActiveOnSelectedBodies(false);
+				}
+				else
+				{						
+					_interactionState = IS_TRANSFORMING;
+				}
+			}
 			break;
 		}
-
-		
+		case IS_MOVING:
+		{
+			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
+			_lastMousePositions.leftScene = sceneMousePos;
+			_physicsMgr->TranslateSelectedBodies(translation);
+			break;
+		}
+		case IS_TRANSFORMING:
+		{
+			break;
+		}
+		}		
 	}
 }
 
