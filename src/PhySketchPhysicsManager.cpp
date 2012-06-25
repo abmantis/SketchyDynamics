@@ -251,5 +251,19 @@ void PhysicsManager::setAwakeOnSelectedBodies( bool flag )
 	}
 }
 
+PhySketch::Vector2 PhysicsManager::getSelectedBodiesCentroid() const
+{
+	Vector2 positionsSum = Vector2::ZERO;
+	uint bodyCount = 0;
+	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		positionsSum += Vector2((*it)->_body->GetPosition());
+		++bodyCount;
+	}
+
+	return positionsSum / (bodyCount*1.0f);
+}
+
 
 } // namespace PhySketch
