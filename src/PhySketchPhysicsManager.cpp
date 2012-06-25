@@ -219,9 +219,36 @@ void PhysicsManager::UnselectAllBodies()
 	
 }
 
+void PhysicsManager::TranslateSelectedBodies( Vector2 translation )
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		(*it)->translate(translation);
+	}
+}
+
 const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
 {
 	return _selectedBodies;
+}
+
+void PhysicsManager::SetActiveOnSelectedBodies( bool flag )
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		(*it)->_body->SetActive(flag);
+	}
+}
+
+void PhysicsManager::SetAwakeOnSelectedBodies( bool flag )
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		(*it)->_body->SetAwake(flag);
+	}
 }
 
 

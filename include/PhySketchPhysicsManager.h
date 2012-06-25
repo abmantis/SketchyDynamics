@@ -37,6 +37,11 @@ namespace PhySketch
 
 		virtual void UnselectAllBodies();
 
+		virtual void TranslateSelectedBodies(Vector2 translation);
+
+		virtual void SetActiveOnSelectedBodies(bool flag);
+		virtual void SetAwakeOnSelectedBodies(bool flag);
+
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 
 		/// <summary> Adds a joint. </summary>
