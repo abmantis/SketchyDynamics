@@ -19,7 +19,7 @@ namespace PhySketch
 		switch (_pjr)
 		{
 		case PJR_Circle:			
-			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO, 0.10f, 180);
+			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180);
 			_polygon->setPosition(positionA);
 			break;
 		case PJR_Cross:

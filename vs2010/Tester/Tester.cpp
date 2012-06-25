@@ -20,7 +20,7 @@ TestInputListener *_inputListener;
 int _tmain(int argc, _TCHAR* argv[])
 {	
 	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10));
-	_window = _core.createWindow("test", PhySketch::Vector2::ZERO, PhySketch::Vector2(1280, 720), false);
+	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
 		

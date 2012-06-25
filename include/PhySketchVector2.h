@@ -205,12 +205,13 @@ namespace PhySketch
 		float y;
 
 	public:
-		static const Vector2 ZERO;
+		static const Vector2 ZERO_XY;
 		static const Vector2 UNIT_X;
 		static const Vector2 UNIT_Y;
+		static const Vector2 UNIT_XY;
 		static const Vector2 NEGATIVE_UNIT_X;
 		static const Vector2 NEGATIVE_UNIT_Y;
-		static const Vector2 UNIT_SCALE;
+		static const Vector2 NEGATIVE_UNIT_XY;		
 	};
 } // namespace PhySketch
 
