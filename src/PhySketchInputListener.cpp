@@ -88,15 +88,13 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 				case IS_SELECTING:
 					{
 						bool onSelectableBody = false;
-						// Make a small box.
+						
 						b2AABB aabb;
 						Vector2 d(0.00001f, 0.00001f);
 						aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
 						aabb.upperBound = (sceneMousePos + d).tob2Vec2();
-						// Query the world for overlapping shapes.
 						PhysicsQueryCallback callback(sceneMousePos, true);
 						_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-						// do we intersect at least two bodies?
 						if(!callback._bodies.empty())
 						{
 							PhysicsBody *pb = callback._bodies.back();
@@ -120,8 +118,14 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 							_physicsMgr->UnselectAllBodies();
 							_interactionState = IS_NONE;
 						}
+						else if(_physicsMgr->getSelectedBodies().empty())
+						{
+							// no more selected bodies
+							_interactionState = IS_NONE;
+						}
 						else
 						{
+							// we have at least one body selected
 							_interactionState = IS_SELECTING;
 						}
 						
@@ -132,8 +136,10 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;
 				case IS_MOVING:
+					_interactionState = IS_SELECTING;
 					break;
 				case IS_TRANSFORMING:
+					_interactionState = IS_SELECTING;
 					break;
 				}
 
@@ -170,7 +176,29 @@ void MainInputListener::mouseMoved( Vector2 position )
 			_gesturePolygon->addVertex(sceneMousePos);
 			break;
 		case IS_SELECTING:
-			break;
+			{
+				b2AABB aabb;
+				Vector2 d(0.00001f, 0.00001f);
+				aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
+				aabb.upperBound = (sceneMousePos + d).tob2Vec2();
+				PhysicsQueryCallback callback(sceneMousePos, true);
+				_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+				if(!callback._bodies.empty())
+				{
+					PhysicsBody *pb = callback._bodies.back();
+					if(pb->isSelected())
+					{
+						_interactionState = IS_MOVING;
+						std::cout << "moving" << std::endl;
+					}
+					else
+					{
+						_interactionState = IS_TRANSFORMING;
+						std::cout << "transforming" << std::endl;
+					}
+				}
+				break;
+			}
 		case IS_MOVING:
 			break;
 		case IS_TRANSFORMING:
