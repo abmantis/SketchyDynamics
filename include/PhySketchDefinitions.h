@@ -31,6 +31,7 @@
 #include <set>
 #include <map>
 #include <sstream>
+#include <unordered_map>
 #include <GL/glew.h>
 
 //////////////////////////////////////////////////////////////////////////

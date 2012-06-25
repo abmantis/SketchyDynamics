@@ -3,7 +3,8 @@
 namespace PhySketch
 {
 
-Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*/, CoordinateSystem cs /*= CS_Scene*/) :
+Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*/, std::string name /*= ""*/, CoordinateSystem cs /*= CS_Scene*/) :
+	_name(name),	
 	_hasNewVertices	(false), 
 	_angle			(0.0f), 
 	_position		(Vector2::ZERO), 
@@ -18,7 +19,8 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*
 {
 }
 
-Polygon::Polygon( const Polygon& poly ) :
+Polygon::Polygon( const Polygon& poly, std::string name /*= ""*/ ) :
+	_name(name),
 	_vertices		(poly._vertices),
 	_vertexIndexes	(poly._vertexIndexes),
 	_material		(poly._material),
@@ -103,9 +105,9 @@ const Polygon::CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-Polygon* Polygon::CreateSquare( DrawingMode dm )
+Polygon* Polygon::CreateSquare( DrawingMode dm, std::string name /*= ""*/ )
 {
-	Polygon *poly = new Polygon(VV_Static, dm);
+	Polygon *poly = new Polygon(VV_Static, dm, name);
 	poly->addVertex(Vector2(-0.5f, -0.5f));
 	poly->addVertex(Vector2(-0.5f, 0.5f));
 	poly->addVertex(Vector2(0.5f, 0.5f));
@@ -114,9 +116,9 @@ Polygon* Polygon::CreateSquare( DrawingMode dm )
 	return poly;
 }
 
-Polygon* Polygon::CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments )
+Polygon* Polygon::CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments, std::string name /*= ""*/ )
 {
-	Polygon *poly = new Polygon(VV_Static, dm);
+	Polygon *poly = new Polygon(VV_Static, dm, name);
 
 	std::vector<Vector2> circleVec = GetCircleVertices(center, radius, num_segments);
 
@@ -213,6 +215,11 @@ const Material& Polygon::GetMaterial( void ) const
 void Polygon::SetMaterial( const Material& material )
 {
 	_material = material;
+}
+
+std::string Polygon::getName() const
+{
+	return _name;
 }
 
 

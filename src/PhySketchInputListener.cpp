@@ -244,7 +244,7 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 		delete _gesturePolygon;
 		_gesturePolygon = nullptr;
 	}
-	_gesturePolygon = new Polygon(Polygon::VV_Stream, Polygon::DM_LINE_STRIP, Polygon::CS_Scene);
+	_gesturePolygon = new Polygon(Polygon::VV_Stream, Polygon::DM_LINE_STRIP, "PS_gesture");
 	_gesturePolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }

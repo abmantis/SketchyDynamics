@@ -132,6 +132,14 @@ namespace PhySketch
 	{
 		PHYSKETCH_ASSERT(!polygon->_inRenderingQueue && "Polygon is already in the rendering queue");
 
+		if(!polygon->getName().empty())
+		{
+			std::pair<NamedPolygonMap::iterator, bool> insresult = 
+				_namedPolygonMap.insert(NamedPolygonMap::value_type(polygon->getName(), polygon));
+
+			PHYSKETCH_ASSERT(insresult.second && "A Polygon with the same name already exists in the renderer.");			
+		}
+
 		RenderQueue::iterator it_begin;
 		RenderQueue::iterator it;
 		RenderQueue *currentQueue = getRenderQueuePtr(rq);
@@ -237,6 +245,11 @@ namespace PhySketch
 				currentQueue->erase(it);
 				break;
 			}
+		}
+
+		if(!polygon->getName().empty())
+		{
+			_namedPolygonMap.erase(polygon->getName());
 		}
 
 		polygon->_inRenderingQueue = false;
@@ -383,6 +396,19 @@ namespace PhySketch
 			PHYSKETCH_LOG_ERROR("Invalid render queue");
 			return nullptr;
 		}
+	}
+
+	Polygon* Renderer::getPolygonByName( std::string name )
+	{
+		// Look up 
+		NamedPolygonMap::iterator i = _namedPolygonMap.find(name);
+
+		if (i == _namedPolygonMap.end())
+		{
+			return nullptr;
+		}
+
+		return i->second;
 	}
 
 }

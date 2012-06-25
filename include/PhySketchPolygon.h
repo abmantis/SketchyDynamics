@@ -43,9 +43,12 @@ namespace PhySketch
 			VV_Stream	// For polygons that change vertices almost every frame
 		};
 	public:
-		Polygon(VertexVariance vv = VV_Static , DrawingMode dm = DM_LINES, CoordinateSystem cs = CS_Scene);
-		Polygon(const Polygon& poly);
+		Polygon(VertexVariance vv = VV_Static , DrawingMode dm = DM_LINES, std::string name = "", CoordinateSystem cs = CS_Scene);
+		Polygon(const Polygon& poly, std::string name = "");
 		virtual ~Polygon();
+
+		virtual std::string getName() const;
+
 
 		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
 		//virtual void optimizeVertexList(); // TODO
@@ -126,7 +129,7 @@ namespace PhySketch
 
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <returns> The square. </returns>
-		static Polygon* CreateSquare(DrawingMode dm);
+		static Polygon* CreateSquare(DrawingMode dm, std::string name = "");
 
 		/// <summary> Creates a circle polygon. </summary>
 		/// <param name="cs"> The coordinate system </param>
@@ -134,7 +137,7 @@ namespace PhySketch
 		/// <param name="radius"> The radius. </param>
 		/// <param name="num_segments"> The number of segments that compose the circle.  </param>
 		/// <returns> The circle polygon. </returns>
-		static Polygon* CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments);
+		static Polygon* CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments, std::string name = "");
 		static std::vector<Vector2> GetCircleVertices(Vector2 center, float radius, int num_segments);
 
 	protected:
@@ -142,6 +145,7 @@ namespace PhySketch
 		
 
 	protected:
+		std::string _name;
 		std::vector<Vector2> _vertices;
 		std::vector<uint> _vertexIndexes;
 		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies

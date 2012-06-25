@@ -26,6 +26,7 @@ namespace PhySketch
 			ulong depth;
 		};
 		typedef std::list<RenderQueueParams> RenderQueue;
+		typedef std::unordered_map<std::string, Polygon*> NamedPolygonMap;
 
 	public:
 		Renderer();
@@ -46,6 +47,8 @@ namespace PhySketch
 		/// <param name="polygon"> The polygon to remove. </param>
 		/// <param name="rq"> Which render queue the polygon should be added to. </param>
 		virtual void removePolygon(Polygon *polygon, RenderQueueType rq = RQT_Scene);
+
+		virtual Polygon* getPolygonByName(std::string name);
 	
 		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
 		virtual void render();
@@ -81,6 +84,8 @@ namespace PhySketch
 		RenderQueue _backgroundRenderQueue;
 		RenderQueue _sceneRenderQueue;
 		RenderQueue _uiRenderQueue;
+		
+		NamedPolygonMap _namedPolygonMap;
 
 		Vector2 _sceneViewMin;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
 		Vector2 _sceneViewMax;		// The minimum limit of the current scene viewing region (only for CT_Scene polygons)
