@@ -38,7 +38,7 @@ PhysicsManager& PhysicsManager::getSingleton( void )
 	return *ms_Singleton;
 }
 
-void PhysicsManager::AddBody( PhysicsBody *b )
+void PhysicsManager::addBody( PhysicsBody *b )
 {
 	PHYSKETCH_ASSERT(b != nullptr && "PhysicsBody is NULL");
 
@@ -53,7 +53,7 @@ void PhysicsManager::AddBody( PhysicsBody *b )
 	b->_needsPolygonUpdate = false;
 }
 
-void PhysicsManager::RemoveBody( PhysicsBody *b )
+void PhysicsManager::removeBody( PhysicsBody *b )
 {
 	_physicsBodies.remove(b);
 	int polygonToRemoveCount = b->_oldPolygons.size();
@@ -68,7 +68,7 @@ void PhysicsManager::RemoveBody( PhysicsBody *b )
 	}
 }
 
-void PhysicsManager::AddJoint( PhysicsJoint *j )
+void PhysicsManager::addJoint( PhysicsJoint *j )
 {
 	PHYSKETCH_ASSERT(j != nullptr && "PhysicsJoint is NULL");
 
@@ -77,13 +77,13 @@ void PhysicsManager::AddJoint( PhysicsJoint *j )
 	_renderer->addPolygon(j->_polygon, j->_id, RQT_Scene);
 }
 
-void PhysicsManager::RemoveJoint( PhysicsJoint *j )
+void PhysicsManager::removeJoint( PhysicsJoint *j )
 {
 	_physicsJoints.remove(j);
 	_renderer->removePolygon(j->_polygon);
 }
 
-void PhysicsManager::Update( ulong advanceTime )
+void PhysicsManager::update( ulong advanceTime )
 {	
 
 	if(!_simulationPaused)
@@ -92,7 +92,7 @@ void PhysicsManager::Update( ulong advanceTime )
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Update bodies
+	// update bodies
 	{
 		PhysicsBody *pb = nullptr;
 		Polygon *poly = nullptr;
@@ -127,7 +127,7 @@ void PhysicsManager::Update( ulong advanceTime )
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// Update joints
+	// update joints
 	{
 		PhysicsJointList::iterator itEnd = _physicsJoints.end();
 		for (PhysicsJointList::iterator it = _physicsJoints.begin(); it != itEnd; ++it)
@@ -178,7 +178,7 @@ bool PhysicsManager::isSimulationPaused() const
 	return _simulationPaused;
 }
 
-void PhysicsManager::SelectBody( PhysicsBody *b )
+void PhysicsManager::selectBody( PhysicsBody *b )
 {
 	if(b->_selectable == true && b->_selected == false)
 	{
@@ -188,7 +188,7 @@ void PhysicsManager::SelectBody( PhysicsBody *b )
 	}
 }
 
-void PhysicsManager::UnselectBody( PhysicsBody *b )
+void PhysicsManager::unselectBody( PhysicsBody *b )
 {
 	if(b->_selected)
 	{
@@ -199,27 +199,27 @@ void PhysicsManager::UnselectBody( PhysicsBody *b )
 	}
 }
 
-void PhysicsManager::SetUnselectableBody( PhysicsBody *b )
+void PhysicsManager::setUnselectableBody( PhysicsBody *b )
 {
 	b->_selectable = false;
-	UnselectBody(b);
+	unselectBody(b);
 }
 
-void PhysicsManager::SetSelectableBody( PhysicsBody *b )
+void PhysicsManager::setSelectableBody( PhysicsBody *b )
 {
 	b->_selectable = true;
 }
 
-void PhysicsManager::UnselectAllBodies()
+void PhysicsManager::unselectAllBodies()
 {
 	while(!_selectedBodies.empty())
 	{
-		UnselectBody(_selectedBodies.front());
+		unselectBody(_selectedBodies.front());
 	}
 	
 }
 
-void PhysicsManager::TranslateSelectedBodies( Vector2 translation )
+void PhysicsManager::translateSelectedBodies( Vector2 translation )
 {
 	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
@@ -233,7 +233,7 @@ const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
 	return _selectedBodies;
 }
 
-void PhysicsManager::SetActiveOnSelectedBodies( bool flag )
+void PhysicsManager::setActiveOnSelectedBodies( bool flag )
 {
 	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
@@ -242,7 +242,7 @@ void PhysicsManager::SetActiveOnSelectedBodies( bool flag )
 	}
 }
 
-void PhysicsManager::SetAwakeOnSelectedBodies( bool flag )
+void PhysicsManager::setAwakeOnSelectedBodies( bool flag )
 {
 	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)

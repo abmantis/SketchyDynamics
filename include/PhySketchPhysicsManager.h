@@ -20,47 +20,47 @@ namespace PhySketch
 
 		/// <summary> Adds a physics body. </summary>
 		/// <remarks> This class saves this pointer! It should not be deleted
-		/// 	without calling RemoveBody first. </remarks>
+		/// 	without calling removeBody first. </remarks>
 		/// <param name="b"> The PhysicsBody to add. </param>
-		virtual void AddBody(PhysicsBody *b);
+		virtual void addBody(PhysicsBody *b);
 
 		/// <summary> Removes a body. </summary>
 		/// <remarks> This only removes the body from the bodies list and doesn't
 		/// 	destroys it. </remarks>
 		/// <param name="b"> The PhysicsBody to remove. </param>
-		virtual void RemoveBody(PhysicsBody *b);
+		virtual void removeBody(PhysicsBody *b);
 
-		virtual void SelectBody(PhysicsBody *b);
-		virtual void UnselectBody(PhysicsBody *b);
-		virtual void SetUnselectableBody(PhysicsBody *b);
-		virtual void SetSelectableBody(PhysicsBody *b);
+		virtual void selectBody(PhysicsBody *b);
+		virtual void unselectBody(PhysicsBody *b);
+		virtual void setUnselectableBody(PhysicsBody *b);
+		virtual void setSelectableBody(PhysicsBody *b);
 
-		virtual void UnselectAllBodies();
+		virtual void unselectAllBodies();
 
-		virtual void TranslateSelectedBodies(Vector2 translation);
+		virtual void translateSelectedBodies(Vector2 translation);
 
-		virtual void SetActiveOnSelectedBodies(bool flag);
-		virtual void SetAwakeOnSelectedBodies(bool flag);
+		virtual void setActiveOnSelectedBodies(bool flag);
+		virtual void setAwakeOnSelectedBodies(bool flag);
 
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 
 		/// <summary> Adds a joint. </summary>
 		/// <remarks> This class saves this pointer! It should not be deleted
-		/// 	without calling RemoveBody first. </remarks>
+		/// 	without calling removeBody first. </remarks>
 		/// <param name="j"> The PhysicsJoint to add. </param>
-		virtual void AddJoint(PhysicsJoint *j);
+		virtual void addJoint(PhysicsJoint *j);
 
 		/// <summary> Removes a joint. </summary>
 		/// <remarks> This only removes the joint from the bodies list and doesn't
 		/// 	destroys it. </remarks>
 		/// <param name="j"> The PhysicsJoint to remove. </param>
-		virtual void RemoveJoint(PhysicsJoint *j);
+		virtual void removeJoint(PhysicsJoint *j);
 
 		/// <summary> Updates the physics objects and advances in the simulation
 		/// 	by 'advanceTime' millisecconds. </summary>
 		/// <param name="advanceTime"> Millisecconds to advance in the
 		/// 	simulation. </param>
-		virtual void Update(ulong advanceTime);
+		virtual void update(ulong advanceTime);
 
 		/// <summary> Pause the physics simulation. </summary>		
 		virtual void pauseSimulation();

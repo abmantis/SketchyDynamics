@@ -109,11 +109,11 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 								onSelectableBody = true;
 								if(pb->isSelected())
 								{
-									_physicsMgr->UnselectBody(pb);
+									_physicsMgr->unselectBody(pb);
 								}
 								else
 								{
-									_physicsMgr->SelectBody(pb);									
+									_physicsMgr->selectBody(pb);									
 								}
 							}
 						}
@@ -121,7 +121,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 						if(!onSelectableBody)
 						{
 							// clicked outside a bodie, deselect!
-							_physicsMgr->UnselectAllBodies();
+							_physicsMgr->unselectAllBodies();
 							_interactionState = IS_NONE;
 						}
 						else if(_physicsMgr->getSelectedBodies().empty())
@@ -142,8 +142,8 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;
 				case IS_MOVING:
-					_physicsMgr->SetActiveOnSelectedBodies(true);
-					_physicsMgr->SetAwakeOnSelectedBodies(true);
+					_physicsMgr->setActiveOnSelectedBodies(true);
+					_physicsMgr->setAwakeOnSelectedBodies(true);
 					_interactionState = IS_SELECTING;
 					break;
 				case IS_TRANSFORMING:
@@ -206,8 +206,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 				if(pb->isSelected())
 				{						
 					_interactionState = IS_MOVING;
-					_physicsMgr->SetAwakeOnSelectedBodies(false);
-					_physicsMgr->SetActiveOnSelectedBodies(false);
+					_physicsMgr->setAwakeOnSelectedBodies(false);
+					_physicsMgr->setActiveOnSelectedBodies(false);
 				}
 				else
 				{						
@@ -220,7 +220,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 		{
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
-			_physicsMgr->TranslateSelectedBodies(translation);
+			_physicsMgr->translateSelectedBodies(translation);
 			break;
 		}
 		case IS_TRANSFORMING:
@@ -298,7 +298,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		body->CreateFixture(&fixtureDef);
 
 		PhysicsBody *pb = new PhysicsBody(body);
-		_physicsMgr->AddBody(pb);
+		_physicsMgr->addBody(pb);
 	} 
 	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
@@ -332,7 +332,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		body->CreateFixture(&fixtureDef);
 
 		PhysicsBody *pb = new PhysicsBody(body);
-		_physicsMgr->AddBody(pb);
+		_physicsMgr->addBody(pb);
 
 	} 
 	else if (gestureName.compare("Circle") == 0)
@@ -365,7 +365,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			body->CreateFixture(&fixtureDef);
 
 			PhysicsBody *pb = new PhysicsBody(body);
-			_physicsMgr->AddBody(pb);
+			_physicsMgr->addBody(pb);
 		}
 
 	} 
@@ -399,7 +399,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			body->CreateFixture(&fixtureDef);
 
 			PhysicsBody *pb = new PhysicsBody(body);
-			_physicsMgr->AddBody(pb);
+			_physicsMgr->addBody(pb);
 		}
 		
 	} 
@@ -447,7 +447,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
 
 			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Cross);
-			_physicsMgr->AddJoint(pj);
+			_physicsMgr->addJoint(pj);
 		}
 	} 
 
@@ -485,7 +485,7 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), position.tob2Vec2());
 			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
 			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Circle);
-			_physicsMgr->AddJoint(pj);
+			_physicsMgr->addJoint(pj);
 			return true;
 		}
 	}
