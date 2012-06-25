@@ -205,6 +205,14 @@ bool PhysicsBody::isSelectable() const
 	return _selectable;
 }
 
+PhySketch::Vector2 PhysicsBody::translate( Vector2 translation )
+{
+	Vector2 pos = _body->GetPosition();
+	pos += translation;
+	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle());
+	return pos;
+}
+
 
 }
 

@@ -28,12 +28,12 @@ namespace PhySketch
 		/// <param name="body"> The box2D body. </param>
 		virtual void setBox2DBody(b2Body* body);
 
-		virtual void reconstructPolygons();
-
 		virtual ulong getId() const { return _id; }
 
 		virtual bool isSelected() const;
 		virtual bool isSelectable() const;
+
+		virtual Vector2 translate(Vector2 translation);
 
 		// Access the FillMaterial
 		const Material& getFillMaterial(void) const;
@@ -47,7 +47,7 @@ namespace PhySketch
 		const Material& getSelectedMaterial(void) const;
 		void setSelectedMaterial(const Material& material);
 
-
+		virtual void reconstructPolygons();
 
 	protected:
 		bool _needsPolygonUpdate;
