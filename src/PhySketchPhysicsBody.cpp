@@ -196,6 +196,15 @@ PhySketch::Vector2 PhysicsBody::translate( Vector2 translation )
 	return pos;
 }
 
+void PhysicsBody::rotateAroundPoint( float angle, Vector2 rotationPoint )
+{
+	Vector2 pos = _body->GetPosition();
+	Vector2 rotatedDist = Vector2::Rotate(pos - rotationPoint, angle);
+	pos = rotationPoint + rotatedDist;
+
+ 	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle() + angle); 	
+}
+
 
 }
 

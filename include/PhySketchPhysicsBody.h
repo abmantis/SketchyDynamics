@@ -34,6 +34,7 @@ namespace PhySketch
 		virtual bool isSelectable() const;
 
 		virtual Vector2 translate(Vector2 translation);
+		virtual void rotateAroundPoint(float angle, Vector2 rotationPoint);
 
 		// Access the FillMaterial
 		const Material& getFillMaterial(void) const;
