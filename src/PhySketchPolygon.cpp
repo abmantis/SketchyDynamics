@@ -90,6 +90,14 @@ void Polygon::translate( const Vector2& amount )
 	computeTransformationMatrix();
 }
 
+
+void Polygon::rotate( const float& angle )
+{
+	_angle += angle;
+	computeTransformationMatrix();
+}
+
+
 void Polygon::addVertex( const Vector2& vertex )
 {
 	_vertexIndexes.push_back(_vertexIndexes.size());

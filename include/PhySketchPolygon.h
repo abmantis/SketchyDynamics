@@ -89,6 +89,10 @@ namespace PhySketch
 		/// <param name="amount"> The amount to translate the polygon. </param>
 		virtual void translate(const Vector2& amount);
 
+		/// <summary> Rotates by the given angle; </summary>
+		/// <param name="angle"> The amount of rotation to be applied, in radians. </param>
+		virtual void rotate(const float& angle);
+
 		/// <summary> Adds a new vertex . </summary>
 		/// <param name="vertex"> The vertex. </param>
 		virtual void addVertex(const Vector2& vertex);
