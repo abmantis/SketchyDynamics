@@ -228,12 +228,13 @@ void MainInputListener::mouseMoved( Vector2 position )
 					_physicsMgr->setActiveOnSelectedBodies(false);
 
 					// Show AABB of the selected bodies and AABB center indicator
-					AABB selectedAABB = _physicsMgr->getSelectedBodiesAABB();
-					_selectedBodiesAABBPoly->setPosition(selectedAABB.getCenter());
-					_selectedBodiesAABBPoly->setScale(selectedAABB.getSize());
+					_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
+					_selectedBodiesAABBPoly->setPosition(_selectedBodiesAABB.getCenter());
+					_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
+					_selectedBodiesAABBPoly->setAngle(0.0f);
 					_renderer->addPolygon(_selectedBodiesAABBPoly);
 					
-					_transformIndicator->setPosition(selectedAABB.getCenter());
+					_transformIndicator->setPosition(_selectedBodiesAABB.getCenter());
 					_renderer->addPolygon(_transformIndicator);
 
 					_interactionState = IS_TRANSFORMING;
@@ -250,6 +251,15 @@ void MainInputListener::mouseMoved( Vector2 position )
 		}
 		case IS_TRANSFORMING:
 		{
+			Vector2 selectedAABBCenter = _selectedBodiesAABB.getCenter();
+			float angle = (_lastMousePositions.leftScene - selectedAABBCenter)
+							.angleTo(sceneMousePos - selectedAABBCenter);
+			_physicsMgr->rotateSelectedBodies(angle, selectedAABBCenter);
+			 _selectedBodiesAABBPoly->rotate(angle);
+			 std::cout << angle << std::endl;
+
+			 _lastMousePositions.leftScene = sceneMousePos;
+
 			break;
 		}
 		}		

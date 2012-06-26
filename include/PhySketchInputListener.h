@@ -4,6 +4,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchVector2.h"
+#include "PhySketchAABB.h"
 
 class CIScribble;
 class CIStroke;
@@ -201,6 +202,7 @@ namespace PhySketch
 		Polygon *_gesturePolygon;
 		Polygon *_transformIndicator;
 		Polygon *_selectedBodiesAABBPoly;
+		AABB _selectedBodiesAABB;
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
 		InteractionStates _interactionState;
