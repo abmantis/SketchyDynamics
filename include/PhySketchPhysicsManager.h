@@ -42,7 +42,7 @@ namespace PhySketch
 		virtual void setActiveOnSelectedBodies(bool flag);
 		virtual void setAwakeOnSelectedBodies(bool flag);
 
-		virtual Vector2 getSelectedBodiesCentroid() const;
+		virtual AABB getSelectedBodiesAABB() const;
 
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 

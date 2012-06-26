@@ -244,18 +244,19 @@ void PhysicsManager::setAwakeOnSelectedBodies( bool flag )
 	}
 }
 
-PhySketch::Vector2 PhysicsManager::getSelectedBodiesCentroid() const
+PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 {
-	Vector2 positionsSum = Vector2::ZERO_XY;
-	uint bodyCount = 0;
+	AABB aabb;
+	AABB bodyAABB;
+
 	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		positionsSum += Vector2((*it)->_body->GetPosition());
-		++bodyCount;
+		bodyAABB = (*it)->_fillPolygon->getWorldAABB();
+		aabb.update(bodyAABB);
 	}
 
-	return positionsSum / (bodyCount*1.0f);
+	return aabb;
 }
 
 
