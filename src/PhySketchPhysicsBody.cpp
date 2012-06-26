@@ -39,11 +39,11 @@ PhysicsBody::PhysicsBody( b2Body *body )
 
 PhysicsBody::~PhysicsBody()
 {
-	for (size_t i = 0; i < _polygons.size(); i++)
-	{
-		delete _polygons[i]; 
-		_polygons[i] = nullptr;
-	}
+	delete _fillPolygon;
+	_fillPolygon = nullptr;
+	delete _linePolygon;
+	_linePolygon = nullptr;
+
 	for (size_t i = 0; i < _oldPolygons.size(); i++)
 	{
 		delete _oldPolygons[i]; 
@@ -53,12 +53,13 @@ PhysicsBody::~PhysicsBody()
 
 void PhysicsBody::update()
 {
-	size_t polyCount = _polygons.size();
-	for (size_t i = 0; i < polyCount; i++)
-	{
-		_polygons[i]->setPosition(_body->GetPosition());
-		_polygons[i]->setAngle(_body->GetAngle());
-	}
+	Vector2 pos = _body->GetPosition();
+	float angle = _body->GetAngle();
+
+	_fillPolygon->setPosition(pos);
+	_fillPolygon->setAngle(angle);
+	_linePolygon->setPosition(pos);
+	_linePolygon->setAngle(angle);	
 }
 
 b2Body* PhysicsBody::getBox2DBody()
@@ -80,23 +81,17 @@ void PhysicsBody::reconstructPolygons()
 
 	Vector2 position = _body->GetPosition();
 	float angle = _body->GetAngle();
-	Polygon *poly = nullptr;
-	Polygon *linePoly = nullptr;
-	Polygon *extraPoly = nullptr;
 	
 	// Remove old polygons	
-	for (size_t i = 0; i < _polygons.size(); i++)
-	{
-		_oldPolygons.push_back(_polygons[i]);
-	}
-	_polygons.clear();
-
+	_oldPolygons.push_back(_fillPolygon);
+	_oldPolygons.push_back(_linePolygon);
+	
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{		
-		poly = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
-		poly->setPosition(position);
-		poly->setAngle(angle);
-		poly->SetMaterial(_fillMaterial);
+		_fillPolygon = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
+		_fillPolygon->setPosition(position);
+		_fillPolygon->setAngle(angle);
+		_fillPolygon->SetMaterial(_fillMaterial);
 
 		switch (fixture->GetType())
 		{
@@ -108,22 +103,16 @@ void PhysicsBody::reconstructPolygons()
 				size_t nVerts = circleVec.size();
 				for (size_t i = 0; i < nVerts; i++)
 				{
-					poly->addVertex(circleVec[i]);
+					_fillPolygon->addVertex(circleVec[i]);
 				}
+				
+				_linePolygon = new Polygon(*_fillPolygon);
 
-				// Add circle inner cross
-				extraPoly = new Polygon(Polygon::VV_Static, Polygon::DM_LINES);
-				extraPoly->addVertex(Vector2(0.0f, 0.0f));
-				extraPoly->addVertex(Vector2(circle->m_radius, 0.0f));
-				extraPoly->addVertex(Vector2(-circle->m_radius, 0.0f));
-				extraPoly->addVertex(Vector2(0.0f, 0.0f));				
-
-				extraPoly->addVertex(Vector2(0.0f, 0.0f));
-				extraPoly->addVertex(Vector2(0.0f, circle->m_radius));
-				extraPoly->addVertex(Vector2(0.0f, -circle->m_radius));
-				extraPoly->addVertex(Vector2(0.0f, 0.0f));		
-
-				extraPoly->SetMaterial(_lineMaterial);
+				// Add circle's inner cross
+				_linePolygon->addVertex(Vector2(-circle->m_radius, circle->m_radius));
+				_linePolygon->addVertex(Vector2( circle->m_radius,-circle->m_radius));
+				_linePolygon->addVertex(Vector2(-circle->m_radius,-circle->m_radius));
+				_linePolygon->addVertex(Vector2( circle->m_radius, circle->m_radius));				
 			}
 			break;
 
@@ -134,8 +123,9 @@ void PhysicsBody::reconstructPolygons()
 
 				for (int32 i = 0; i < vertexCount; ++i)
 				{
-					poly->addVertex(box2dpoly->m_vertices[i]);
+					_fillPolygon->addVertex(box2dpoly->m_vertices[i]);
 				}
+				_linePolygon = new Polygon(*_fillPolygon);
 			}
 			break;
 			// 		case b2Shape::e_edge:
@@ -151,17 +141,8 @@ void PhysicsBody::reconstructPolygons()
 			break;
 		}
 
-		_polygons.push_back(poly);
-
-		linePoly = new Polygon(*poly);
-		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);		
-		linePoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
-		_polygons.push_back(linePoly);	
-
-		if(extraPoly)
-		{
-			_polygons.push_back(extraPoly);
-		}
+		_linePolygon->setDrawingMode(Polygon::DM_LINE_LOOP);
+		_linePolygon->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
 	}
 }
 

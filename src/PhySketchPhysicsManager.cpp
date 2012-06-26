@@ -45,11 +45,9 @@ void PhysicsManager::addBody( PhysicsBody *b )
 	b->_id = ++_physicsBodiesIDSeed;
 	_physicsBodies.push_back(b);
 
-	int polygonCount = b->_polygons.size();
-	for(int i = 0; i < polygonCount; i++)
-	{
-		_renderer->addPolygon(b->_polygons[i], b->_id);
-	}
+	_renderer->addPolygon(b->_fillPolygon, b->_id);
+	_renderer->addPolygon(b->_linePolygon, b->_id);
+	
 	b->_needsPolygonUpdate = false;
 }
 
@@ -61,11 +59,8 @@ void PhysicsManager::removeBody( PhysicsBody *b )
 	{
 		_renderer->removePolygon(b->_oldPolygons[i]);
 	}
-	polygonToRemoveCount = b->_polygons.size();
-	for(int i = 0; i < polygonToRemoveCount; i++)
-	{
-		_renderer->removePolygon(b->_polygons[i]);
-	}
+	_renderer->removePolygon(b->_fillPolygon);
+	_renderer->removePolygon(b->_linePolygon);
 }
 
 void PhysicsManager::addJoint( PhysicsJoint *j )
@@ -116,11 +111,9 @@ void PhysicsManager::update( ulong advanceTime )
 					poly = nullptr;
 				}
 
-				polygonCount = pb->_polygons.size();
-				for(i = 0; i < polygonCount; i++)
-				{
-					_renderer->addPolygon(pb->_polygons[i], pb->_id, RQT_Scene);
-				}
+				_renderer->addPolygon(pb->_fillPolygon, pb->_id);
+				_renderer->addPolygon(pb->_linePolygon, pb->_id);
+				
 			}
 			pb->update();
 		}	
@@ -183,7 +176,7 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 	if(b->_selectable == true && b->_selected == false)
 	{
 		b->_selected = true;
-		b->_polygons[1]->SetMaterial(b->_selectedMaterial);
+		b->_linePolygon->SetMaterial(b->_selectedMaterial);
 		_selectedBodies.push_back(b);
 	}
 }
@@ -193,7 +186,7 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 	if(b->_selected)
 	{
 		b->_selected = false;
-		b->_polygons[1]->SetMaterial(b->_lineMaterial);
+		b->_linePolygon->SetMaterial(b->_lineMaterial);
 
 		_selectedBodies.remove(b);
 	}
