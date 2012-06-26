@@ -114,7 +114,7 @@ namespace PhySketch
 
 		/// <summary> Gets the axis aligned bounding box in world space. </summary>
 		/// <returns> The axis aligned bounding box. </returns>
-		virtual AABB getWorldAABB() const;
+		virtual AABB getWorldAABB(bool bestFit) const;
 
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>

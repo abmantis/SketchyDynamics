@@ -191,10 +191,24 @@ const AABB& Polygon::getAABB() const
 }
 
 
-AABB Polygon::getWorldAABB() const
+PhySketch::AABB Polygon::getWorldAABB( bool bestFit ) const
 {
-	AABB aabb = _aabb;
+	AABB aabb;
+	if(bestFit)
+	{
+		// transform every point and compute the AABB
+		int nr_vertices = _vertices.size();
+		for (int i = 0; i < nr_vertices; i++)
+		{			
+			aabb.update(_transformMatrix * _vertices[i]);
+		}		
+	}
+	else
+	{
+		// only transform the AABB
+		aabb = _aabb;
 		aabb.transform(_transformMatrix);
+	}
 	return aabb;
 }
 
