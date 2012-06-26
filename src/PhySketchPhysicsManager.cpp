@@ -221,6 +221,15 @@ void PhysicsManager::translateSelectedBodies( Vector2 translation )
 	}
 }
 
+void PhysicsManager::rotateSelectedBodies( float angle, Vector2 rotationCenter )
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		(*it)->rotateAroundPoint(angle, rotationCenter);
+	}
+}
+
 const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
 {
 	return _selectedBodies;
@@ -258,6 +267,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 
 	return aabb;
 }
+
 
 
 } // namespace PhySketch
