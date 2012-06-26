@@ -175,6 +175,11 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 {
 	if(b->_selectable == true && b->_selected == false)
 	{
+		// Deactivate physics of the selected body 
+		b2Body *b2d_body = b->_body;		
+		b2d_body->SetAwake(false);
+		b2d_body->SetActive(false);	
+
 		b->_selected = true;
 		b->_linePolygon->SetMaterial(b->_selectedMaterial);
 		_selectedBodies.push_back(b);
@@ -185,6 +190,11 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 {
 	if(b->_selected)
 	{
+		// Re-activate physics of the selected body 
+		b2Body *b2d_body = b->_body;		
+		b2d_body->SetAwake(true);
+		b2d_body->SetActive(true);	
+
 		b->_selected = false;
 		b->_linePolygon->SetMaterial(b->_lineMaterial);
 

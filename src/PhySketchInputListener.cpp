@@ -103,12 +103,15 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 						aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
 						aabb.upperBound = (sceneMousePos + d).tob2Vec2();
 						PhysicsQueryCallback callback(sceneMousePos, true);
+						_physicsMgr->setActiveOnSelectedBodies(true);
 						_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+						_physicsMgr->setActiveOnSelectedBodies(false);
 						if(!callback._bodies.empty())
 						{
 							PhysicsBody *pb = callback._bodies.back();
 							if(pb->isSelectable())
 							{
+								b2Body *b2d_body = pb->getBox2DBody();
 								onSelectableBody = true;
 								if(pb->isSelected())
 								{
@@ -116,7 +119,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 								}
 								else
 								{
-									_physicsMgr->selectBody(pb);									
+									_physicsMgr->selectBody(pb);	
 								}
 							}
 						}
@@ -145,15 +148,9 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;
 				case IS_MOVING:
-					_physicsMgr->setActiveOnSelectedBodies(true);
-					_physicsMgr->setAwakeOnSelectedBodies(true);
 					_interactionState = IS_SELECTING;
 					break;
 				case IS_TRANSFORMING:
-					// Re-activate physics of the selected bodies 
-					_physicsMgr->setActiveOnSelectedBodies(true);
-					_physicsMgr->setAwakeOnSelectedBodies(true);
-
 					// Remove AABB and center indicator polygons
 					_renderer->removePolygon(_selectedBodiesAABBPoly);
 					_renderer->removePolygon(_transformIndicator);
@@ -204,7 +201,9 @@ void MainInputListener::mouseMoved( Vector2 position )
 			aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
 			aabb.upperBound = (sceneMousePos + d).tob2Vec2();
 			PhysicsQueryCallback callback(sceneMousePos, true);
+			_physicsMgr->setActiveOnSelectedBodies(true);
 			_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+			_physicsMgr->setActiveOnSelectedBodies(false);
 			if(!callback._bodies.empty())
 			{
 				// When in the IS_SELECTING state and the left button 
@@ -215,18 +214,10 @@ void MainInputListener::mouseMoved( Vector2 position )
 				PhysicsBody *pb = callback._bodies.back();
 				if(pb->isSelected())
 				{	
-					// Deactivate physics of the selected bodies 
-					_physicsMgr->setAwakeOnSelectedBodies(false);
-					_physicsMgr->setActiveOnSelectedBodies(false);
-
 					_interactionState = IS_MOVING;					
 				}
 				else
 				{
-					// Deactivate physics of the selected bodies 
-					_physicsMgr->setAwakeOnSelectedBodies(false);
-					_physicsMgr->setActiveOnSelectedBodies(false);
-
 					// Show AABB of the selected bodies and AABB center indicator
 					_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
 					_selectedBodiesAABBPoly->setPosition(_selectedBodiesAABB.getCenter());
@@ -256,7 +247,6 @@ void MainInputListener::mouseMoved( Vector2 position )
 							.angleTo(sceneMousePos - selectedAABBCenter);
 			_physicsMgr->rotateSelectedBodies(angle, selectedAABBCenter);
 			 _selectedBodiesAABBPoly->rotate(angle);
-			 std::cout << angle << std::endl;
 
 			 _lastMousePositions.leftScene = sceneMousePos;
 
