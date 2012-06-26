@@ -163,6 +163,25 @@ namespace PhySketch
 			return distance(*this, p);
 		}
 
+		/// <summary> Compute the angle from this vector to another. </summary>
+		/// <remarks> The angle can be positive or negative, depending on weather
+		/// 	this vector is ahead of the other or not. </remarks>
+		/// <param name="v"> The second  Vector2. </param>
+		/// <returns> The angle. </returns>
+		virtual float angleTo(const Vector2& v)
+		{
+			float angle = atan2(v.y, v.x) - atan2(y, x);
+			if(angle < -M_PI)
+			{
+				angle += 2.0f * M_PI;
+			}
+			else if (angle > M_PI)
+			{
+				angle -= 2.0f * M_PI;
+			}
+			return angle;
+		}
+
 		// Squared distance between two vectors
 		static float sqrdDistance(const Vector2& p1, const Vector2& p2)
 		{
@@ -176,6 +195,7 @@ namespace PhySketch
 		}
 
 		/// <summary> Compute the angle between two vectors. </summary>
+		/// <remarks> The angle is allways positive </remarks>
 		/// <param name="v1"> The first Vector2; </param>
 		/// <param name="v2"> The second  Vector2 </param>
 		/// <returns> The angle </returns>
