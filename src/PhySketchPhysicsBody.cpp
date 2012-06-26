@@ -108,11 +108,13 @@ void PhysicsBody::reconstructPolygons()
 				
 				_linePolygon = new Polygon(*_fillPolygon);
 
-				// Add circle's inner cross
-				_linePolygon->addVertex(Vector2(-circle->m_radius, circle->m_radius));
-				_linePolygon->addVertex(Vector2( circle->m_radius,-circle->m_radius));
-				_linePolygon->addVertex(Vector2(-circle->m_radius,-circle->m_radius));
-				_linePolygon->addVertex(Vector2( circle->m_radius, circle->m_radius));				
+				_linePolygon->addVertex(Vector2(circle->m_radius, 0.0f));
+				_linePolygon->addVertex(Vector2(-circle->m_radius, 0.0f));
+				_linePolygon->addVertex(Vector2(0.0f, 0.0f));
+				_linePolygon->addVertex(Vector2(0.0f, circle->m_radius));
+				_linePolygon->addVertex(Vector2(0.0f, -circle->m_radius));
+				_linePolygon->addVertex(Vector2(0.0f, 0.0f));				
+				
 			}
 			break;
 
