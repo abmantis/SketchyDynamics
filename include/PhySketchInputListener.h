@@ -199,6 +199,8 @@ namespace PhySketch
 		CIScribble *_caliScribble;
 		CIRecognizer *_caliRecognizer;
 		Polygon *_gesturePolygon;
+		Polygon *_transformIndicator;
+		Polygon *_selectedBodiesAABBPoly;
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
 		InteractionStates _interactionState;

@@ -28,6 +28,9 @@ MainInputListener::MainInputListener() : InputListener()
 	_gesturePolygon = nullptr;	
 	_caliRecognizer = new CIRecognizer();
 	_interactionState = IS_NONE;
+
+	_transformIndicator = Polygon::CreateCircle(Polygon::DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80, "PS_transform_indicator");
+	_selectedBodiesAABBPoly = Polygon::CreateSquare(Polygon::DM_LINE_LOOP, "PS_selected_bodies_aabb");
 }
 
 MainInputListener::~MainInputListener()
@@ -147,6 +150,13 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_SELECTING;
 					break;
 				case IS_TRANSFORMING:
+					// Re-activate physics of the selected bodies 
+					_physicsMgr->setActiveOnSelectedBodies(true);
+					_physicsMgr->setAwakeOnSelectedBodies(true);
+
+					// Remove AABB and center indicator polygons
+					_renderer->removePolygon(_selectedBodiesAABBPoly);
+					_renderer->removePolygon(_transformIndicator);
 					_interactionState = IS_SELECTING;
 					break;
 				}
@@ -204,13 +214,28 @@ void MainInputListener::mouseMoved( Vector2 position )
 
 				PhysicsBody *pb = callback._bodies.back();
 				if(pb->isSelected())
-				{						
-					_interactionState = IS_MOVING;
+				{	
+					// Deactivate physics of the selected bodies 
 					_physicsMgr->setAwakeOnSelectedBodies(false);
 					_physicsMgr->setActiveOnSelectedBodies(false);
+
+					_interactionState = IS_MOVING;					
 				}
 				else
-				{						
+				{
+					// Deactivate physics of the selected bodies 
+					_physicsMgr->setAwakeOnSelectedBodies(false);
+					_physicsMgr->setActiveOnSelectedBodies(false);
+
+					// Show AABB of the selected bodies and AABB center indicator
+					AABB selectedAABB = _physicsMgr->getSelectedBodiesAABB();
+					_selectedBodiesAABBPoly->setPosition(selectedAABB.getCenter());
+					_selectedBodiesAABBPoly->setScale(selectedAABB.getSize());
+					_renderer->addPolygon(_selectedBodiesAABBPoly);
+					
+					_transformIndicator->setPosition(selectedAABB.getCenter());
+					_renderer->addPolygon(_transformIndicator);
+
 					_interactionState = IS_TRANSFORMING;
 				}
 			}
