@@ -194,6 +194,17 @@ namespace PhySketch
 			return acos(val);
 		}
 
+		static Vector2 Vector2::Rotate(Vector2 p, float angle)
+		{ 
+			float xold,yold;
+			Vector2 retP;
+			xold=p.x;
+			yold=p.y;
+			retP.x= xold*cos(angle)-yold*sin(angle);
+			retP.y= xold*sin(angle)+yold*cos(angle);
+			return retP;
+		}
+
 		friend std::ostream& operator<<(std::ostream& out, const Vector2& vector)
 		{
 			out << "(" << vector.x << ", " << vector.y << ")";
