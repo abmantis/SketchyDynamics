@@ -252,7 +252,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		bodyAABB = (*it)->_fillPolygon->getWorldAABB();
+		bodyAABB = (*it)->_fillPolygon->getWorldAABB(true);
 		aabb.update(bodyAABB);
 	}
 
