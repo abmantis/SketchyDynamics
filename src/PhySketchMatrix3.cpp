@@ -117,7 +117,23 @@ namespace PhySketch
         }
         return kProd;
     }
-    //-----------------------------------------------------------------------
+
+	PhySketch::Vector2 Matrix3::operator*( Vector2 vec ) const
+	{
+		Vector2 ret;
+		float vx = vec.x;
+		float vy = vec.y;
+		
+		float invz = 1.0f / (_m[2][0]*vx + _m[2][1]*vy + _m[2][2]);
+
+		ret.x = (_m[0][0]*vx + _m[0][1]*vy + _m[0][2]) * invz;
+		ret.y = (_m[1][0]*vx + _m[1][1]*vy + _m[1][2]) * invz;
+		
+
+		return ret;
+	}
+
+	//-----------------------------------------------------------------------
     Matrix3 operator* (float fScalar, const Matrix3& rkMatrix)
     {
         Matrix3 kProd;

@@ -106,6 +106,9 @@ namespace PhySketch
         // scalar * matrix
         friend Matrix3 operator* (float fScalar, const Matrix3& rkMatrix);
 
+		// matrix * vector2 -> transform point
+		Vector2 operator* (Vector2 vec) const;
+
         // utilities
         Matrix3 Transpose () const;
         bool Inverse (Matrix3& rkInverse, float fTolerance = 1e-06) const;
