@@ -98,6 +98,28 @@ namespace PhySketch
 			}
 		}
 
+		/// <summary> Updates this AABB to accomodate the given AABB. </summary>
+		/// <param name="aabb"> The AABB to accomodate in this AABB. </param>
+		void update(AABB aabb)
+		{
+			if(!aabb._valid)
+				return;
+
+			update(aabb._min);
+			update(aabb._max);
+		}
+
+		void transform(Vector2 position, Vector2 scale)
+		{
+			if(_valid)
+			{
+				_min += position;
+				_max += position;
+				_min *= scale;
+				_max *= scale;
+			}
+		}
+
 	protected:
 		bool _valid;
 		Vector2 _min;
