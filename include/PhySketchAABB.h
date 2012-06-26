@@ -3,6 +3,7 @@
 #define PhySketchAABB_h__
 
 #include "PhySketchVector2.h"
+#include "PhySketchMatrix3.h"
 
 namespace PhySketch
 {
@@ -109,14 +110,59 @@ namespace PhySketch
 			update(aabb._max);
 		}
 
-		void transform(Vector2 position, Vector2 scale)
+		void transform(Vector2 position, Vector2 scale, float angle)
 		{
 			if(_valid)
 			{
-				_min += position;
-				_max += position;
-				_min *= scale;
-				_max *= scale;
+				Vector2 p1, p2, p3, p4;
+
+				//Compute and rotate the four vertices of this box
+				p1 = _min;
+				p2 = Vector2(_max.x, _min.y);
+				p3 = _max;
+				p4 = Vector2(_min.x, _max.y);
+				
+				p1 = Vector2::Rotate(p1, angle);
+				p2 = Vector2::Rotate(p2, angle);
+				p3 = Vector2::Rotate(p3, angle);
+				p4 = Vector2::Rotate(p4, angle);
+				
+				// invalidate this AABB and re-create it using the new rotated four vertices
+				invalidate();
+				update(p1);
+				update(p2);
+				update(p3);
+				update(p4);
+
+				// translate and scale the new AABB
+ 				_min = (_min + position) * scale;
+ 				_max = (_max + position) * scale;
+			}
+		}
+
+		void transform(Matrix3 mat)
+		{
+			if(_valid)
+			{
+				Vector2 p1, p2, p3, p4;
+
+				//Compute and transform the four vertices of this box
+				p1 = _min;
+				p2 = Vector2(_max.x, _min.y);
+				p3 = _max;
+				p4 = Vector2(_min.x, _max.y);
+
+				p1 = mat * p1;
+				p2 = mat * p2;
+				p3 = mat * p3;
+				p4 = mat * p4;
+
+				// invalidate this AABB and re-create it using the new transformed vertices
+				invalidate();
+				update(p1);
+				update(p2);
+				update(p3);
+				update(p4);
 			}
 		}
 

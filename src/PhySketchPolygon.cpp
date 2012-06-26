@@ -194,7 +194,7 @@ const AABB& Polygon::getAABB() const
 AABB Polygon::getWorldAABB() const
 {
 	AABB aabb = _aabb;
-	aabb.transform(_position, _scale);
+		aabb.transform(_transformMatrix);
 	return aabb;
 }
 
