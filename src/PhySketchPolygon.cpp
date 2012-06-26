@@ -190,6 +190,15 @@ const AABB& Polygon::getAABB() const
 	return _aabb;
 }
 
+
+AABB Polygon::getWorldAABB() const
+{
+	AABB aabb = _aabb;
+	aabb.transform(_position, _scale);
+	return aabb;
+}
+
+
 const Polygon::VertexVariance& Polygon::GetVertexVariance() const
 {
 	return(_vertexVariance);

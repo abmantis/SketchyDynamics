@@ -108,9 +108,13 @@ namespace PhySketch
 		/// <summary> Updates the axis aligned bounding box. </summary>
 		virtual void updateAABB();
 
-		/// <summary> Gets the axis aligned bounding box of this mesh. </summary>
+		/// <summary> Gets the axis aligned bounding box in local space. </summary>
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual const AABB& getAABB() const;
+
+		/// <summary> Gets the axis aligned bounding box in world space. </summary>
+		/// <returns> The axis aligned bounding box. </returns>
+		virtual AABB getWorldAABB() const;
 
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
