@@ -43,7 +43,7 @@ namespace PhySketch
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
             {
-                if ( m[iRow][iCol] != rkMatrix.m[iRow][iCol] )
+                if ( _m[iRow][iCol] != rkMatrix._m[iRow][iCol] )
                     return false;
             }
         }
@@ -58,8 +58,8 @@ namespace PhySketch
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
             {
-                kSum.m[iRow][iCol] = m[iRow][iCol] +
-                    rkMatrix.m[iRow][iCol];
+                kSum._m[iRow][iCol] = _m[iRow][iCol] +
+                    rkMatrix._m[iRow][iCol];
             }
         }
         return kSum;
@@ -72,8 +72,8 @@ namespace PhySketch
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
             {
-                kDiff.m[iRow][iCol] = m[iRow][iCol] -
-                    rkMatrix.m[iRow][iCol];
+                kDiff._m[iRow][iCol] = _m[iRow][iCol] -
+                    rkMatrix._m[iRow][iCol];
             }
         }
         return kDiff;
@@ -86,10 +86,10 @@ namespace PhySketch
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
             {
-                kProd.m[iRow][iCol] =
-                    m[iRow][0]*rkMatrix.m[0][iCol] +
-                    m[iRow][1]*rkMatrix.m[1][iCol] +
-                    m[iRow][2]*rkMatrix.m[2][iCol];
+                kProd._m[iRow][iCol] =
+                    _m[iRow][0]*rkMatrix._m[0][iCol] +
+                    _m[iRow][1]*rkMatrix._m[1][iCol] +
+                    _m[iRow][2]*rkMatrix._m[2][iCol];
             }
         }
         return kProd;
@@ -102,7 +102,7 @@ namespace PhySketch
         for (size_t iRow = 0; iRow < 3; iRow++)
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
-                kNeg[iRow][iCol] = -m[iRow][iCol];
+                kNeg[iRow][iCol] = -_m[iRow][iCol];
         }
         return kNeg;
     }
@@ -113,7 +113,7 @@ namespace PhySketch
         for (size_t iRow = 0; iRow < 3; iRow++)
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
-                kProd[iRow][iCol] = fScalar*m[iRow][iCol];
+                kProd[iRow][iCol] = fScalar*_m[iRow][iCol];
         }
         return kProd;
     }
@@ -124,7 +124,7 @@ namespace PhySketch
         for (size_t iRow = 0; iRow < 3; iRow++)
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
-                kProd[iRow][iCol] = fScalar*rkMatrix.m[iRow][iCol];
+                kProd[iRow][iCol] = fScalar*rkMatrix._m[iRow][iCol];
         }
         return kProd;
     }
@@ -135,7 +135,7 @@ namespace PhySketch
         for (size_t iRow = 0; iRow < 3; iRow++)
         {
             for (size_t iCol = 0; iCol < 3; iCol++)
-                kTranspose[iRow][iCol] = m[iCol][iRow];
+                kTranspose[iRow][iCol] = _m[iCol][iRow];
         }
         return kTranspose;
     }
@@ -145,29 +145,29 @@ namespace PhySketch
         // Invert a 3x3 using cofactors.  This is about 8 times faster than
         // the Numerical Recipes code which uses Gaussian elimination.
 
-        rkInverse[0][0] = m[1][1]*m[2][2] -
-            m[1][2]*m[2][1];
-        rkInverse[0][1] = m[0][2]*m[2][1] -
-            m[0][1]*m[2][2];
-        rkInverse[0][2] = m[0][1]*m[1][2] -
-            m[0][2]*m[1][1];
-        rkInverse[1][0] = m[1][2]*m[2][0] -
-            m[1][0]*m[2][2];
-        rkInverse[1][1] = m[0][0]*m[2][2] -
-            m[0][2]*m[2][0];
-        rkInverse[1][2] = m[0][2]*m[1][0] -
-            m[0][0]*m[1][2];
-        rkInverse[2][0] = m[1][0]*m[2][1] -
-            m[1][1]*m[2][0];
-        rkInverse[2][1] = m[0][1]*m[2][0] -
-            m[0][0]*m[2][1];
-        rkInverse[2][2] = m[0][0]*m[1][1] -
-            m[0][1]*m[1][0];
+        rkInverse[0][0] = _m[1][1]*_m[2][2] -
+            _m[1][2]*_m[2][1];
+        rkInverse[0][1] = _m[0][2]*_m[2][1] -
+            _m[0][1]*_m[2][2];
+        rkInverse[0][2] = _m[0][1]*_m[1][2] -
+            _m[0][2]*_m[1][1];
+        rkInverse[1][0] = _m[1][2]*_m[2][0] -
+            _m[1][0]*_m[2][2];
+        rkInverse[1][1] = _m[0][0]*_m[2][2] -
+            _m[0][2]*_m[2][0];
+        rkInverse[1][2] = _m[0][2]*_m[1][0] -
+            _m[0][0]*_m[1][2];
+        rkInverse[2][0] = _m[1][0]*_m[2][1] -
+            _m[1][1]*_m[2][0];
+        rkInverse[2][1] = _m[0][1]*_m[2][0] -
+            _m[0][0]*_m[2][1];
+        rkInverse[2][2] = _m[0][0]*_m[1][1] -
+            _m[0][1]*_m[1][0];
 
         float fDet =
-            m[0][0]*rkInverse[0][0] +
-            m[0][1]*rkInverse[1][0]+
-            m[0][2]*rkInverse[2][0];
+            _m[0][0]*rkInverse[0][0] +
+            _m[0][1]*rkInverse[1][0]+
+            _m[0][2]*rkInverse[2][0];
 
         if ( std::fabs(fDet) <= fTolerance )
             return false;
@@ -191,29 +191,29 @@ namespace PhySketch
     //-----------------------------------------------------------------------
     float Matrix3::Determinant () const
     {
-        float fCofactor00 = m[1][1]*m[2][2] -
-            m[1][2]*m[2][1];
-        float fCofactor10 = m[1][2]*m[2][0] -
-            m[1][0]*m[2][2];
-        float fCofactor20 = m[1][0]*m[2][1] -
-            m[1][1]*m[2][0];
+        float fCofactor00 = _m[1][1]*_m[2][2] -
+            _m[1][2]*_m[2][1];
+        float fCofactor10 = _m[1][2]*_m[2][0] -
+            _m[1][0]*_m[2][2];
+        float fCofactor20 = _m[1][0]*_m[2][1] -
+            _m[1][1]*_m[2][0];
 
         float fDet =
-            m[0][0]*fCofactor00 +
-            m[0][1]*fCofactor10 +
-            m[0][2]*fCofactor20;
+            _m[0][0]*fCofactor00 +
+            _m[0][1]*fCofactor10 +
+            _m[0][2]*fCofactor20;
 
         return fDet;
     }
 
 	float* Matrix3::operator[]( size_t iRow ) const
 	{
-		return (float*)m[iRow];
+		return (float*)_m[iRow];
 	}
 
 	Matrix3& Matrix3::operator=( const Matrix3& rkMatrix )
 	{
-		memcpy(m,rkMatrix.m,9*sizeof(float));
+		memcpy(_m,rkMatrix._m,9*sizeof(float));
 		return *this;
 	}
 
@@ -227,41 +227,41 @@ namespace PhySketch
 		float angCos = std::cos(angle);
 		float angSin = std::sin(angle);
 
-		m[0][0] = angCos;
-		m[0][1] =-angSin;
-		m[0][2] = 0;
-		m[1][0] = angSin; 
-		m[1][1] = angCos;
-		m[1][2] = 0;
-		m[2][0] = 0;
-		m[2][1] = 0;
-		m[2][2] = 1;
+		_m[0][0] = angCos;
+		_m[0][1] =-angSin;
+		_m[0][2] = 0;
+		_m[1][0] = angSin; 
+		_m[1][1] = angCos;
+		_m[1][2] = 0;
+		_m[2][0] = 0;
+		_m[2][1] = 0;
+		_m[2][2] = 1;
 	}
 
 	void Matrix3::fromPosition( Vector2 pos )
 	{
-		m[0][0] = 1;
-		m[0][1] = 0;
-		m[0][2] = pos.x;
-		m[1][0] = 0; 
-		m[1][1] = 1;
-		m[1][2] = pos.y;
-		m[2][0] = 0;
-		m[2][1] = 0;
-		m[2][2] = 1;
+		_m[0][0] = 1;
+		_m[0][1] = 0;
+		_m[0][2] = pos.x;
+		_m[1][0] = 0; 
+		_m[1][1] = 1;
+		_m[1][2] = pos.y;
+		_m[2][0] = 0;
+		_m[2][1] = 0;
+		_m[2][2] = 1;
 	}
 
 	void Matrix3::fromScale( Vector2 scale )
 	{
-		m[0][0] = scale.x;
-		m[0][1] = 0;
-		m[0][2] = 0;
-		m[1][0] = 0;
-		m[1][1] = scale.y;
-		m[1][2] = 0;
-		m[2][0] = 0;
-		m[2][1] = 0;
-		m[2][2] = 1;
+		_m[0][0] = scale.x;
+		_m[0][1] = 0;
+		_m[0][2] = 0;
+		_m[1][0] = 0;
+		_m[1][1] = scale.y;
+		_m[1][2] = 0;
+		_m[2][0] = 0;
+		_m[2][1] = 0;
+		_m[2][2] = 1;
 	}
 
 // 	void Matrix3::setAngle( float angle )
@@ -272,23 +272,23 @@ namespace PhySketch
 // 
 // 	void Matrix3::setPosition( Vector2 pos )
 // 	{
-// 		m[0][2] = pos.x;
-// 		m[1][2] = pos.y;
+// 		_m[0][2] = pos.x;
+// 		_m[1][2] = pos.y;
 // 	}
 // 
 // 	float Matrix3::getAngle() const
 // 	{
-// 		return std::atan(-m[0][1]/m[0][0]);
+// 		return std::atan(-_m[0][1]/_m[0][0]);
 // 	}
 // 
 // 	PhySketch::Vector2 Matrix3::getPosition() const
 // 	{
-// 		return Vector2(m[0][2], m[1][2]);
+// 		return Vector2(_m[0][2], _m[1][2]);
 // 	}
 // 
 // 	PhySketch::Vector2 Matrix3::getScale() const
 // 	{
-// 		return Vector2(sqrt(m[0][0]*m[0][0] + m[0][1]*m[0][1]), sqrt(m[1][0]*m[1][0] + m[1][1]*m[1][1]));
+// 		return Vector2(sqrt(_m[0][0]*_m[0][0] + _m[0][1]*_m[0][1]), sqrt(_m[1][0]*_m[1][0] + _m[1][1]*_m[1][1]));
 // 	}
 
 }

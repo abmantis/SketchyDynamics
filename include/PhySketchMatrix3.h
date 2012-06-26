@@ -44,40 +44,40 @@ namespace PhySketch
 		inline Matrix3 () {}
         inline explicit Matrix3 (const float arr[3][3])
 		{
-			memcpy(m,arr,9*sizeof(float));
+			memcpy(_m,arr,9*sizeof(float));
 		}
         inline Matrix3 (const Matrix3& rkMatrix)
 		{
-			memcpy(m,rkMatrix.m,9*sizeof(float));
+			memcpy(_m,rkMatrix._m,9*sizeof(float));
 		}
         Matrix3 (float fEntry00, float fEntry01, float fEntry02,
                     float fEntry10, float fEntry11, float fEntry12,
                     float fEntry20, float fEntry21, float fEntry22)
 		{
-			m[0][0] = fEntry00;
-			m[0][1] = fEntry01;
-			m[0][2] = fEntry02;
-			m[1][0] = fEntry10;
-			m[1][1] = fEntry11;
-			m[1][2] = fEntry12;
-			m[2][0] = fEntry20;
-			m[2][1] = fEntry21;
-			m[2][2] = fEntry22;
+			_m[0][0] = fEntry00;
+			_m[0][1] = fEntry01;
+			_m[0][2] = fEntry02;
+			_m[1][0] = fEntry10;
+			_m[1][1] = fEntry11;
+			_m[1][2] = fEntry12;
+			_m[2][0] = fEntry20;
+			_m[2][1] = fEntry21;
+			_m[2][2] = fEntry22;
 		}
 
 		/// <summary> Exchange the contents of this matrix with another. </summary>
 		/// <param name="other"> The other matrix. </param>
 		inline void swap(Matrix3& other)
 		{
-			std::swap(m[0][0], other.m[0][0]);
-			std::swap(m[0][1], other.m[0][1]);
-			std::swap(m[0][2], other.m[0][2]);
-			std::swap(m[1][0], other.m[1][0]);
-			std::swap(m[1][1], other.m[1][1]);
-			std::swap(m[1][2], other.m[1][2]);
-			std::swap(m[2][0], other.m[2][0]);
-			std::swap(m[2][1], other.m[2][1]);
-			std::swap(m[2][2], other.m[2][2]);
+			std::swap(_m[0][0], other._m[0][0]);
+			std::swap(_m[0][1], other._m[0][1]);
+			std::swap(_m[0][2], other._m[0][2]);
+			std::swap(_m[1][0], other._m[1][0]);
+			std::swap(_m[1][1], other._m[1][1]);
+			std::swap(_m[1][2], other._m[1][2]);
+			std::swap(_m[2][0], other._m[2][0]);
+			std::swap(_m[2][1], other._m[2][1]);
+			std::swap(_m[2][2], other._m[2][2]);
 		}
 
 		/// <summary>  member access, allows use of construct mat[r][c]. </summary>
@@ -142,7 +142,7 @@ namespace PhySketch
         static const Matrix3 IDENTITY;
 
     protected:
-		float m[3][3];
+		float _m[3][3];
 
     };
 	
