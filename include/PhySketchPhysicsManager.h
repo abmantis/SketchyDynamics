@@ -39,6 +39,7 @@ namespace PhySketch
 
 		virtual void translateSelectedBodies(Vector2 translation);
 		virtual void rotateSelectedBodies(float angle, Vector2 rotationCenter);
+		virtual void scaleSelectedBodies(Vector2 factor);
 
 		virtual void setActiveOnSelectedBodies(bool flag);
 		virtual void setAwakeOnSelectedBodies(bool flag);

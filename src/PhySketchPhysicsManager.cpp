@@ -240,6 +240,16 @@ void PhysicsManager::rotateSelectedBodies( float angle, Vector2 rotationCenter )
 	}
 }
 
+void PhysicsManager::scaleSelectedBodies( Vector2 factor )
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
+	{
+		(*it)->scale(factor);
+	}
+}
+
+
 const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
 {
 	return _selectedBodies;
