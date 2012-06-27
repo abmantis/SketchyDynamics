@@ -93,6 +93,10 @@ namespace PhySketch
 		/// <param name="angle"> The amount of rotation to be applied, in radians. </param>
 		virtual void rotate(const float& angle);
 
+		/// <summary> Scales the polygon </summary>
+		/// <param name="factor"> The scale factor. </param>
+		virtual void scale(const Vector2& factor);
+
 		/// <summary> Adds a new vertex . </summary>
 		/// <param name="vertex"> The vertex. </param>
 		virtual void addVertex(const Vector2& vertex);
