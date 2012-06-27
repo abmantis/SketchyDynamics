@@ -113,7 +113,7 @@ void CTesterMFCDlg::initPhySketch()
 	_stOpenGL.GetWindowRect(&stRect);
 	ScreenToClient(&stRect);
 
-	_window = _core.createWindow("test", PhySketch::Vector2::ZERO, 
+	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, 
 		PhySketch::Vector2((float)stRect.Width(), (float)stRect.Height()), false, &wndparams);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
@@ -140,9 +140,9 @@ void CTesterMFCDlg::initPhySketch()
 		backgroundPhyBody->setFillMaterial(backgroundMat);
 		backgroundPhyBody->setLineMaterial(backgroundMat);
 		backgroundPhyBody->reconstructPolygons();
-		_physicsMgr->AddBody(backgroundPhyBody);
+		_physicsMgr->addBody(backgroundPhyBody);
 	}
-
+	 
 
 	{
 		b2BodyDef bodyDef;
@@ -153,7 +153,7 @@ void CTesterMFCDlg::initPhySketch()
 		groundBox.SetAsBox(7.0f, 0.3f);
 		body->CreateFixture(&groundBox, 0.0f);
 		_phyGroundBody = new PhySketch::PhysicsBody(body);
-		_physicsMgr->AddBody(_phyGroundBody);
+		_physicsMgr->addBody(_phyGroundBody);
 	}
 
 }
