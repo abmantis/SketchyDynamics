@@ -205,6 +205,81 @@ void PhysicsBody::rotateAroundPoint( float angle, Vector2 rotationPoint )
  	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle() + angle); 	
 }
 
+void PhysicsBody::scale( Vector2 factor )
+{
+	b2Fixture* node_fixture = _body->GetFixtureList();
+	b2Fixture* fixture;
+	while(node_fixture) 
+	{
+		fixture = node_fixture;
+		node_fixture = node_fixture->GetNext();
+
+		b2FixtureDef newFixtureDef;		
+		newFixtureDef.density = fixture->GetDensity();
+		newFixtureDef.friction = fixture->GetFriction();
+		newFixtureDef.restitution = fixture->GetRestitution();	
+		newFixtureDef.filter = fixture->GetFilterData();
+		newFixtureDef.isSensor = fixture->IsSensor();
+		newFixtureDef.userData = fixture->GetUserData();
+
+		switch (fixture->GetType())
+		{
+		case b2Shape::e_circle:
+			{
+				b2CircleShape newCircleShape;
+				b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();				
+				newCircleShape.m_p = circle->m_p;
+				newCircleShape.m_radius = circle->m_radius * factor.x;
+				
+				newFixtureDef.shape = &newCircleShape;		
+
+				_body->DestroyFixture(fixture);
+				_body->CreateFixture(&newFixtureDef);
+			}
+			break;
+
+		case b2Shape::e_polygon:
+			{
+				b2PolygonShape newShape;
+				b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
+				int32 vertexCount = box2dpoly->m_count;
+
+				b2Vec2 *vertices = new b2Vec2[vertexCount];
+				for (int32 i = 0; i < vertexCount; ++i)
+				{
+					b2Vec2 pos = box2dpoly->m_vertices[i];
+					pos.x *= factor.x;
+					pos.y *= factor.y;
+
+					vertices[i] = pos;
+				}
+				newShape.Set(vertices, vertexCount);
+				delete[] vertices;
+				newFixtureDef.shape = &newShape;
+
+				_body->DestroyFixture(fixture);
+				_body->CreateFixture(&newFixtureDef);
+			}
+			break;
+			// 		case b2Shape::e_edge:
+			// 			{
+			// 			}
+			// 			break;
+			// 
+			// 		case b2Shape::e_chain:
+			// 			{
+			// 			}
+			// 			break;
+		default:
+			break;
+		}		
+	}
+	
+	_fillPolygon->scale(factor);
+	_linePolygon->scale(factor);
+	_body->ResetMassData();
+}
+
 
 }
 
