@@ -203,6 +203,7 @@ namespace PhySketch
 		Polygon *_transformIndicator;
 		Polygon *_selectedBodiesAABBPoly;
 		AABB _selectedBodiesAABB;
+		float _initialDistFromSelectedBodiesCenter;
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
 		InteractionStates _interactionState;

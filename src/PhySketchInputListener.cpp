@@ -217,15 +217,20 @@ void MainInputListener::mouseMoved( Vector2 position )
 					_interactionState = IS_MOVING;					
 				}
 				else
-				{
-					// Show AABB of the selected bodies and AABB center indicator
+				{					
 					_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
-					_selectedBodiesAABBPoly->setPosition(_selectedBodiesAABB.getCenter());
+					Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
+
+					_initialDistFromSelectedBodiesCenter = Vector2::distance(sceneMousePos, aabbCenter);
+					_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
+
+					// Show AABB of the selected bodies and AABB center indicator
+					_selectedBodiesAABBPoly->setPosition(aabbCenter);
 					_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
 					_selectedBodiesAABBPoly->setAngle(0.0f);
 					_renderer->addPolygon(_selectedBodiesAABBPoly);
 					
-					_transformIndicator->setPosition(_selectedBodiesAABB.getCenter());
+					_transformIndicator->setPosition(aabbCenter);
 					_renderer->addPolygon(_transformIndicator);
 
 					_interactionState = IS_TRANSFORMING;
@@ -243,10 +248,26 @@ void MainInputListener::mouseMoved( Vector2 position )
 		case IS_TRANSFORMING:
 		{
 			Vector2 selectedAABBCenter = _selectedBodiesAABB.getCenter();
-			float angle = (_lastMousePositions.leftScene - selectedAABBCenter)
-							.angleTo(sceneMousePos - selectedAABBCenter);
+			Vector2 prevMouseToCenterVec = _lastMousePositions.leftScene - selectedAABBCenter;
+			Vector2 currMouseToCenterVec = sceneMousePos - selectedAABBCenter;
+			float angle = prevMouseToCenterVec.angleTo(currMouseToCenterVec);
 			_physicsMgr->rotateSelectedBodies(angle, selectedAABBCenter);
-			 _selectedBodiesAABBPoly->rotate(angle);
+			_selectedBodiesAABBPoly->rotate(angle);
+			
+			float mouseMoveDist = Vector2::distance(_lastMousePositions.leftScene, sceneMousePos);
+			float scale = mouseMoveDist / _initialDistFromSelectedBodiesCenter;
+			if(prevMouseToCenterVec.sqrdLength() < currMouseToCenterVec.sqrdLength())
+			{
+				// if the mouse is moving away from the AABB center then we need to scale up
+				scale += 1.0f;
+			}
+			else
+			{
+				// if the mouse is moving closer to the AABB center then we need to scale down
+				scale = 1.0f - scale;
+			}
+			_physicsMgr->scaleSelectedBodies(Vector2(scale, scale));
+			//_selectedBodiesAABBPoly->setScale(dist);
 
 			 _lastMousePositions.leftScene = sceneMousePos;
 
