@@ -45,6 +45,25 @@ MainInputListener::~MainInputListener()
 
 	delete _caliRecognizer;
 	_caliRecognizer = nullptr;
+
+	if(_gesturePolygon)
+	{
+		_renderer->removePolygon(_gesturePolygon);
+		delete _gesturePolygon;
+		_gesturePolygon = nullptr;
+	}
+	if(_transformIndicator)
+	{
+		_renderer->removePolygon(_transformIndicator);
+		delete _transformIndicator;
+		_transformIndicator = nullptr;
+	}
+	if(_selectedBodiesAABBPoly)
+	{
+		_renderer->removePolygon(_selectedBodiesAABBPoly);
+		delete _selectedBodiesAABBPoly;
+		_selectedBodiesAABBPoly = nullptr;
+	}
 }
 
 void MainInputListener::keyDown( Key key )
