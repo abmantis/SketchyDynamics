@@ -35,7 +35,6 @@ protected:
 	PhySketch::Renderer *_renderer;
 	PhySketch::PhysicsManager *_physicsMgr;
 	TestInputListener *_inputListener;
-	PhySketch::PhysicsBody *_phyGroundBody;
 
 protected:
 	HICON m_hIcon;

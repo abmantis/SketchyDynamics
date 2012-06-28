@@ -9,13 +9,13 @@ namespace PhySketch
 {
 	class PhysicsBody 
 	{	
+	protected:
 		friend class PhysicsManager;
-	public:
-		PhysicsBody();
+	
 		PhysicsBody(b2Body *body);
 		virtual ~PhysicsBody();
-		
-
+	
+	public:	
 		/// <summary> Updates . </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
 		virtual void update();

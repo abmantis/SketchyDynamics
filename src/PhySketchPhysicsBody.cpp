@@ -9,33 +9,17 @@
 
 namespace PhySketch
 {
-
-PhysicsBody::PhysicsBody() :
-	_fillPolygon(nullptr), 
-	_linePolygon(nullptr),
-	_body(nullptr)
-{
-	_needsPolygonUpdate = false;
-	_selected = false;
-	_selectable = true;
-	
-	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
-	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
-	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
-}
-
 PhysicsBody::PhysicsBody( b2Body *body ) :
 	_fillPolygon(nullptr), 
 	_linePolygon(nullptr),
-	_body(body)
+	_body(body),
+	_needsPolygonUpdate(false),
+	_selected(false),
+	_selectable(true)
 {
 	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
 	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
-
-	_needsPolygonUpdate = false;
-	_selected = false;
-	_selectable = true;
 
 	_body->SetUserData(this);
 	reconstructPolygons();
@@ -53,8 +37,6 @@ PhysicsBody::~PhysicsBody()
 		delete _oldPolygons[i]; 
 		_oldPolygons[i] = nullptr;
 	}
-
-
 }
 
 void PhysicsBody::update()

@@ -18,17 +18,28 @@ namespace PhySketch
 		PhysicsManager(Vector2 gravity);
 		virtual ~PhysicsManager();
 
-		/// <summary> Adds a physics body. </summary>
-		/// <remarks> This class saves this pointer! It should not be deleted
-		/// 	without calling removeBody first. </remarks>
-		/// <param name="b"> The PhysicsBody to add. </param>
-		virtual void addBody(PhysicsBody *b);
+		/// <summary> Creates a new PhysicsBody. </summary>
+		/// <param name="b2d_body"> The Box2D body to be attached to this
+		/// 	PhysicsBody. </param>
+		/// <returns> The new PhysicsBody. </returns>
+		virtual PhysicsBody* createBody(b2Body *b2d_body);
 
-		/// <summary> Removes a body. </summary>
-		/// <remarks> This only removes the body from the bodies list and doesn't
-		/// 	destroys it. </remarks>
-		/// <param name="b"> The PhysicsBody to remove. </param>
-		virtual void removeBody(PhysicsBody *b);
+		/// <summary> Creates a new PhysicsBody and an attached b2Body based on a
+		/// 	b2BodyDef. </summary>
+		/// <remarks> In addition to creating a new PhysicsBody this method also
+		/// 	creates a new b2Body. DO NOT FORGET to call
+		/// 	PhysicsBody::reconstructPolygons() after adding fixtures to the
+		/// 	body. </remarks>
+		/// <param name="b2d_body_def"> The definition of the new Box2D body to
+		/// 	be attached to this PhysicsBody. </param>
+		/// <returns> The new PhysicsBody. </returns>
+		virtual PhysicsBody* createBody(const b2BodyDef& b2d_body_def);
+
+		/// <summary> Destroys a PhysicsBody. </summary>
+		/// <param name="b"> The PhysicsBody to add. </param>
+		/// <param name="destroyB2DBody"> True to also destroy the Box2D b2Body
+		/// 	attached to this object. </param>
+		virtual void destroyBody(PhysicsBody *b, bool destroyB2DBody = true);
 
 		virtual void selectBody(PhysicsBody *b);
 		virtual void unselectBody(PhysicsBody *b);

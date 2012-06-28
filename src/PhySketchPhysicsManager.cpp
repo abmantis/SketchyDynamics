@@ -38,22 +38,38 @@ PhysicsManager& PhysicsManager::getSingleton( void )
 	return *ms_Singleton;
 }
 
-void PhysicsManager::addBody( PhysicsBody *b )
+PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 {
-	PHYSKETCH_ASSERT(b != nullptr && "PhysicsBody is NULL");
+	// Create new PhysicsBody
+	PhySketch::PhysicsBody *b = new PhySketch::PhysicsBody(b2d_body);
 
+	// give the new body an ID and put it in the bodies' list
 	b->_id = ++_physicsBodiesIDSeed;
 	_physicsBodies.push_back(b);
 
-	_renderer->addPolygon(b->_fillPolygon, b->_id);
-	_renderer->addPolygon(b->_linePolygon, b->_id);
-	
+	// add the body's polygons to the renderer
+	if(b->_fillPolygon)
+		_renderer->addPolygon(b->_fillPolygon, b->_id);
+	if(b->_linePolygon)
+		_renderer->addPolygon(b->_linePolygon, b->_id);
+	// we already added the polygons to the render so put the flag to false
 	b->_needsPolygonUpdate = false;
+	
+	return b;
 }
 
-void PhysicsManager::removeBody( PhysicsBody *b )
+PhysicsBody* PhysicsManager::createBody( const b2BodyDef& b2d_body_def )
 {
+	b2Body *b2body = _physicsWorld->CreateBody(&b2d_body_def);
+	return createBody(b2body);
+}
+
+void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/ )
+{
+	// remove the body from the bodies' list
 	_physicsBodies.remove(b);
+
+	// remove all body's polygons from the renderer
 	int polygonToRemoveCount = b->_oldPolygons.size();
 	for(int i = 0; i < polygonToRemoveCount; i++)
 	{
@@ -61,6 +77,16 @@ void PhysicsManager::removeBody( PhysicsBody *b )
 	}
 	_renderer->removePolygon(b->_fillPolygon);
 	_renderer->removePolygon(b->_linePolygon);
+
+	if(destroyB2DBody)
+	{
+		// destroy the box2d body
+		_physicsWorld->DestroyBody(b->_body);
+	}
+
+	// delete the body and clear the pointer
+	delete b;
+	b = nullptr;
 }
 
 void PhysicsManager::addJoint( PhysicsJoint *j )
@@ -287,6 +313,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 
 	return aabb;
 }
+
 
 
 

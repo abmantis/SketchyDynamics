@@ -343,8 +343,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		PhysicsBody *pb = new PhysicsBody(body);
-		_physicsMgr->addBody(pb);
+		_physicsMgr->createBody(body);		
 	} 
 	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
@@ -377,9 +376,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		PhysicsBody *pb = new PhysicsBody(body);
-		_physicsMgr->addBody(pb);
-
+		_physicsMgr->createBody(body);
 	} 
 	else if (gestureName.compare("Circle") == 0)
 	{
@@ -410,8 +407,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			fixtureDef.restitution = 0.2f;	
 			body->CreateFixture(&fixtureDef);
 
-			PhysicsBody *pb = new PhysicsBody(body);
-			_physicsMgr->addBody(pb);
+			_physicsMgr->createBody(body);
 		}
 
 	} 
@@ -444,8 +440,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			fixtureDef.restitution = 0.2f;	
 			body->CreateFixture(&fixtureDef);
 
-			PhysicsBody *pb = new PhysicsBody(body);
-			_physicsMgr->addBody(pb);
+			_physicsMgr->createBody(body);
 		}
 		
 	} 

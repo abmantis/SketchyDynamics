@@ -127,7 +127,7 @@ void CTesterMFCDlg::initPhySketch()
 		backgroundMat.setColor(PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
 		b2BodyDef backgroundbodyDef;
 		backgroundbodyDef.position.Set(0.0f, 0.0f);
-		b2Body *backgroundBody = _physicsMgr->getPhysicsWorld()->CreateBody(&backgroundbodyDef);
+		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);
 
 		b2PolygonShape backgroundBox;
 		backgroundBox.SetAsBox((_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).x*0.5f,
@@ -135,15 +135,14 @@ void CTesterMFCDlg::initPhySketch()
 		b2FixtureDef backgroundFixtureDef;
 		backgroundFixtureDef.shape = &backgroundBox;
 		backgroundFixtureDef.filter.categoryBits = 0x0;
-		backgroundBody->CreateFixture(&backgroundFixtureDef);
-		PhySketch::PhysicsBody *backgroundPhyBody = new PhySketch::PhysicsBody(backgroundBody);
+		backgroundPhyBody->getBox2DBody()->CreateFixture(&backgroundFixtureDef);
 		backgroundPhyBody->setFillMaterial(backgroundMat);
 		backgroundPhyBody->setLineMaterial(backgroundMat);
-		backgroundPhyBody->reconstructPolygons();
-		_physicsMgr->addBody(backgroundPhyBody);
+		backgroundPhyBody->reconstructPolygons();		
+		_physicsMgr->setUnselectableBody(backgroundPhyBody);
 	}
-	 
-
+	
+		
 	{
 		b2BodyDef bodyDef;
 		bodyDef.position.Set(0.0f, -4.0f);
@@ -152,8 +151,8 @@ void CTesterMFCDlg::initPhySketch()
 		b2PolygonShape groundBox;
 		groundBox.SetAsBox(7.0f, 0.3f);
 		body->CreateFixture(&groundBox, 0.0f);
-		_phyGroundBody = new PhySketch::PhysicsBody(body);
-		_physicsMgr->addBody(_phyGroundBody);
+		PhySketch::PhysicsBody *phyBody = _physicsMgr->createBody(body);
+		_physicsMgr->setUnselectableBody(phyBody);
 	}
 
 }
@@ -213,8 +212,6 @@ BOOL CTesterMFCDlg::PreTranslateMessage(MSG* pMsg)
 
 CTesterMFCDlg::~CTesterMFCDlg()
 {
-	delete _phyGroundBody;
-	_phyGroundBody = nullptr;
 	delete _inputListener;
 	_inputListener = nullptr;
 }

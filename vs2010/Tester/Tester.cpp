@@ -33,7 +33,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		backgroundMat.setColor(PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
 		b2BodyDef backgroundbodyDef;
 		backgroundbodyDef.position.Set(0.0f, 0.0f);
-		b2Body *backgroundBody = _physicsMgr->getPhysicsWorld()->CreateBody(&backgroundbodyDef);
+		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);
 
 		b2PolygonShape backgroundBox;
 		backgroundBox.SetAsBox((_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).x*0.5f,
@@ -41,12 +41,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		b2FixtureDef backgroundFixtureDef;
 		backgroundFixtureDef.shape = &backgroundBox;
 		backgroundFixtureDef.filter.categoryBits = 0x0;
-		backgroundBody->CreateFixture(&backgroundFixtureDef);
-		PhySketch::PhysicsBody *backgroundPhyBody = new PhySketch::PhysicsBody(backgroundBody);
+		backgroundPhyBody->getBox2DBody()->CreateFixture(&backgroundFixtureDef);
 		backgroundPhyBody->setFillMaterial(backgroundMat);
 		backgroundPhyBody->setLineMaterial(backgroundMat);
-		backgroundPhyBody->reconstructPolygons();
-		_physicsMgr->addBody(backgroundPhyBody);
+		backgroundPhyBody->reconstructPolygons();		
 		_physicsMgr->setUnselectableBody(backgroundPhyBody);
 	}
 	
@@ -59,8 +57,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		b2PolygonShape groundBox;
 		groundBox.SetAsBox(7.0f, 0.3f);
 		body->CreateFixture(&groundBox, 0.0f);
-		PhySketch::PhysicsBody *phyBody = new PhySketch::PhysicsBody(body);
-		_physicsMgr->addBody(phyBody);
+		PhySketch::PhysicsBody *phyBody = _physicsMgr->createBody(body);
 		_physicsMgr->setUnselectableBody(phyBody);
 	}
 	
