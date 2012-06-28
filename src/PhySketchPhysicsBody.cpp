@@ -10,9 +10,11 @@
 namespace PhySketch
 {
 
-PhysicsBody::PhysicsBody()
+PhysicsBody::PhysicsBody() :
+	_fillPolygon(nullptr), 
+	_linePolygon(nullptr),
+	_body(nullptr)
 {
-	_body = nullptr;
 	_needsPolygonUpdate = false;
 	_selected = false;
 	_selectable = true;
@@ -22,8 +24,10 @@ PhysicsBody::PhysicsBody()
 	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
 }
 
-PhysicsBody::PhysicsBody( b2Body *body ) 
-	:_body(body)
+PhysicsBody::PhysicsBody( b2Body *body ) :
+	_fillPolygon(nullptr), 
+	_linePolygon(nullptr),
+	_body(body)
 {
 	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
@@ -49,6 +53,8 @@ PhysicsBody::~PhysicsBody()
 		delete _oldPolygons[i]; 
 		_oldPolygons[i] = nullptr;
 	}
+
+
 }
 
 void PhysicsBody::update()
@@ -83,8 +89,14 @@ void PhysicsBody::reconstructPolygons()
 	float angle = _body->GetAngle();
 	
 	// Remove old polygons	
-	_oldPolygons.push_back(_fillPolygon);
-	_oldPolygons.push_back(_linePolygon);
+	if(_fillPolygon != nullptr)
+	{
+		_oldPolygons.push_back(_fillPolygon);
+	}
+	if(_linePolygon != nullptr)
+	{
+		_oldPolygons.push_back(_linePolygon);
+	}
 	
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{		
