@@ -35,13 +35,13 @@ Core::~Core( void )
 	{
 		delete _renderer; _renderer = nullptr;
 	}
-	if(_logger != nullptr)
-	{
-		delete _logger; _logger = nullptr;
-	}
 	if (_physicsMgr != nullptr)
 	{
 		delete _physicsMgr; _physicsMgr = nullptr;
+	}
+	if(_logger != nullptr)
+	{
+		delete _logger; _logger = nullptr;
 	}
 }
 
