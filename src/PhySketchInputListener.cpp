@@ -506,8 +506,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), intersectPt.tob2Vec2());
 			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
 
-			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Cross);
-			_physicsMgr->addJoint(pj);
+			_physicsMgr->createJoint(j, PJR_Cross);
 		}
 	} 
 
@@ -544,8 +543,7 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 			b2RevoluteJointDef jd;
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), position.tob2Vec2());
 			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
-			PhysicsJoint *pj = new PhysicsJoint(j, PJR_Circle);
-			_physicsMgr->addJoint(pj);
+			_physicsMgr->createJoint(j, PJR_Circle);
 			return true;
 		}
 	}

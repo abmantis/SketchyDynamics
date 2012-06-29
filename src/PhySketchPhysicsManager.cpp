@@ -3,7 +3,6 @@
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsBody.h"
 #include "PhySketchPolygon.h"
-#include "PhySketchPhysicsJoint.h"
 
 namespace PhySketch
 {
@@ -89,19 +88,29 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 	b = nullptr;
 }
 
-void PhysicsManager::addJoint( PhysicsJoint *j )
+PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation )
 {
-	PHYSKETCH_ASSERT(j != nullptr && "PhysicsJoint is NULL");
+	// get the ID from the body A
+	ulong id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
 
-	j->_id = (static_cast<PhysicsBody*>(j->_joint->GetBodyA()->GetUserData()))->_id;
+	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), id);
 	_physicsJoints.push_back(j);
 	_renderer->addPolygon(j->_polygon, j->_id, RQT_Scene);
+	return j;
 }
 
-void PhysicsManager::removeJoint( PhysicsJoint *j )
+void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*= true*/ )
 {
-	_physicsJoints.remove(j);
-	_renderer->removePolygon(j->_polygon);
+	_physicsJoints.remove(joint);
+	_renderer->removePolygon(joint->_polygon);
+
+	if(destroyB2DJoint)
+	{
+		_physicsWorld->DestroyJoint(joint->_joint);
+	}
+
+	delete joint;
+	joint = nullptr;
 }
 
 void PhysicsManager::update( ulong advanceTime )
@@ -313,6 +322,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 
 	return aabb;
 }
+
 
 
 

@@ -4,6 +4,7 @@
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
 #include "Box2D/Box2D.h"
+#include "PhySketchPhysicsJoint.h"
 
 
 namespace PhySketch
@@ -59,17 +60,15 @@ namespace PhySketch
 
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 
-		/// <summary> Adds a joint. </summary>
-		/// <remarks> This class saves this pointer! It should not be deleted
-		/// 	without calling removeBody first. </remarks>
-		/// <param name="j"> The PhysicsJoint to add. </param>
-		virtual void addJoint(PhysicsJoint *j);
+		/// <summary> Creates a new PhysicsJoint. </summary>
+		/// <param name="b2d_joint"> The box2d joint. </param>
+		/// <param name="representation"> The visual representation. </param>
+		/// <returns> The new PhysicsJoint. </returns>
+		virtual PhysicsJoint* createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation);
 
-		/// <summary> Removes a joint. </summary>
-		/// <remarks> This only removes the joint from the bodies list and doesn't
-		/// 	destroys it. </remarks>
-		/// <param name="j"> The PhysicsJoint to remove. </param>
-		virtual void removeJoint(PhysicsJoint *j);
+		/// <summary> Destroys a PhysicsJoint. </summary>
+		/// <param name="joint"> The PhysicsJoint to be destroyed. </param>
+		virtual void destroyJoint(PhysicsJoint* joint, bool destroyB2DJoint = true);
 
 		/// <summary> Updates the physics objects and advances in the simulation
 		/// 	by 'advanceTime' millisecconds. </summary>

@@ -17,11 +17,13 @@ namespace PhySketch
 
 	class PhysicsJoint
 	{	
+	protected:
 		friend class PhysicsManager;
-	public:
-		PhysicsJoint(b2Joint *joint, PhysicsJointRepresentation representation, const Material& material = Material(Color(1.0f, 0.3f, 0.3f, 0.0f)));
-		virtual ~PhysicsJoint() {};
-		
+
+		PhysicsJoint(b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, ulong id);
+		virtual ~PhysicsJoint();
+	
+	public:				
 		virtual const b2Joint* getBox2DJoint() const;
 
 		// Access the material

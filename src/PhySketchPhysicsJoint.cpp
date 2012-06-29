@@ -5,8 +5,8 @@
 
 namespace PhySketch
 {
-	PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation representation, const Material& material ) :
-		_joint(joint), _pjr(representation), _material(material), _id(0)
+	PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, ulong id ) :
+		_joint(joint), _pjr(representation), _material(material), _id(id)
 	{
 		_joint->SetUserData(this);
 
@@ -39,7 +39,13 @@ namespace PhySketch
 
 		_polygon->SetMaterial(_material);
 	}
-		
+
+	PhysicsJoint::~PhysicsJoint()
+	{
+		delete _polygon;
+		_polygon = nullptr;
+	}
+
 	const Material& PhysicsJoint::getMaterial() const
 	{
 		return(_material);
