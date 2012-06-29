@@ -23,10 +23,6 @@ Core::Core( void )
 
 Core::~Core( void )
 {
-	if(_window != nullptr)
-	{
-		delete _window; _window = nullptr;
-	}
 	if(_mainInputListener != nullptr)
 	{
 		delete _mainInputListener; _mainInputListener = nullptr; 
@@ -38,6 +34,10 @@ Core::~Core( void )
 	if(_renderer != nullptr)
 	{
 		delete _renderer; _renderer = nullptr;
+	}
+	if(_window != nullptr)
+	{
+		delete _window; _window = nullptr;
 	}
 	if(_logger != nullptr)
 	{
