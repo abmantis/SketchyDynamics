@@ -31,13 +31,13 @@ Core::~Core( void )
 	{
 		delete _mainInputListener; _mainInputListener = nullptr; 
 	}
-	if(_renderer != nullptr)
-	{
-		delete _renderer; _renderer = nullptr;
-	}
 	if (_physicsMgr != nullptr)
 	{
 		delete _physicsMgr; _physicsMgr = nullptr;
+	}
+	if(_renderer != nullptr)
+	{
+		delete _renderer; _renderer = nullptr;
 	}
 	if(_logger != nullptr)
 	{
