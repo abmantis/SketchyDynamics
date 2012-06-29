@@ -319,6 +319,8 @@ void MainInputListener::stopDrawingGesture()
 	_caliScribble->addStroke(_caliStroke);
 	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
 	processGesture((*recGests)[0]);
+	delete recGests;
+	recGests = nullptr;
 
 	_renderer->removePolygon(_gesturePolygon);
 	delete _gesturePolygon;

@@ -19,6 +19,28 @@ PhysicsManager::PhysicsManager(Vector2 gravity) :
 
 PhysicsManager::~PhysicsManager()
 {
+	// destroy joints
+	PhysicsJointList::iterator jointsItEnd = _physicsJoints.end();
+	PhysicsJointList::iterator jointIt = _physicsJoints.begin();
+	PhysicsJoint *pj = nullptr;
+	while(jointIt != jointsItEnd)
+	{
+		pj = *jointIt;
+		++jointIt;
+		destroyJoint(pj, false);
+	}
+	
+	// destroy bodies
+	PhysicsBodyList::iterator bodiesItEnd = _physicsBodies.end();
+	PhysicsBodyList::iterator bodyIt = _physicsBodies.begin(); 
+	PhysicsBody *pb = nullptr;
+	while(bodyIt != bodiesItEnd)
+	{
+		pb = *bodyIt;
+		++bodyIt;
+		destroyBody(pb, false);
+	}
+
 	if(_physicsWorld != nullptr)
 	{
 		delete _physicsWorld; _physicsWorld = nullptr;
