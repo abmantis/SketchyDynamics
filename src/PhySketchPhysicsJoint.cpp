@@ -19,11 +19,11 @@ namespace PhySketch
 		switch (_pjr)
 		{
 		case PJR_Circle:			
-			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180);
+			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180, "PS_Joint" + _id);
 			_polygon->setPosition(positionA);
 			break;
 		case PJR_Cross:
-			_polygon = new Polygon(Polygon::VV_Static, Polygon::DM_LINES);
+			_polygon = new Polygon(Polygon::VV_Static, Polygon::DM_LINES, "PS_Joint" + _id);
 			_polygon->addVertex(Vector2(-0.10f,-0.10f));
 			_polygon->addVertex(Vector2( 0.10f, 0.10f));
 			_polygon->addVertex(Vector2(-0.10f, 0.10f));

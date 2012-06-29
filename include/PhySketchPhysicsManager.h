@@ -104,6 +104,7 @@ namespace PhySketch
 		PhysicsBodyList _selectedBodies;
 		PhysicsJointList _physicsJoints;
 		ulong _physicsBodiesIDSeed;
+		ulong _physicsJointsIDSeed;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
 		bool _simulationPaused;

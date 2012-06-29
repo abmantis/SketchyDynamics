@@ -9,13 +9,14 @@
 
 namespace PhySketch
 {
-PhysicsBody::PhysicsBody( b2Body *body ) :
+PhysicsBody::PhysicsBody( b2Body *body, uint id ) :
 	_fillPolygon(nullptr), 
 	_linePolygon(nullptr),
 	_body(body),
 	_needsPolygonUpdate(false),
 	_selected(false),
-	_selectable(true)
+	_selectable(true),
+	_id(id)
 {
 	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
 	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
@@ -69,6 +70,8 @@ void PhysicsBody::reconstructPolygons()
 
 	Vector2 position = _body->GetPosition();
 	float angle = _body->GetAngle();
+
+	std::string polyNamePrefix = "PS_Body" + _id;
 	
 	// Remove old polygons	
 	if(_fillPolygon != nullptr)
@@ -82,7 +85,7 @@ void PhysicsBody::reconstructPolygons()
 	
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{		
-		_fillPolygon = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN);
+		_fillPolygon = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN, polyNamePrefix + "fill");
 		_fillPolygon->setPosition(position);
 		_fillPolygon->setAngle(angle);
 		_fillPolygon->SetMaterial(_fillMaterial);
@@ -100,7 +103,7 @@ void PhysicsBody::reconstructPolygons()
 					_fillPolygon->addVertex(circleVec[i]);
 				}
 				
-				_linePolygon = new Polygon(*_fillPolygon);
+				_linePolygon = new Polygon(*_fillPolygon, polyNamePrefix + "line");
 
 				_linePolygon->addVertex(Vector2(circle->m_radius, 0.0f));
 				_linePolygon->addVertex(Vector2(-circle->m_radius, 0.0f));
@@ -121,7 +124,7 @@ void PhysicsBody::reconstructPolygons()
 				{
 					_fillPolygon->addVertex(box2dpoly->m_vertices[i]);
 				}
-				_linePolygon = new Polygon(*_fillPolygon);
+				_linePolygon = new Polygon(*_fillPolygon, polyNamePrefix + "line");
 			}
 			break;
 			// 		case b2Shape::e_edge:

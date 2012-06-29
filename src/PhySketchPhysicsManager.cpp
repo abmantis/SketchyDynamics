@@ -11,6 +11,7 @@ template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
 PhysicsManager::PhysicsManager(Vector2 gravity) :
 	_physicsBodiesIDSeed(0),
+	_physicsJointsIDSeed(0),
 	_simulationPaused	(false)
 {
 	_renderer = Renderer::getSingletonPtr();
@@ -62,10 +63,8 @@ PhysicsManager& PhysicsManager::getSingleton( void )
 PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 {
 	// Create new PhysicsBody
-	PhySketch::PhysicsBody *b = new PhySketch::PhysicsBody(b2d_body);
+	PhySketch::PhysicsBody *b = new PhySketch::PhysicsBody(b2d_body, ++_physicsBodiesIDSeed);
 
-	// give the new body an ID and put it in the bodies' list
-	b->_id = ++_physicsBodiesIDSeed;
 	_physicsBodies.push_back(b);
 
 	// add the body's polygons to the renderer
@@ -112,12 +111,12 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 
 PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation )
 {
-	// get the ID from the body A
-	ulong id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
-
-	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), id);
+	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), ++_physicsJointsIDSeed);
 	_physicsJoints.push_back(j);
-	_renderer->addPolygon(j->_polygon, j->_id, RQT_Scene);
+
+	// get the ID from the body A
+	ulong bodyid = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
+	_renderer->addPolygon(j->_polygon, bodyid, RQT_Scene);
 	return j;
 }
 

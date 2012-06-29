@@ -12,7 +12,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 	
-		PhysicsBody(b2Body *body);
+		PhysicsBody(b2Body *body, uint id);
 		virtual ~PhysicsBody();
 	
 	public:	
