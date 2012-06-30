@@ -2,6 +2,7 @@
 #include "PhySketchPolygon.h"
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 #include "Box2D/Dynamics/b2Body.h"
+#include "PhySketchUtils.h"
 
 namespace PhySketch
 {
@@ -9,6 +10,8 @@ namespace PhySketch
 		_joint(joint), _pjr(representation), _material(material), _id(id)
 	{
 		_joint->SetUserData(this);
+
+		std::string jointPolyName = "PS_Joint" + toString(_id);
 
 		//////////////////////////////////////////////////////////////////////////
 		// Construct polygons
@@ -19,11 +22,11 @@ namespace PhySketch
 		switch (_pjr)
 		{
 		case PJR_Circle:			
-			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180, "PS_Joint" + _id);
+			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180, jointPolyName);
 			_polygon->setPosition(positionA);
 			break;
 		case PJR_Cross:
-			_polygon = new Polygon(Polygon::VV_Static, Polygon::DM_LINES, "PS_Joint" + _id);
+			_polygon = new Polygon(Polygon::VV_Static, Polygon::DM_LINES, jointPolyName);
 			_polygon->addVertex(Vector2(-0.10f,-0.10f));
 			_polygon->addVertex(Vector2( 0.10f, 0.10f));
 			_polygon->addVertex(Vector2(-0.10f, 0.10f));

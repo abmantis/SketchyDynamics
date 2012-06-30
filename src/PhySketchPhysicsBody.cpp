@@ -5,6 +5,7 @@
 #include "Box2D\Collision\Shapes\b2CircleShape.h"
 #include "Box2D\Collision\Shapes\b2PolygonShape.h"
 #include "PhySketchRenderer.h"
+#include "PhySketchUtils.h"
 
 
 namespace PhySketch
@@ -71,7 +72,7 @@ void PhysicsBody::reconstructPolygons()
 	Vector2 position = _body->GetPosition();
 	float angle = _body->GetAngle();
 
-	std::string polyNamePrefix = "PS_Body" + _id;
+	std::string polyNamePrefix = "PS_Body" + toString(_id);
 	
 	// Remove old polygons	
 	if(_fillPolygon != nullptr)
