@@ -18,7 +18,7 @@ namespace PhySketch
 		Logger *l = Logger::getSingletonPtr();
 		if(l)
 		{
-			l->writeError(std::string(file) + ":" + toString(line), std::string("Assertion failed: ") + expr);
+			l->writeError(std::string(file) + ":" + toString((ulong)line), std::string("Assertion failed: ") + expr);
 		}
 		else
 		{

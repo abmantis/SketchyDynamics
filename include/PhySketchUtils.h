@@ -13,7 +13,7 @@ namespace PhySketch
 		return stream.str();
 	}
 	
-	static std::string toString(unsigned int i)
+	static std::string toString(unsigned long i)
 	{
 		std::ostringstream stream;
 		stream << i;
