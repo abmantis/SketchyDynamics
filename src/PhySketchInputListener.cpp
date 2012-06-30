@@ -195,7 +195,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 }
 
 void MainInputListener::mouseMoved( Vector2 position )
-{
+{	
 	Vector2 sceneMousePos = _renderer->windowToScene(position);
 	if(_isLeftMouseDown)
 	{
@@ -203,18 +203,25 @@ void MainInputListener::mouseMoved( Vector2 position )
 		{
 		case IS_NONE:
 			{
+				if(position.distanceTo(_lastMousePositions.left) < 3)
+				{
+					// Make sure the mouse moved more than 3 pixels to remove jitter 
+					break;
+				}
+				
 				startDrawingGesture(sceneMousePos);
 				_interactionState = IS_GESTURING;
+				
 				break;
-			}
-		case IS_GESTURING:
-			{
-				_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
-				_gesturePolygon->addVertex(sceneMousePos);
-				break;
-			}
+			}		
 		case IS_SELECTING:
 		{
+			if(position.distanceTo(_lastMousePositions.left) < 3)
+			{
+				// Make sure the mouse moved more than 3 pixels to remove jitter
+				break;
+			}
+
 			b2AABB aabb;
 			Vector2 d(0.00001f, 0.00001f);
 			aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
@@ -255,6 +262,12 @@ void MainInputListener::mouseMoved( Vector2 position )
 					_interactionState = IS_TRANSFORMING;
 				}
 			}
+			break;
+		}
+		case IS_GESTURING:
+		{
+			_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
+			_gesturePolygon->addVertex(sceneMousePos);
 			break;
 		}
 		case IS_MOVING:
