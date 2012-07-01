@@ -261,16 +261,16 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		b2Body *b2d_body = b->_body;		
 		b2d_body->SetAwake(false);
 		b2d_body->SetActive(false);	
-
-		b->_selected = true;
-
+		
 		uint linePolyCount = b->_linePolygons.size();
 		for (uint i = 0; i < linePolyCount; i++)
 		{
 			b->_linePolygons[i]->SetMaterial(b->_selectedMaterial);
 		}
 
+		b->_selected = true;
 		_selectedBodies.push_back(b);
+		selectConnectedBodiesRecurse(b);
 	}
 }
 
@@ -281,9 +281,7 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 		// Re-activate physics of the selected body 
 		b2Body *b2d_body = b->_body;		
 		b2d_body->SetAwake(true);
-		b2d_body->SetActive(true);	
-
-		b->_selected = false;
+		b2d_body->SetActive(true);			
 
 		uint linePolyCount = b->_linePolygons.size();
 		for (uint i = 0; i < linePolyCount; i++)
@@ -291,7 +289,37 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 			b->_linePolygons[i]->SetMaterial(b->_lineMaterial);
 		}
 
+		b->_selected = false;
 		_selectedBodies.remove(b);
+		unselectConnectedBodiesRecurse(b);
+	}
+}
+
+void PhysicsManager::selectConnectedBodiesRecurse( PhysicsBody *b )
+{	
+	PhysicsBody *otherPhysicsBody = nullptr;
+	for (b2JointEdge* jointEdge = b->_body->GetJointList(); jointEdge != NULL; jointEdge = jointEdge->next)
+	{
+		otherPhysicsBody = static_cast<PhysicsBody*>(jointEdge->other->GetUserData());
+		if(otherPhysicsBody->_selected == false)
+		{
+			selectBody(otherPhysicsBody);
+			selectConnectedBodiesRecurse(otherPhysicsBody);
+		}
+	}
+}
+
+void PhysicsManager::unselectConnectedBodiesRecurse( PhysicsBody *b )
+{	
+	PhysicsBody *otherPhysicsBody = nullptr;
+	for (b2JointEdge* jointEdge = b->_body->GetJointList(); jointEdge != NULL; jointEdge = jointEdge->next)
+	{
+		otherPhysicsBody = static_cast<PhysicsBody*>(jointEdge->other->GetUserData());
+		if(otherPhysicsBody->_selected == true)
+		{
+			unselectBody(otherPhysicsBody);
+			unselectConnectedBodiesRecurse(otherPhysicsBody);
+		}
 	}
 }
 

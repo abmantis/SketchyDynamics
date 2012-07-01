@@ -98,6 +98,9 @@ namespace PhySketch
 
 	protected:
 		virtual void stepPhysics(ulong ellapsedMillisec);
+
+		virtual void selectConnectedBodiesRecurse(PhysicsBody *b);
+		virtual void unselectConnectedBodiesRecurse(PhysicsBody *b);
 		
 	protected:
 		PhysicsBodyList _physicsBodies;
