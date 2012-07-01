@@ -160,6 +160,12 @@ CIPolygon *CIEllipse::calcEllipse(CIPoint *points)
 
     np--;
 
+	if(_eliPoints != NULL)
+	{
+		delete _eliPoints;
+		_eliPoints = NULL;
+	}
+
     _eliPoints = rotate(pts, theta, pt, a, b, np);
     return _eliPoints;
 }
