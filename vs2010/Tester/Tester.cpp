@@ -3,6 +3,16 @@
 
 #include "stdafx.h"
 
+// Memory leak debug
+#ifndef NDEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_CLIENTBLOCK   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_CLIENTBLOCK
+#endif
+
+
 #include "PhySketchCore.h"
 #include "PhySketchApplicationWindow.h"
 #include "TestInputListener.h"
@@ -19,6 +29,8 @@ TestInputListener *_inputListener;
 
 int _tmain(int argc, _TCHAR* argv[])
 {	
+	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
+
 	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10));
 	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
