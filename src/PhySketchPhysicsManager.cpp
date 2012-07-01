@@ -68,10 +68,18 @@ PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 	_physicsBodies.push_back(b);
 
 	// add the body's polygons to the renderer
-	if(b->_fillPolygon)
-		_renderer->addPolygon(b->_fillPolygon, b->_id);
-	if(b->_linePolygon)
-		_renderer->addPolygon(b->_linePolygon, b->_id);
+	size_t i;
+	uint fillPolyCount = b->_fillPolygons.size();
+	for (i = 0; i < fillPolyCount; ++i)
+	{
+		_renderer->addPolygon(b->_fillPolygons[i], b->_id);
+	}
+	uint linePolyCount = b->_linePolygons.size();
+	for (i = 0; i < linePolyCount; i++)
+	{
+		_renderer->addPolygon(b->_linePolygons[i], b->_id);
+	}
+	
 	// we already added the polygons to the render so put the flag to false
 	b->_needsPolygonUpdate = false;
 	
@@ -90,13 +98,22 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 	_physicsBodies.remove(b);
 
 	// remove all body's polygons from the renderer
-	int polygonToRemoveCount = b->_oldPolygons.size();
-	for(int i = 0; i < polygonToRemoveCount; i++)
+	size_t i;
+	uint polygonToRemoveCount = b->_oldPolygons.size();
+	for(i = 0; i < polygonToRemoveCount; i++)
 	{
 		_renderer->removePolygon(b->_oldPolygons[i]);
+	}	
+	uint fillPolyCount = b->_fillPolygons.size();
+	for (i = 0; i < fillPolyCount; ++i)
+	{
+		_renderer->removePolygon(b->_fillPolygons[i]);
 	}
-	_renderer->removePolygon(b->_fillPolygon);
-	_renderer->removePolygon(b->_linePolygon);
+	uint linePolyCount = b->_linePolygons.size();
+	for (i = 0; i < linePolyCount; i++)
+	{
+		_renderer->removePolygon(b->_linePolygons[i]);
+	}
 
 	if(destroyB2DBody)
 	{
@@ -147,9 +164,10 @@ void PhysicsManager::update( ulong advanceTime )
 	{
 		PhysicsBody *pb = nullptr;
 		Polygon *poly = nullptr;
-		int polygonCount = 0;
-		int polygonToRemoveCount = 0;
-		int i = 0;
+		uint fillPolyCount = 0;
+		uint linePolyCount = 0;
+		uint polygonToRemoveCount = 0;
+		uint i = 0;
 		PhysicsBodyList::iterator itEnd = _physicsBodies.end();
 		for (PhysicsBodyList::iterator it = _physicsBodies.begin(); it != itEnd; ++it)
 		{
@@ -158,6 +176,7 @@ void PhysicsManager::update( ulong advanceTime )
 			if(pb->_needsPolygonUpdate)
 			{
 				pb->_needsPolygonUpdate = false;
+
 				polygonToRemoveCount = pb->_oldPolygons.size();
 				for(i = 0; i < polygonToRemoveCount; i++)
 				{
@@ -166,10 +185,17 @@ void PhysicsManager::update( ulong advanceTime )
 					delete poly;
 					poly = nullptr;
 				}
-
-				_renderer->addPolygon(pb->_fillPolygon, pb->_id);
-				_renderer->addPolygon(pb->_linePolygon, pb->_id);
-				
+				fillPolyCount = pb->_fillPolygons.size();
+				for (i = 0; i < fillPolyCount; ++i)
+				{
+					_renderer->addPolygon(pb->_fillPolygons[i], pb->_id);
+				}
+				linePolyCount = pb->_linePolygons.size();
+				for (i = 0; i < linePolyCount; i++)
+				{
+					_renderer->addPolygon(pb->_linePolygons[i], pb->_id);
+				}
+		
 			}
 			pb->update();
 		}	
@@ -237,7 +263,13 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		b2d_body->SetActive(false);	
 
 		b->_selected = true;
-		b->_linePolygon->SetMaterial(b->_selectedMaterial);
+
+		uint linePolyCount = b->_linePolygons.size();
+		for (uint i = 0; i < linePolyCount; i++)
+		{
+			b->_linePolygons[i]->SetMaterial(b->_selectedMaterial);
+		}
+
 		_selectedBodies.push_back(b);
 	}
 }
@@ -252,7 +284,12 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 		b2d_body->SetActive(true);	
 
 		b->_selected = false;
-		b->_linePolygon->SetMaterial(b->_lineMaterial);
+
+		uint linePolyCount = b->_linePolygons.size();
+		for (uint i = 0; i < linePolyCount; i++)
+		{
+			b->_linePolygons[i]->SetMaterial(b->_lineMaterial);
+		}
 
 		_selectedBodies.remove(b);
 	}
@@ -332,13 +369,18 @@ void PhysicsManager::setAwakeOnSelectedBodies( bool flag )
 PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 {
 	AABB aabb;
-	AABB bodyAABB;
+	AABB polyAABB;
 
 	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		bodyAABB = (*it)->_fillPolygon->getWorldAABB(true);
-		aabb.update(bodyAABB);
+		uint linePolyCount = (*it)->_linePolygons.size();
+		for (uint i = 0; i < linePolyCount; i++)
+		{
+			polyAABB = (*it)->_linePolygons[i]->getWorldAABB(true);
+		}
+
+		aabb.update(polyAABB);
 	}
 
 	return aabb;
