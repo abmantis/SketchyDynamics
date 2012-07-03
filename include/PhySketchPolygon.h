@@ -7,6 +7,11 @@
 #include "PhySketchMatrix3.h"
 #include "PhySketchMaterial.h"
 
+#define PHYSKETCH_POLYGON_UTYPE_NONE		0
+#define PHYSKETCH_POLYGON_UTYPE_PHYBODY		1
+#define PHYSKETCH_POLYGON_UTYPE_PHYJOINT	2
+#define PHYSKETCH_POLYGON_UTYPE_USER		3
+
 
 namespace PhySketch
 {
@@ -126,12 +131,32 @@ namespace PhySketch
 
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
-		const Material& GetMaterial(void) const;
+		virtual const Material& GetMaterial(void) const;
 
 		/// <summary> Sets this Polygon's material. </summary>
 		/// <remarks> Deadvirus, 6/19/2012. </remarks>
 		/// <param name="material"> The material. </param>
-		void SetMaterial(const Material& material);
+		virtual void SetMaterial(const Material& material);
+
+		/// <summary> Sets a custom type to identify this polygon. </summary>
+		/// <remarks> User-defined types should be greater that
+		/// 	PHYSKETCH_POLYGON_UTYPE_USER. Values below this are used by
+		/// 	PhySketch. </remarks>
+		/// <param name="type"> The custom type. </param>
+		virtual void setUserType(ulong type);
+
+		virtual ulong getUserType() const;
+
+		/// <summary> Sets custom user data. </summary>
+		/// <param name="data"> The data. </param>
+		virtual void setUserData(void* data);
+
+		virtual void* getUserData();
+
+		/// <summary> Query if a point is inside this polygon. </summary>
+		/// <param name="pt"> The point. </param>
+		/// <returns> true if point is inside, false if not. </returns>
+		virtual bool isPointInside(Vector2 pt) const;
 
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
@@ -174,6 +199,9 @@ namespace PhySketch
 		DrawingMode _drawingMode;		
 		VertexVariance _vertexVariance;
 		AABB _aabb;
+
+		void* _userData;
+		ulong _userType;
 
 		UINT _vertexBuffer;	
 		UINT _elementBuffer;	

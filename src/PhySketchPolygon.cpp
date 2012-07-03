@@ -1,4 +1,5 @@
 #include "PhySketchPolygon.h"
+#include "PhySketchUtils.h"
 
 namespace PhySketch
 {
@@ -15,7 +16,9 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, DrawingMode dm /*= DM_LINES*
 	_vertexVariance	(vv),
 	_vertexBuffer	(0), 
 	_elementBuffer	(0),
-	_inRenderingQueue(false)
+	_inRenderingQueue(false),
+	_userData(NULL),
+	_userType(PHYSKETCH_POLYGON_UTYPE_NONE)
 {
 }
 
@@ -34,7 +37,9 @@ Polygon::Polygon( const Polygon& poly, std::string name /*= ""*/ ) :
 	_vertexVariance	(poly._vertexVariance),
 	_vertexBuffer	(0), 
 	_elementBuffer	(0),
-	_inRenderingQueue(false)
+	_inRenderingQueue(false),
+	_userData(NULL),
+	_userType(PHYSKETCH_POLYGON_UTYPE_NONE)
 {
 }
 
@@ -257,6 +262,87 @@ void Polygon::SetMaterial( const Material& material )
 std::string Polygon::getName() const
 {
 	return _name;
+}
+
+void Polygon::setUserType( ulong type )
+{
+	_userType = type;
+}
+
+PhySketch::ulong Polygon::getUserType() const
+{
+	return _userType;
+}
+
+void Polygon::setUserData( void* data )
+{
+	_userData = data;
+}
+
+void* Polygon::getUserData()
+{
+	return _userData;
+}
+
+bool Polygon::isPointInside( Vector2 pt ) const
+{
+	uint vertCount = _vertexIndexes.size();
+	Vector2 p1, p2, p3; // triangle points
+
+	if(vertCount <= 0)
+		return false;
+		
+	if( _drawingMode == DM_TRIANGLES)
+	{
+		uint i = 0; 
+		while (i+2 < vertCount)
+		{			
+			p1 = _vertices[_vertexIndexes[i]];
+			p2 = _vertices[_vertexIndexes[++i]];
+			p3 = _vertices[_vertexIndexes[++i]];
+			++i;
+
+			if(isPointInTri(pt, p1, p2, p3) == true)
+			{
+				return true;
+			}
+		}
+	}
+	else if(_drawingMode == DM_TRIANGLE_FAN)
+	{
+		uint i = 1; 
+		p1 = _vertices[_vertexIndexes[0]];
+
+		while (i+1 < vertCount)
+		{			
+			p2 = _vertices[_vertexIndexes[i]];
+			p3 = _vertices[_vertexIndexes[++i]];
+			
+
+			if(isPointInTri(pt, p1, p2, p3) == true)
+			{
+				return true;
+			}
+		}
+	}
+	else if(_drawingMode == DM_TRIANGLE_STRIP)
+	{
+		uint i = 1; 
+		while (i+1 < vertCount)
+		{			
+			p1 = _vertices[_vertexIndexes[i-1]];
+			p2 = _vertices[_vertexIndexes[i]];
+			p3 = _vertices[_vertexIndexes[++i]];
+			
+
+			if(isPointInTri(pt, p1, p2, p3) == true)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 
