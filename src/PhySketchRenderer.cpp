@@ -411,5 +411,59 @@ namespace PhySketch
 		return i->second;
 	}
 
+	void Renderer::queryScene( const Vector2& pt, SceneQueryCallback *callback )
+	{
+		bool continueQuery = true;
+		RenderQueue::iterator it, it_begin;
+		Polygon *p = nullptr;
+		AABB aabb;
+
+		for (int i = 0; i < 3; ++i)
+		{
+			if(i == 0)
+			{
+				it_begin = _backgroundRenderQueue.begin();
+				it = _backgroundRenderQueue.end();
+			}
+			else if (i == 1)
+			{
+				it_begin = _sceneRenderQueue.begin();
+				it = _sceneRenderQueue.end();
+			} 
+			else if (i == 2)
+			{
+				it_begin = _uiRenderQueue.begin();
+				it = _uiRenderQueue.end();
+			}
+			else
+			{
+				break;
+			}
+
+			for(; it != it_begin; /* we'll update the iterator inside the loop */)
+			{
+				it--;
+
+				p = it->polygon;
+				aabb = p->getWorldAABB(true);
+				if(pt > aabb.getMin() && pt < aabb.getMax())
+				{
+					continueQuery = callback->reportPolygon(p);
+					if(continueQuery == false)
+					{
+						break;
+					}
+				}			
+			}
+
+
+			if(continueQuery == false)
+			{
+				break;
+			}
+		}		
+		
+	}
+
 }
 

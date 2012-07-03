@@ -7,6 +7,16 @@
 
 namespace PhySketch
 {
+	class SceneQueryCallback
+	{
+	public:
+
+		/// <summary> Reports an intersected polygon. </summary>
+		/// <param name="p"> The intersected Polygon . </param>
+		/// <returns> true to continue querying other for more Polygons. </returns>
+		virtual bool reportPolygon(Polygon *p) = 0;
+	};
+
 	enum RenderQueueType
 	{
 		RQT_Background,
@@ -49,6 +59,16 @@ namespace PhySketch
 		virtual void removePolygon(Polygon *polygon, RenderQueueType rq = RQT_Scene);
 
 		virtual Polygon* getPolygonByName(std::string name);
+
+		/// <summary> Find polygons whose AABBs are intersected by a specific
+		/// 	point. </summary>
+		/// <remarks> This only checks for AABB intersection and not pixel
+		/// 	intersection. The polygons are reported by the order they appear
+		/// 	on screen, i.e. the first reported polygon appears above all
+		/// 	others. </remarks>
+		/// <param name="pt"> The intersecting point. </param>
+		/// <param name="callback"> The callback to report intersected polygons. </param>
+		virtual void queryScene(const Vector2& pt, SceneQueryCallback *callback );
 	
 		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
 		virtual void render();
