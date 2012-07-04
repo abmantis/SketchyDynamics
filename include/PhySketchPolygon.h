@@ -156,7 +156,6 @@ namespace PhySketch
 		virtual void setScale(const Vector2& scale);
 
 		/// <summary> Translates the polygon </summary>
-		///
 		/// <param name="amount"> The amount to translate the polygon. </param>
 		virtual void translate(const Vector2& amount);
 
@@ -224,7 +223,8 @@ namespace PhySketch
 
 	protected:
 		void computeTransformationMatrix();
-		
+		void clearSubPolygons();
+
 
 	protected:
 		std::vector<SubPolygon*> _subPolygons;

@@ -158,11 +158,17 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, std::string name /*= ""*/, C
 
 Polygon::~Polygon()
 {
+	clearSubPolygons();
+}
+
+void Polygon::clearSubPolygons()
+{
 	uint subpolycount = _subPolygons.size();
 	for (uint i = 0; i < subpolycount; ++i)
 	{
 		delete _subPolygons[i];
 	}
+	_subPolygons.clear();
 }
 
 float Polygon::getAngle( void ) const
