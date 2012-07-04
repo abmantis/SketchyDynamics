@@ -128,16 +128,7 @@ void PhysicsManager::update( ulong advanceTime )
 	{
 		stepPhysics(advanceTime);
 	}
-	
-	//////////////////////////////////////////////////////////////////////////
-	// update joints
-	{
-		PhysicsJointList::iterator itEnd = _physicsJoints.end();
-		for (PhysicsJointList::iterator it = _physicsJoints.begin(); it != itEnd; ++it)
-		{
-			(*it)->update();
-		}	
-	}
+
 }
 
 void PhysicsManager::stepPhysics( ulong ellapsedMillisec )
