@@ -1,5 +1,4 @@
 #include "PhySketchPhysicsBody.h"
-#include "PhySketchPolygon.h"
 #include "Box2D\Dynamics\b2Body.h"
 #include "Box2D\Dynamics\b2Fixture.h"
 #include "Box2D\Collision\Shapes\b2CircleShape.h"
@@ -10,10 +9,9 @@
 
 namespace PhySketch
 {
-PhysicsBody::PhysicsBody( b2Body *body, uint id ) :
+PhysicsBody::PhysicsBody( b2Body *body, uint id ) :	
+	Polygon(VV_Static, "body" + toString(ulong(id)) ),
 	_body(body),
-	_polygon(nullptr),
-	_needsPolygonUpdate(false),
 	_selected(false),
 	_selectable(true),
 	_id(id)
@@ -23,19 +21,11 @@ PhysicsBody::PhysicsBody( b2Body *body, uint id ) :
 	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
 
 	_body->SetUserData(this);
-	reconstructPolygons();
+	reconstructPolygon();
 }
 
 PhysicsBody::~PhysicsBody()
 {
-	delete _polygon;
-	_polygon = nullptr;
-
-	for (size_t i = 0; i < _oldPolygons.size(); i++)
-	{
-		delete _oldPolygons[i]; 
-		_oldPolygons[i] = nullptr;
-	}
 }
 
 void PhysicsBody::update()
@@ -43,8 +33,8 @@ void PhysicsBody::update()
 	Vector2 pos = _body->GetPosition();
 	float angle = _body->GetAngle();
 
-	_polygon->setPosition(pos);
-	_polygon->setAngle(angle);	
+	Polygon::setPosition(pos);
+	Polygon::setAngle(angle);	
 }
 
 b2Body* PhysicsBody::getBox2DBody()
@@ -57,35 +47,23 @@ void PhysicsBody::setBox2DBody( b2Body* body )
 	_body = body;
 	_body->SetUserData(this);
 
-	reconstructPolygons();
+	reconstructPolygon();
 }
 
-void PhysicsBody::reconstructPolygons()
-{
-	_needsPolygonUpdate = true;
-
-	Vector2 position = _body->GetPosition();
-	float angle = _body->GetAngle();
-
-	std::string polyName = "PS_Body" + toString(_id);
-	
-	// Remove old polygon	
-	if(_polygon)
-		_oldPolygons.push_back(_polygon);	
+void PhysicsBody::reconstructPolygon()
+{	
+	// Remove old subpolygons
+	clearSubPolygons();
 	
 	//////////////////////////////////////////////////////////////////////////
-	// Create new polygon
-	_polygon = new Polygon(VV_Static, polyName);
+	// Create new subpolygons
 	SubPolygon* fillsubpoly = nullptr;
 	SubPolygon* linesubpoly = nullptr;
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
 	{	
-		_polygon->setPosition(position);
-		_polygon->setAngle(angle);
-
-		fillsubpoly = _polygon->createSubPolygon(DM_TRIANGLE_FAN);
+		fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
 		fillsubpoly->SetMaterial(_fillMaterial);
-		linesubpoly = _polygon->createSubPolygon(DM_LINE_LOOP);
+		linesubpoly = createSubPolygon(DM_LINE_LOOP);
 		linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
 
 		switch (fixture->GetType())
@@ -183,24 +161,32 @@ bool PhysicsBody::isSelectable() const
 	return _selectable;
 }
 
-PhySketch::Vector2 PhysicsBody::translate( Vector2 translation )
+void PhysicsBody::translate( const Vector2& amount )
 {
 	Vector2 pos = _body->GetPosition();
-	pos += translation;
+	pos += amount;
 	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle());
-	return pos;
+	Polygon::setPosition(pos);
 }
 
-void PhysicsBody::rotateAroundPoint( float angle, Vector2 rotationPoint )
+void PhysicsBody::rotate( const float& angle )
+{
+	_body->SetTransform(_body->GetPosition(), _body->GetAngle() + angle);
+	Polygon::rotate(angle);
+}
+
+void PhysicsBody::rotateAroundPoint( float angle, const Vector2& rotationPoint )
 {
 	Vector2 pos = _body->GetPosition();
 	Vector2 rotatedDist = Vector2::Rotate(pos - rotationPoint, angle);
 	pos = rotationPoint + rotatedDist;
 
- 	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle() + angle); 	
+ 	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle() + angle);
+	Polygon::setPosition(pos);
+	Polygon::rotate(angle);
 }
 
-void PhysicsBody::scale( Vector2 factor )
+void PhysicsBody::scale( const Vector2& factor )
 {
 	b2Fixture* node_fixture = _body->GetFixtureList();
 	b2Fixture* fixture;
@@ -269,11 +255,27 @@ void PhysicsBody::scale( Vector2 factor )
 			break;
 		}		
 	}
-
-
-	_polygon->scale(factor);
-
+	
 	_body->ResetMassData();
+
+	Polygon::scale(factor);
+}
+
+void PhysicsBody::setAngle( float angle )
+{
+	_body->SetTransform(_body->GetPosition(), angle);
+	Polygon::setAngle(angle);
+}
+
+void PhysicsBody::setPosition( const Vector2& position )
+{
+	_body->SetTransform(position.tob2Vec2(), _body->GetAngle());
+	Polygon::setPosition(position);
+}
+
+void PhysicsBody::setScale( const Vector2& scale )
+{
+	throw std::exception("The method or operation is not implemented.");
 }
 
 

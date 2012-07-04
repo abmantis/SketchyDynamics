@@ -169,11 +169,7 @@ namespace PhySketch
 		uint subpolycount = polygon->_subPolygons.size();
 		for (uint i = 0; i < subpolycount; ++i)
 		{
-			subpoly = polygon->_subPolygons[i];
-			glGenBuffers(1, &subpoly->_vertexBuffer);
-			glGenBuffers(1, &subpoly->_elementBuffer);
-			updateOpenGLBuffers(subpoly, polygon->_vertexVariance);
-			subpoly->_hasNewVertices = false;
+			updateOpenGLBuffers(polygon->_subPolygons[i], polygon->_vertexVariance);
 		}
 		
 		polygon->_inRenderingQueue = true;
@@ -208,6 +204,16 @@ namespace PhySketch
 			break;
 		}
 
+		if (subpolygon->_vertexBuffer == 0)
+		{
+			glGenBuffers(1, &subpolygon->_vertexBuffer);
+		}
+		if (subpolygon->_elementBuffer == 0)
+		{
+			glGenBuffers(1, &subpolygon->_elementBuffer);
+		}
+		
+
 		float *vertBuff = new float[subpolygon->_vertices.size()*2];
 		for (uint i = 0, j = 0; i < subpolygon->_vertices.size(); i++, j = j+2)
 		{
@@ -220,19 +226,21 @@ namespace PhySketch
 		{
 			elemBuff[i] = subpolygon->_vertexIndexes[i];
 		}
-
+		
 		// Create vertex buffers
 		glBindBuffer(GL_ARRAY_BUFFER, subpolygon->_vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, subpolygon->_vertices.size()*sizeof(float)*2, 
-			vertBuff, usageHint);
+			vertBuff, usageHint); 	// TODO: use glSubBufferData?
 
 		// Create element buffers
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_elementBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_vertexIndexes.size()*sizeof(uint), 
-			elemBuff, usageHint);
+			elemBuff, usageHint); 	// TODO: use glSubBufferData?
 
 		delete[] vertBuff;
 		delete[] elemBuff;
+
+		subpolygon->_hasNewVertices = false;
 	}
 
 	void Renderer::removePolygon( Polygon *polygon, RenderQueueType rq /*= RQT_Scene*/ )

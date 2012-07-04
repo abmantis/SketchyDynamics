@@ -67,11 +67,8 @@ PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 
 	_physicsBodies.push_back(b);
 
-	_renderer->addPolygon(b->_polygon, b->_id);
-		
-	// we already added the polygon to the render so put the flag to false
-	b->_needsPolygonUpdate = false;
-	
+	_renderer->addPolygon(b, b->_id);
+
 	return b;
 }
 
@@ -85,16 +82,8 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 {
 	// remove the body from the bodies' list
 	_physicsBodies.remove(b);
-
-	// remove all body's polygons from the renderer
-	size_t i;
-	uint polygonToRemoveCount = b->_oldPolygons.size();
-	for(i = 0; i < polygonToRemoveCount; i++)
-	{
-		_renderer->removePolygon(b->_oldPolygons[i]);
-	}	
-	
-	_renderer->removePolygon(b->_polygon);
+		
+	_renderer->removePolygon(b);
 	
 	if(destroyB2DBody)
 	{
@@ -139,41 +128,7 @@ void PhysicsManager::update( ulong advanceTime )
 	{
 		stepPhysics(advanceTime);
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// update bodies
-	{
-		PhysicsBody *pb = nullptr;
-		Polygon *poly = nullptr;
-		uint fillPolyCount = 0;
-		uint linePolyCount = 0;
-		uint polygonToRemoveCount = 0;
-		uint i = 0;
-		PhysicsBodyList::iterator itEnd = _physicsBodies.end();
-		for (PhysicsBodyList::iterator it = _physicsBodies.begin(); it != itEnd; ++it)
-		{
-			pb = *it;
-
-			if(pb->_needsPolygonUpdate)
-			{
-				pb->_needsPolygonUpdate = false;
-
-				polygonToRemoveCount = pb->_oldPolygons.size();
-				for(i = 0; i < polygonToRemoveCount; i++)
-				{
-					poly = pb->_oldPolygons[i];
-					_renderer->removePolygon(poly, RQT_Scene);
-					delete poly;
-					poly = nullptr;
-				}
-				pb->_oldPolygons.clear();
-				
-				_renderer->addPolygon(pb->_polygon, pb->_id);
-			}
-			pb->update();
-		}	
-	}
-
+	
 	//////////////////////////////////////////////////////////////////////////
 	// update joints
 	{
@@ -235,11 +190,10 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		b2d_body->SetAwake(false);
 		b2d_body->SetActive(false);	
 		
-		Polygon *bodyPoly = b->_polygon;
-		uint subPolyCount = bodyPoly->getSubPolygonCount();
+		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
-			bodyPoly->getSubPolygon(i)->SetMaterial(b->_selectedMaterial);
+			b->getSubPolygon(i)->SetMaterial(b->_selectedMaterial);
 		}
 
 		b->_selected = true;
@@ -257,11 +211,10 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 		b2d_body->SetAwake(true);
 		b2d_body->SetActive(true);			
 
-		Polygon *bodyPoly = b->_polygon;
-		uint subPolyCount = bodyPoly->getSubPolygonCount();
+		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
-			bodyPoly->getSubPolygon(i)->SetMaterial(b->_lineMaterial);
+			b->getSubPolygon(i)->SetMaterial(b->_lineMaterial);
 		}
 
 		b->_selected = false;
@@ -377,7 +330,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		polyAABB = (*it)->_polygon->getWorldAABB(true);
+		polyAABB = (*it)->getWorldAABB(true);
 		aabb.update(polyAABB);
 	}
 

@@ -56,7 +56,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		backgroundPhyBody->getBox2DBody()->CreateFixture(&backgroundFixtureDef);
 		backgroundPhyBody->setFillMaterial(backgroundMat);
 		backgroundPhyBody->setLineMaterial(backgroundMat);
-		backgroundPhyBody->reconstructPolygons();		
+		backgroundPhyBody->reconstructPolygon();		
 		_physicsMgr->setUnselectableBody(backgroundPhyBody);
 	}
 	

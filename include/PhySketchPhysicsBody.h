@@ -2,12 +2,14 @@
 #define PhySketchPhysicsBody_h__
 
 #include "PhySketchDefinitions.h"
-#include "Box2D/Dynamics/b2Body.h"
 #include "PhySketchMaterial.h"
+#include "PhySketchPolygon.h"
+
+class b2Body;
 
 namespace PhySketch
 {
-	class PhysicsBody 
+	class PhysicsBody : public Polygon
 	{	
 	protected:
 		friend class PhysicsManager;
@@ -33,9 +35,14 @@ namespace PhySketch
 		virtual bool isSelected() const;
 		virtual bool isSelectable() const;
 
-		virtual Vector2 translate(Vector2 translation);
-		virtual void rotateAroundPoint(float angle, Vector2 rotationPoint);
-		virtual void scale(Vector2 factor);
+		virtual void setAngle( float angle );
+		virtual void setPosition( const Vector2& position );
+		virtual void setScale( const Vector2& scale );
+
+		virtual void translate(const Vector2& amount);
+		virtual void rotate( const float& angle );
+		virtual void rotateAroundPoint(float angle, const Vector2& rotationPoint);
+		virtual void scale(const Vector2& factor);
 
 		// Access the FillMaterial
 		const Material& getFillMaterial(void) const;
@@ -49,13 +56,10 @@ namespace PhySketch
 		const Material& getSelectedMaterial(void) const;
 		void setSelectedMaterial(const Material& material);
 
-		virtual void reconstructPolygons();
+		virtual void reconstructPolygon();
 
 	protected:
-		bool _needsPolygonUpdate;
 		b2Body* _body;
-		Polygon* _polygon;
-		std::vector<Polygon*> _oldPolygons;
 		ulong _id;
 		bool _selectable;
 		bool _selected;
