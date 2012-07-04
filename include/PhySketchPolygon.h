@@ -116,6 +116,19 @@ namespace PhySketch
 		/// <returns> The new SubPolygon. </returns>
 		virtual SubPolygon* createSubPolygon(DrawingMode dm);
 
+		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
+		/// <param name="dm"> The drawing mode. </param>
+		/// <returns> The new square subpolygon. </returns>
+		SubPolygon* CreateSquareSubPolygon(DrawingMode dm);
+
+		/// <summary> Creates a circle subpolygon. </summary>
+		/// <param name="dm"> The drawing mode. </param>
+		/// <param name="center"> The circle's center. </param>
+		/// <param name="radius"> The radius. </param>
+		/// <param name="num_segments"> The number of segments that compose the circle. </param>
+		/// <returns> The new circle subpolygon. </returns>
+		SubPolygon* CreateCircleSubPolygon( DrawingMode dm, Vector2 center, float radius, int num_segments);
+
 		/// <summary> Gets the number of SubPolygons in this Polygon. </summary>
 		/// <returns> The number of SubPolygon. </returns>
 		virtual uint getSubPolygonCount() const;
@@ -208,17 +221,6 @@ namespace PhySketch
 
 		const VertexVariance& GetVertexVariance() const;
 
-		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
-		/// <returns> The square. </returns>
-		static Polygon* CreateSquare(DrawingMode dm, std::string name = "");
-
-		/// <summary> Creates a circle polygon. </summary>
-		/// <param name="cs"> The coordinate system </param>
-		/// <param name="center"> The center. </param>
-		/// <param name="radius"> The radius. </param>
-		/// <param name="num_segments"> The number of segments that compose the circle.  </param>
-		/// <returns> The circle polygon. </returns>
-		static Polygon* CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments, std::string name = "");
 		static std::vector<Vector2> GetCircleVertices(Vector2 center, float radius, int num_segments);
 
 	protected:

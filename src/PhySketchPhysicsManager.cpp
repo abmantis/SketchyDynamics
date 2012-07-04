@@ -103,14 +103,14 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepre
 
 	// get the ID from the body A
 	ulong bodyid = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
-	_renderer->addPolygon(j->_polygon, bodyid, RQT_Scene);
+	_renderer->addPolygon(j, bodyid, RQT_Scene);
 	return j;
 }
 
 void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*= true*/ )
 {
 	_physicsJoints.remove(joint);
-	_renderer->removePolygon(joint->_polygon);
+	_renderer->removePolygon(joint);
 
 	if(destroyB2DJoint)
 	{

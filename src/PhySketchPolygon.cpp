@@ -236,35 +236,43 @@ const CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-Polygon* Polygon::CreateSquare( DrawingMode dm, std::string name /*= ""*/ )
+SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm )
 {
-	Polygon *poly = new Polygon(VV_Static, name);
-	SubPolygon *subpoly = poly->createSubPolygon(dm);
+	SubPolygon *subpoly = createSubPolygon(dm);
 
 	subpoly->addVertex(Vector2(-0.5f, -0.5f));
 	subpoly->addVertex(Vector2(-0.5f, 0.5f));
 	subpoly->addVertex(Vector2(0.5f, 0.5f));
 	subpoly->addVertex(Vector2(0.5f, -0.5f));	
 
-	return poly;
+	return subpoly;
 }
 
-Polygon* Polygon::CreateCircle( DrawingMode dm, Vector2 center, float radius, int num_segments, std::string name /*= ""*/ )
+SubPolygon* Polygon::CreateCircleSubPolygon( DrawingMode dm, Vector2 center, float radius, int num_segments )
 {
-	Polygon *poly = new Polygon(VV_Static, name);
-	SubPolygon *subpoly = poly->createSubPolygon(dm);
+	float theta = 2.0f * M_PI / float(num_segments); 
+	float c = cos(theta);//precalculate the sine and cosine
+	float s = sin(theta);
+	float t;
 
-	std::vector<Vector2> circleVec = GetCircleVertices(center, radius, num_segments);
+	float x = radius;//we start at angle = 0 
+	float y = 0; 
 
+	SubPolygon *subpoly = createSubPolygon(dm);
 	subpoly->_vertexIndexes.reserve(num_segments);
 	subpoly->_vertices.reserve(num_segments);
-	for (int i = 0; i < num_segments; i++)
-	{
-		subpoly->addVertex(circleVec[i]);
-	}
 
+	for(int ii = 0; ii < num_segments; ++ii) 
+	{ 
+		subpoly->addVertex(Vector2(x + center.x, y + center.y));
 
-	return poly;
+		//apply the rotation matrix
+		t = x;
+		x = c * x - s * y;
+		y = s * t + c * y;
+	} 
+
+	return subpoly;
 }
 
 std::vector<Vector2> Polygon::GetCircleVertices( Vector2 center, float radius, int num_segments )

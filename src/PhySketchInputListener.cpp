@@ -30,8 +30,10 @@ MainInputListener::MainInputListener() : InputListener()
 	_caliRecognizer = new CIRecognizer();
 	_interactionState = IS_NONE;
 
-	_transformIndicator = Polygon::CreateCircle(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80, "PS_transform_indicator");
-	_selectedBodiesAABBPoly = Polygon::CreateSquare(DM_LINE_LOOP, "PS_selected_bodies_aabb");
+	_transformIndicator = new Polygon(VV_Static, "PS_transform_indicator");
+	_transformIndicator->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80);
+	_selectedBodiesAABBPoly = new Polygon(VV_Static, "PS_selected_bodies_aabb");
+	_selectedBodiesAABBPoly->CreateSquareSubPolygon(DM_LINE_LOOP);
 }
 
 MainInputListener::~MainInputListener()
