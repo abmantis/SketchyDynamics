@@ -17,6 +17,32 @@
 namespace PhySketch
 {
 
+	class FirstObjectSceneQueryCallback : public SceneQueryCallback
+	{
+	public:
+		FirstObjectSceneQueryCallback(Vector2 pt) : 
+			_point(pt),
+			_firstPolygon(nullptr)
+		{
+		}
+
+		virtual bool reportPolygon(Polygon *p) 
+		{
+			if(p->isPointInside(_point))
+			{
+				_firstPolygon = p;
+				return false;
+			}
+			
+			return true;
+		}
+
+		Vector2 _point;
+		Polygon* _firstPolygon;
+
+	};
+
+
 
 MainInputListener::MainInputListener() : InputListener()
 {
@@ -118,30 +144,27 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					{
 						bool onSelectableBody = false;
 						
-						b2AABB aabb;
-						Vector2 d(0.00001f, 0.00001f);
-						aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
-						aabb.upperBound = (sceneMousePos + d).tob2Vec2();
-						PhysicsQueryCallback callback(sceneMousePos, true);
-						_physicsMgr->setActiveOnSelectedBodies(true);
-						_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-						_physicsMgr->setActiveOnSelectedBodies(false);
-						if(!callback._bodies.empty())
+						FirstObjectSceneQueryCallback callback(sceneMousePos);
+						_renderer->queryScene(sceneMousePos, &callback);
+						if(callback._firstPolygon != nullptr)
 						{
-							PhysicsBody *pb = callback._bodies.back();
-							if(pb->isSelectable())
+							PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
+							if( pb != nullptr)
 							{
-								b2Body *b2d_body = pb->getBox2DBody();
-								onSelectableBody = true;
-								if(pb->isSelected())
+								if(pb->isSelectable())
 								{
-									_physicsMgr->unselectBody(pb);
-								}
-								else
-								{
-									_physicsMgr->selectBody(pb);	
+									onSelectableBody = true;
+									if(pb->isSelected())
+									{
+										_physicsMgr->unselectBody(pb);
+									}
+									else
+									{
+										_physicsMgr->selectBody(pb);	
+									}
 								}
 							}
+							
 						}
 
 						if(!onSelectableBody)
@@ -223,44 +246,40 @@ void MainInputListener::mouseMoved( Vector2 position )
 				break;
 			}
 
-			b2AABB aabb;
-			Vector2 d(0.00001f, 0.00001f);
-			aabb.lowerBound = (sceneMousePos - d).tob2Vec2();
-			aabb.upperBound = (sceneMousePos + d).tob2Vec2();
-			PhysicsQueryCallback callback(sceneMousePos, true);
-			_physicsMgr->setActiveOnSelectedBodies(true);
-			_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-			_physicsMgr->setActiveOnSelectedBodies(false);
-			if(!callback._bodies.empty())
+			FirstObjectSceneQueryCallback callback(sceneMousePos);
+			_renderer->queryScene(sceneMousePos, &callback);
+			if(callback._firstPolygon != nullptr)
 			{
-				// When in the IS_SELECTING state and the left button 
-				// is pressed and the mouse is moved we need to check if it 
-				// was moved inside or outside a selected object and change
-				// to the IS_MOVING or IS_TRANSFORMING states accordingly
+				PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
+				if( pb != nullptr)
+				{
+					// When in the IS_SELECTING state and the left button 
+					// is pressed and the mouse is moved we need to check if it 
+					// was moved inside or outside a selected object and change
+					// to the IS_MOVING or IS_TRANSFORMING states accordingly				
+					if(pb->isSelected())
+					{	
+						_interactionState = IS_MOVING;					
+					}
+					else
+					{					
+						_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
+						Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
 
-				PhysicsBody *pb = callback._bodies.back();
-				if(pb->isSelected())
-				{	
-					_interactionState = IS_MOVING;					
-				}
-				else
-				{					
-					_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
-					Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
+						_initialDistFromSelectedBodiesCenter = Vector2::distance(sceneMousePos, aabbCenter);
+						_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
 
-					_initialDistFromSelectedBodiesCenter = Vector2::distance(sceneMousePos, aabbCenter);
-					_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
-
-					// Show AABB of the selected bodies and AABB center indicator
-					_selectedBodiesAABBPoly->setPosition(aabbCenter);
-					_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
-					_selectedBodiesAABBPoly->setAngle(0.0f);
-					_renderer->addPolygon(_selectedBodiesAABBPoly);
+						// Show AABB of the selected bodies and AABB center indicator
+						_selectedBodiesAABBPoly->setPosition(aabbCenter);
+						_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
+						_selectedBodiesAABBPoly->setAngle(0.0f);
+						_renderer->addPolygon(_selectedBodiesAABBPoly);
 					
-					_transformIndicator->setPosition(aabbCenter);
-					_renderer->addPolygon(_transformIndicator);
+						_transformIndicator->setPosition(aabbCenter);
+						_renderer->addPolygon(_transformIndicator);
 
-					_interactionState = IS_TRANSFORMING;
+						_interactionState = IS_TRANSFORMING;
+					}
 				}
 			}
 			break;
