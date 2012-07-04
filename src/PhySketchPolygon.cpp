@@ -383,10 +383,13 @@ void* Polygon::getUserData()
 
 bool Polygon::isPointInside( const Vector2& pt ) const
 {
+	// transform the input point so that it is in the same system as the subpolygon
+	Vector2 transPt = _transformMatrix.Inverse() * pt;
+
 	uint subpolycount = _subPolygons.size();
 	for (uint i = 0; i < subpolycount; ++i)
 	{
-		if(_subPolygons[i]->isPointInside(pt))
+		if(_subPolygons[i]->isPointInside(transPt))
 		{
 			return true;
 		}
