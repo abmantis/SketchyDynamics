@@ -10,7 +10,7 @@
 namespace PhySketch
 {
 PhysicsBody::PhysicsBody( b2Body *body, uint id ) :	
-	Polygon(VV_Static, "body" + toString(ulong(id)) ),
+	Polygon(VV_Static, "PS_Body" + toString(ulong(id)) ),
 	_body(body),
 	_selected(false),
 	_selectable(true),
