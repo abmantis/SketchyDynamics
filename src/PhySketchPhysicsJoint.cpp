@@ -102,5 +102,10 @@ void PhysicsJoint::scale( const Vector2& factor )
 	throw std::exception("The method or operation is not implemented.");
 }
 
+bool PhysicsJoint::isPointInside( const Vector2& pt ) const
+{
+	return getWorldAABB(true).isPointInside(pt);
+}
+
 }
 

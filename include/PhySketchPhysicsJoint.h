@@ -43,6 +43,8 @@ namespace PhySketch
 
 		virtual void scale( const Vector2& factor );
 
+		virtual bool isPointInside( const Vector2& pt ) const;
+
 	protected:
 		PhysicsJointRepresentation _pjr;
 		b2Joint* _joint;
