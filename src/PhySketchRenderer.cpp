@@ -479,7 +479,7 @@ namespace PhySketch
 
 				p = it->polygon;
 				aabb = p->getWorldAABB(true);
-				if(pt > aabb.getMin() && pt < aabb.getMax())
+				if(aabb.isPointInside(pt))
 				{
 					continueQuery = callback->reportPolygon(p);
 					if(continueQuery == false)

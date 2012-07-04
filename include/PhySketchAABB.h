@@ -166,6 +166,15 @@ namespace PhySketch
 			}
 		}
 
+		bool isPointInside(const Vector2& pt)
+		{
+			if(pt > _min && pt < _max)
+			{
+				return true;
+			}
+			return false;
+		}
+
 	protected:
 		bool _valid;
 		Vector2 _min;
