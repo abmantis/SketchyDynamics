@@ -72,12 +72,12 @@ namespace PhySketch
 		return buffer;
 	}
 
-	static float sign(Vector2 p1, Vector2 p2, Vector2 p3)
+	static float sign(const Vector2& p1, const Vector2& p2, const Vector2& p3)
 	{
 		return (p1.x - p3.x) * (p2.y - p3.y) - (p2.x - p3.x) * (p1.y - p3.y);
 	}
 
-	static bool isPointInTri(Vector2 pt, Vector2 tri_v1, Vector2 tri_v2, Vector2 tri_v3)
+	static bool isPointInTri(const Vector2& pt, const Vector2& tri_v1, const Vector2& tri_v2, const Vector2& tri_v3)
 	{
 		bool b1, b2, b3;
 
@@ -95,7 +95,7 @@ namespace PhySketch
 	/// <param name="end2"> The line 2 end point. </param>
 	/// <param name="intersection"> [out] The intersection (if it exists). </param>
 	/// <returns> True if an intersection point exists. </returns>
-	static bool lineLineIntersection(Vector2 start1, Vector2 end1, Vector2 start2, Vector2 end2, Vector2 &intersection) 
+	static bool lineLineIntersection(const Vector2& start1, const Vector2& end1, const Vector2& start2, const Vector2& end2, Vector2 &intersection) 
 	{
 		// Store the values for fast access and easy
 		// equations-to-code conversion
@@ -122,7 +122,7 @@ namespace PhySketch
 	}
 
 
-	static bool isCounterClockwise(Vector2 p1, Vector2 p2, Vector2 p3)
+	static bool isCounterClockwise(const Vector2& p1, const Vector2& p2, const Vector2& p3)
 	{
 		return ((p2.y-p1.y)*(p3.x-p2.x)<(p3.y-p2.y)*(p2.x-p1.x));
 	}
