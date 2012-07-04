@@ -4,6 +4,7 @@
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
 #include "PhySketchVector2.h"
+#include "PhySketchPolygon.h"
 
 namespace PhySketch
 {
@@ -95,7 +96,7 @@ namespace PhySketch
 		virtual void renderPolygons();
 		virtual void renderPolygon(Polygon *poly) const;
 
-		virtual void updateOpenGLBuffers(Polygon *polygon) const;
+		virtual void updateOpenGLBuffers(SubPolygon *subpolygon, VertexVariance variance) const;
 
 		virtual RenderQueue* getRenderQueuePtr(RenderQueueType rqp);
 		

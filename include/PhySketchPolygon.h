@@ -15,49 +15,115 @@
 
 namespace PhySketch
 {
+	enum CoordinateSystem
+	{
+		CS_Scene,		// Scene space (the same used in ortho2d)
+		CS_Pixel,		// Pixel space (window space)
+		CS_Percent		// Percentage in window space
+	};
+
+	enum DrawingMode
+	{
+		DM_POINTS,
+		DM_LINES, 
+		DM_LINE_STRIP, 
+		DM_LINE_LOOP, 
+		DM_TRIANGLES, 
+		DM_TRIANGLE_STRIP, 
+		DM_TRIANGLE_FAN
+	};
+
+	/// <summary> Values that represent how much the vertices vary. </summary>
+	/// <remarks> The variance is only related to vertices and not Polygon's
+	/// 	position, scale or angle. </remarks>
+	enum VertexVariance
+	{
+		VV_Static,	// For polygons with static vertices
+		VV_Dynamic,	// For polygons that change vertices frequently
+		VV_Stream	// For polygons that change vertices almost every frame
+	};
+
+	class SubPolygon
+	{
+		friend class Polygon;
+		friend class Renderer;
+
+	protected:	
+		SubPolygon(DrawingMode dm);
+		virtual ~SubPolygon() {};
+
+	public:
+		/// <summary> Adds a new vertex . </summary>
+		/// <param name="vertex"> The vertex. </param>
+		virtual void addVertex(const Vector2& vertex);
+
+		/// <summary> Gets this Polygon's material. </summary>
+		/// <returns> The material. </returns>
+		virtual const Material& GetMaterial(void) const;
+
+		/// <summary> Sets this Polygon's material. </summary>
+		/// <remarks> Deadvirus, 6/19/2012. </remarks>
+		/// <param name="material"> The material. </param>
+		virtual void SetMaterial(const Material& material);
+
+		/// <summary> Gets the drawing mode. </summary>
+		/// <returns> The drawing mode. </returns>
+		virtual const DrawingMode& getDrawingMode() const;
+
+		/// <summary> Query if a point is inside this polygon. </summary>
+		/// <param name="pt"> The point. </param>
+		/// <returns> true if point is inside, false if not. </returns>
+		virtual bool isPointInside(const Vector2& pt) const;
+
+		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
+		//virtual void optimizeVertexList(); // TODO
+
+		/// <summary> Updates the axis aligned bounding box. </summary>
+		virtual void updateAABB();
+
+		/// <summary> Gets the axis aligned bounding box in local space. </summary>
+		/// <returns> The axis aligned bounding box. </returns>
+		virtual const AABB& getAABB() const;
+
+		/// <summary> Gets the axis aligned bounding box in world space. </summary>
+		/// <returns> The axis aligned bounding box. </returns>
+		virtual AABB getWorldAABB(bool bestFit, Matrix3 transformMatrix) const;		
+
+	protected:
+		std::vector<Vector2> _vertices;
+		std::vector<uint> _vertexIndexes;
+		Material _material;
+		DrawingMode _drawingMode;
+		bool _hasNewVertices;
+		AABB _aabb;
+
+		UINT _vertexBuffer;	
+		UINT _elementBuffer;
+	};
+
 	class Polygon 
 	{
 		friend class Renderer;
 
 	public:
-		enum CoordinateSystem
-		{
-			CS_Scene,		// Scene space (the same used in ortho2d)
-			CS_Pixel,		// Pixel space (window space)
-			CS_Percent		// Percentage in window space
-		};
-
-		enum DrawingMode
-		{
-			DM_POINTS,
-			DM_LINES, 
-			DM_LINE_STRIP, 
-			DM_LINE_LOOP, 
-			DM_TRIANGLES, 
-			DM_TRIANGLE_STRIP, 
-			DM_TRIANGLE_FAN
-		};
-
-		/// <summary> Values that represent how much the vertices vary. </summary>
-		/// <remarks> The variance is only related to vertices and not Polygon's
-		/// 	position, scale or angle. </remarks>
-		enum VertexVariance
-		{
-			VV_Static,	// For polygons with static vertices
-			VV_Dynamic,	// For polygons that change vertices frequently
-			VV_Stream	// For polygons that change vertices almost every frame
-		};
-	public:
-		Polygon(VertexVariance vv = VV_Static , DrawingMode dm = DM_LINES, std::string name = "", CoordinateSystem cs = CS_Scene);
-		Polygon(const Polygon& poly, std::string name = "");
+		Polygon(VertexVariance vv = VV_Static, std::string name = "", CoordinateSystem cs = CS_Scene);
 		virtual ~Polygon();
 
 		virtual std::string getName() const;
 
+		/// <summary> Creates a new SubPolygon in this Polygon. </summary>
+		/// <param name="dm"> The DrawingMode for this SubPolygon. </param>
+		/// <returns> The new SubPolygon. </returns>
+		virtual SubPolygon* createSubPolygon(DrawingMode dm);
 
-		/// <summary> Optimize vertex list, by removing duplicated and unreferenced vertices. </summary>
-		//virtual void optimizeVertexList(); // TODO
-		
+		/// <summary> Gets the number of SubPolygons in this Polygon. </summary>
+		/// <returns> The number of SubPolygon. </returns>
+		virtual uint getSubPolygonCount() const;
+
+		/// <summary> Gets a SubPolygon based on its index. </summary>
+		/// <param name="i"> Zero-based index of the SubPolygon. </param>
+		/// <returns> The SubPolygon. </returns>
+		virtual SubPolygon* getSubPolygon(uint i);
 
 		/// <summary> Gets the rotation angle of the polygon in radians. </summary>
 		/// 
@@ -101,22 +167,10 @@ namespace PhySketch
 		/// <summary> Scales the polygon </summary>
 		/// <param name="factor"> The scale factor. </param>
 		virtual void scale(const Vector2& factor);
-
-		/// <summary> Adds a new vertex . </summary>
-		/// <param name="vertex"> The vertex. </param>
-		virtual void addVertex(const Vector2& vertex);
-
+		
 		/// <summary> Gets the coordinate system used by vertices. </summary>
 		/// <returns> The coordinate system. </returns>
 		virtual const CoordinateSystem& getCoordinateSystem() const;
-
-		/// <summary> Gets the drawing mode. </summary>
-		/// <returns> The drawing mode. </returns>
-		virtual const DrawingMode& getDrawingMode() const;
-
-		/// <summary> Sets the drawing mode. </summary>
-		/// <param name="dm"> The DrawingMode. </param>
-		virtual void setDrawingMode(DrawingMode dm);
 
 		/// <summary> Updates the axis aligned bounding box. </summary>
 		virtual void updateAABB();
@@ -127,16 +181,7 @@ namespace PhySketch
 
 		/// <summary> Gets the axis aligned bounding box in world space. </summary>
 		/// <returns> The axis aligned bounding box. </returns>
-		virtual AABB getWorldAABB(bool bestFit) const;
-
-		/// <summary> Gets this Polygon's material. </summary>
-		/// <returns> The material. </returns>
-		virtual const Material& GetMaterial(void) const;
-
-		/// <summary> Sets this Polygon's material. </summary>
-		/// <remarks> Deadvirus, 6/19/2012. </remarks>
-		/// <param name="material"> The material. </param>
-		virtual void SetMaterial(const Material& material);
+		virtual AABB getWorldAABB(bool bestFit) const;		
 
 		/// <summary> Sets a custom type to identify this polygon. </summary>
 		/// <remarks> User-defined types should be greater that
@@ -156,7 +201,7 @@ namespace PhySketch
 		/// <summary> Query if a point is inside this polygon. </summary>
 		/// <param name="pt"> The point. </param>
 		/// <returns> true if point is inside, false if not. </returns>
-		virtual bool isPointInside(Vector2 pt) const;
+		virtual bool isPointInside(const Vector2& pt) const;
 
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
@@ -182,12 +227,9 @@ namespace PhySketch
 		
 
 	protected:
-		std::string _name;
-		std::vector<Vector2> _vertices;
-		std::vector<uint> _vertexIndexes;
-		//std::vector<std::pair<Material, int> > _materials; // TODO later :) the int thing is to define to wich vertexIndex the material applies
-		Material _material;
-		bool _hasNewVertices;
+		std::vector<SubPolygon*> _subPolygons;
+
+		std::string _name;		
 
 		float _angle;
 		Vector2 _position;
@@ -196,15 +238,11 @@ namespace PhySketch
 		Matrix3 _transformMatrix;
 
 		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
-		DrawingMode _drawingMode;		
 		VertexVariance _vertexVariance;
 		AABB _aabb;
 
 		void* _userData;
-		ulong _userType;
-
-		UINT _vertexBuffer;	
-		UINT _elementBuffer;	
+		ulong _userType;			
 
 		bool _inRenderingQueue;
 		

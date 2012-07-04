@@ -25,12 +25,13 @@ MainInputListener::MainInputListener() : InputListener()
 	_isLeftMouseDown = false;
 	_caliStroke = nullptr;
 	_caliScribble = nullptr;
-	_gesturePolygon = nullptr;	
+	_gesturePolygon = nullptr;
+	_gestureSubPolygon = nullptr;
 	_caliRecognizer = new CIRecognizer();
 	_interactionState = IS_NONE;
 
-	_transformIndicator = Polygon::CreateCircle(Polygon::DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80, "PS_transform_indicator");
-	_selectedBodiesAABBPoly = Polygon::CreateSquare(Polygon::DM_LINE_LOOP, "PS_selected_bodies_aabb");
+	_transformIndicator = Polygon::CreateCircle(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80, "PS_transform_indicator");
+	_selectedBodiesAABBPoly = Polygon::CreateSquare(DM_LINE_LOOP, "PS_selected_bodies_aabb");
 }
 
 MainInputListener::~MainInputListener()
@@ -40,9 +41,6 @@ MainInputListener::~MainInputListener()
 	//delete _caliStroke; //the scribble already deletes this
 	_caliStroke = nullptr;
 
-	delete _gesturePolygon;
-	_gesturePolygon = nullptr;
-
 	delete _caliRecognizer;
 	_caliRecognizer = nullptr;
 
@@ -51,6 +49,7 @@ MainInputListener::~MainInputListener()
 		_renderer->removePolygon(_gesturePolygon);
 		delete _gesturePolygon;
 		_gesturePolygon = nullptr;
+		_gestureSubPolygon = nullptr;
 	}
 	if(_transformIndicator)
 	{
@@ -267,7 +266,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 		case IS_GESTURING:
 		{
 			_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
-			_gesturePolygon->addVertex(sceneMousePos);
+			_gestureSubPolygon->addVertex(sceneMousePos);
 			break;
 		}
 		case IS_MOVING:
@@ -321,9 +320,11 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 		_renderer->removePolygon(_gesturePolygon);
 		delete _gesturePolygon;
 		_gesturePolygon = nullptr;
+		_gestureSubPolygon = nullptr;
 	}
-	_gesturePolygon = new Polygon(Polygon::VV_Stream, Polygon::DM_LINE_STRIP, "PS_gesture");
-	_gesturePolygon->addVertex(startPoint);
+	_gesturePolygon = new Polygon(VV_Stream, "PS_gesture");
+	_gestureSubPolygon = _gesturePolygon->createSubPolygon(DM_LINE_STRIP);
+	_gestureSubPolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }
 
@@ -338,6 +339,7 @@ void MainInputListener::stopDrawingGesture()
 	_renderer->removePolygon(_gesturePolygon);
 	delete _gesturePolygon;
 	_gesturePolygon = nullptr;
+	_gestureSubPolygon = nullptr;
 }
 
 void MainInputListener::processGesture( CIGesture *gesture )

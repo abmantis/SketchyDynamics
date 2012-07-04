@@ -22,25 +22,28 @@ namespace PhySketch
 		switch (_pjr)
 		{
 		case PJR_Circle:			
-			_polygon = Polygon::CreateCircle(Polygon::DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180, jointPolyName);
+			_polygon = Polygon::CreateCircle(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 180, jointPolyName);
 			_polygon->setPosition(positionA);
 			break;
 		case PJR_Cross:
-			_polygon = new Polygon(Polygon::VV_Static, Polygon::DM_LINES, jointPolyName);
-			_polygon->addVertex(Vector2(-0.10f,-0.10f));
-			_polygon->addVertex(Vector2( 0.10f, 0.10f));
-			_polygon->addVertex(Vector2(-0.10f, 0.10f));
-			_polygon->addVertex(Vector2( 0.10f,-0.10f));
+		{
+			_polygon = new Polygon(VV_Static, jointPolyName);
+			SubPolygon *subpoly = _polygon->createSubPolygon(DM_LINES);
+			subpoly->addVertex(Vector2(-0.10f,-0.10f));
+			subpoly->addVertex(Vector2( 0.10f, 0.10f));
+			subpoly->addVertex(Vector2(-0.10f, 0.10f));
+			subpoly->addVertex(Vector2( 0.10f,-0.10f));
 			_polygon->setPosition(positionA);
 			_polygon->setAngle(_joint->GetBodyA()->GetAngle());
 			break;
+		}
 		case PJR_Zigzag:
 			break;
 		case PJR_Line:
 			break;
 		}		
 
-		_polygon->SetMaterial(_material);
+		_polygon->getSubPolygon(0)->SetMaterial(_material);
 	}
 
 	PhysicsJoint::~PhysicsJoint()

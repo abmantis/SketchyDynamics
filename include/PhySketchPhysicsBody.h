@@ -54,8 +54,7 @@ namespace PhySketch
 	protected:
 		bool _needsPolygonUpdate;
 		b2Body* _body;
-		std::vector<Polygon*> _fillPolygons;
-		std::vector<Polygon*> _linePolygons;
+		Polygon* _polygon;
 		std::vector<Polygon*> _oldPolygons;
 		ulong _id;
 		bool _selectable;

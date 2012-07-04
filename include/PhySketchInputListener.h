@@ -200,6 +200,7 @@ namespace PhySketch
 		CIScribble *_caliScribble;
 		CIRecognizer *_caliRecognizer;
 		Polygon *_gesturePolygon;
+		SubPolygon *_gestureSubPolygon;
 		Polygon *_transformIndicator;
 		Polygon *_selectedBodiesAABBPoly;
 		AABB _selectedBodiesAABB;

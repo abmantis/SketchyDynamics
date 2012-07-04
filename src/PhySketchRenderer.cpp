@@ -165,10 +165,17 @@ namespace PhySketch
 		
 		currentQueue->insert(it, RenderQueueParams(polygon, depth));
 
-		glGenBuffers(1, &polygon->_vertexBuffer);
-		glGenBuffers(1, &polygon->_elementBuffer);
-		updateOpenGLBuffers(polygon);
-		polygon->_hasNewVertices = false;
+		SubPolygon *subpoly = nullptr;
+		uint subpolycount = polygon->_subPolygons.size();
+		for (uint i = 0; i < subpolycount; ++i)
+		{
+			subpoly = polygon->_subPolygons[i];
+			glGenBuffers(1, &subpoly->_vertexBuffer);
+			glGenBuffers(1, &subpoly->_elementBuffer);
+			updateOpenGLBuffers(subpoly, polygon->_vertexVariance);
+			subpoly->_hasNewVertices = false;
+		}
+		
 		polygon->_inRenderingQueue = true;
 	}
 
@@ -185,15 +192,15 @@ namespace PhySketch
 		addPolygon(polygon, depth, rq);
 	}
 
-	void Renderer::updateOpenGLBuffers( Polygon *polygon ) const
+	void Renderer::updateOpenGLBuffers( SubPolygon *subpolygon, VertexVariance variance ) const
 	{
 		GLenum usageHint;
-		switch(polygon->_vertexVariance)
+		switch(variance)
 		{
-		case Polygon::VV_Dynamic:
+		case VV_Dynamic:
 			usageHint = GL_DYNAMIC_DRAW;
 			break;
-		case Polygon::VV_Stream:
+		case VV_Stream:
 			usageHint = GL_STREAM_DRAW;
 			break;
 		default:
@@ -201,38 +208,43 @@ namespace PhySketch
 			break;
 		}
 
-		float *vertBuff = new float[polygon->_vertices.size()*2];
-		for (uint i = 0, j = 0; i < polygon->_vertices.size(); i++, j = j+2)
+		float *vertBuff = new float[subpolygon->_vertices.size()*2];
+		for (uint i = 0, j = 0; i < subpolygon->_vertices.size(); i++, j = j+2)
 		{
-			vertBuff[j] = polygon->_vertices[i].x;
-			vertBuff[j+1] = polygon->_vertices[i].y;
+			vertBuff[j] = subpolygon->_vertices[i].x;
+			vertBuff[j+1] = subpolygon->_vertices[i].y;
 		}
 
-		uint *elemBuff = new uint[polygon->_vertexIndexes.size()];
-		for (uint i = 0; i < polygon->_vertexIndexes.size(); i++)
+		uint *elemBuff = new uint[subpolygon->_vertexIndexes.size()];
+		for (uint i = 0; i < subpolygon->_vertexIndexes.size(); i++)
 		{
-			elemBuff[i] = polygon->_vertexIndexes[i];
+			elemBuff[i] = subpolygon->_vertexIndexes[i];
 		}
 
 		// Create vertex buffers
-		glBindBuffer(GL_ARRAY_BUFFER, polygon->_vertexBuffer);
-		glBufferData(GL_ARRAY_BUFFER, polygon->_vertices.size()*sizeof(float)*2, 
+		glBindBuffer(GL_ARRAY_BUFFER, subpolygon->_vertexBuffer);
+		glBufferData(GL_ARRAY_BUFFER, subpolygon->_vertices.size()*sizeof(float)*2, 
 			vertBuff, usageHint);
 
 		// Create element buffers
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, polygon->_elementBuffer);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, polygon->_vertexIndexes.size()*sizeof(uint), 
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_elementBuffer);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_vertexIndexes.size()*sizeof(uint), 
 			elemBuff, usageHint);
 
-		//TODO: cleaning
 		delete[] vertBuff;
 		delete[] elemBuff;
 	}
 
 	void Renderer::removePolygon( Polygon *polygon, RenderQueueType rq /*= RQT_Scene*/ )
 	{
-		glDeleteBuffers(1, &polygon->_vertexBuffer);
-		glDeleteBuffers(1, &polygon->_elementBuffer);
+		SubPolygon *subpoly = nullptr;
+		uint subpolycount = polygon->_subPolygons.size();
+		for (uint i = 0; i < subpolycount; ++i)
+		{
+			subpoly = polygon->_subPolygons[i];
+			glDeleteBuffers(1, &subpoly->_vertexBuffer);
+			glDeleteBuffers(1, &subpoly->_elementBuffer);
+		}
 
 		RenderQueue *currentQueue = getRenderQueuePtr(rq);
 
@@ -303,58 +315,71 @@ namespace PhySketch
 	{
 		// make sure the polygon is updated before being rendered
 		poly->update();
-		if(poly->_hasNewVertices)		
-		{
-			updateOpenGLBuffers(poly);
-		}
-
-		uint polygonIndexCount = poly->_vertexIndexes.size();
-		Color color = poly->_material.getColor();
-		GLenum mode;
-
-		switch(poly->_drawingMode)
-		{
-		case Polygon::DM_POINTS:
-			mode = GL_POINTS;
-			break;
-		case Polygon::DM_LINES:
-			mode = GL_LINES;
-			break;
-		case Polygon::DM_LINE_STRIP:
-			mode = GL_LINE_STRIP;
-			break;
-		case Polygon::DM_LINE_LOOP:
-			mode = GL_LINE_LOOP;
-			break;
-		case Polygon::DM_TRIANGLES:
-			mode = GL_TRIANGLES;
-			break;
-		case Polygon::DM_TRIANGLE_STRIP:
-			mode = GL_TRIANGLE_STRIP;
-			break;
-		case Polygon::DM_TRIANGLE_FAN:
-			mode = GL_TRIANGLE_FAN;
-			break;
-		default:
-			mode = GL_POINTS;
-		}
-				
 
 		glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE,
-			poly->_transformMatrix[0]);
-		glUniform4f(_shaderVars.uniforms.color, color.r, color.g, color.b, 
-			color.a);
+			poly->_transformMatrix[0]);		
+		
+		//////////////////////////////////////////////////////////////////////////
+		// render each SubPolygon
+		SubPolygon *subpoly = nullptr;
+		uint subpolycount = poly->_subPolygons.size();
+		for (uint i = 0; i < subpolycount; ++i)
+		{		
+			subpoly = poly->_subPolygons[i];
+			if(subpoly->_hasNewVertices)		
+			{
+				updateOpenGLBuffers(subpoly, poly->_vertexVariance);
+				poly->updateAABB();
+			}
 
-		glBindBuffer(GL_ARRAY_BUFFER, poly->_vertexBuffer);
-		glVertexAttribPointer(_shaderVars.attributes.position, 2, GL_FLOAT, 
-			GL_FALSE, sizeof(GLfloat)*2, (void*)0);
-		glEnableVertexAttribArray(_shaderVars.attributes.position);
+			uint indexCount = subpoly->_vertexIndexes.size();
+			Color color = subpoly->_material.getColor();
+			GLenum mode;
 
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, poly->_elementBuffer);
-		glDrawElements(mode, polygonIndexCount, GL_UNSIGNED_INT, (void*)0);
+			switch(subpoly->_drawingMode)
+			{
+			case DM_POINTS:
+				mode = GL_POINTS;
+				break;
+			case DM_LINES:
+				mode = GL_LINES;
+				break;
+			case DM_LINE_STRIP:
+				mode = GL_LINE_STRIP;
+				break;
+			case DM_LINE_LOOP:
+				mode = GL_LINE_LOOP;
+				break;
+			case DM_TRIANGLES:
+				mode = GL_TRIANGLES;
+				break;
+			case DM_TRIANGLE_STRIP:
+				mode = GL_TRIANGLE_STRIP;
+				break;
+			case DM_TRIANGLE_FAN:
+				mode = GL_TRIANGLE_FAN;
+				break;
+			default:
+				mode = GL_POINTS;
+			}		
 
-		glDisableVertexAttribArray(_shaderVars.attributes.position);
+			glUniform4f(_shaderVars.uniforms.color, color.r, color.g, color.b, 
+				color.a);
+
+
+			glBindBuffer(GL_ARRAY_BUFFER, subpoly->_vertexBuffer);
+			glVertexAttribPointer(_shaderVars.attributes.position, 2, GL_FLOAT, 
+				GL_FALSE, sizeof(GLfloat)*2, (void*)0);
+			glEnableVertexAttribArray(_shaderVars.attributes.position);
+
+			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subpoly->_elementBuffer);
+			glDrawElements(mode, indexCount, GL_UNSIGNED_INT, (void*)0);
+
+			glDisableVertexAttribArray(_shaderVars.attributes.position);
+		}
+
 	}
+	
 
 	PhySketch::Vector2 Renderer::windowToScene( const Vector2 &vec )
 	{

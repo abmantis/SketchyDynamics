@@ -12,6 +12,7 @@ namespace PhySketch
 {
 PhysicsBody::PhysicsBody( b2Body *body, uint id ) :
 	_body(body),
+	_polygon(nullptr),
 	_needsPolygonUpdate(false),
 	_selected(false),
 	_selectable(true),
@@ -27,17 +28,8 @@ PhysicsBody::PhysicsBody( b2Body *body, uint id ) :
 
 PhysicsBody::~PhysicsBody()
 {
-	for (size_t i = 0; i < _fillPolygons.size(); i++)
-	{
-		delete _fillPolygons[i]; 
-		_fillPolygons[i] = nullptr;
-	}
-	
-	for (size_t i = 0; i < _linePolygons.size(); i++)
-	{
-		delete _linePolygons[i]; 
-		_linePolygons[i] = nullptr;
-	}
+	delete _polygon;
+	_polygon = nullptr;
 
 	for (size_t i = 0; i < _oldPolygons.size(); i++)
 	{
@@ -50,20 +42,9 @@ void PhysicsBody::update()
 {
 	Vector2 pos = _body->GetPosition();
 	float angle = _body->GetAngle();
-	
-	size_t i;
-	uint fillPolyCount = _fillPolygons.size();
-	for (i = 0; i < fillPolyCount; ++i)
-	{
-		_fillPolygons[i]->setPosition(pos);
-		_fillPolygons[i]->setAngle(angle);
-	}
-	uint linePolyCount = _linePolygons.size();
-	for (i = 0; i < linePolyCount; i++)
-	{
-		_linePolygons[i]->setPosition(pos);
-		_linePolygons[i]->setAngle(angle);
-	}
+
+	_polygon->setPosition(pos);
+	_polygon->setAngle(angle);	
 }
 
 b2Body* PhysicsBody::getBox2DBody()
@@ -86,34 +67,26 @@ void PhysicsBody::reconstructPolygons()
 	Vector2 position = _body->GetPosition();
 	float angle = _body->GetAngle();
 
-	std::string polyNamePrefix = "PS_Body" + toString(_id);
+	std::string polyName = "PS_Body" + toString(_id);
+	
+	// Remove old polygon	
+	if(_polygon)
+		_oldPolygons.push_back(_polygon);	
 	
 	//////////////////////////////////////////////////////////////////////////
-	// Remove old polygons	
-	size_t i;
-	uint fillPolyCount = _fillPolygons.size();
-	for (i = 0; i < fillPolyCount; ++i)
-	{
-		_oldPolygons.push_back(_fillPolygons[i]);
-	}
-	uint linePolyCount = _linePolygons.size();
-	for (i = 0; i < linePolyCount; i++)
-	{
-		_oldPolygons.push_back(_linePolygons[i]);
-	}
-	_fillPolygons.clear();
-	_linePolygons.clear();
-	
-	//////////////////////////////////////////////////////////////////////////
-	// Create new polygons
-	Polygon *fillPoly = nullptr;
-	Polygon *linePoly = nullptr;
+	// Create new polygon
+	_polygon = new Polygon(VV_Static, polyName);
+	SubPolygon* fillsubpoly = nullptr;
+	SubPolygon* linesubpoly = nullptr;
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
-	{		
-		fillPoly = new Polygon(Polygon::VV_Static, Polygon::DM_TRIANGLE_FAN, polyNamePrefix + "fill");
-		fillPoly->setPosition(position);
-		fillPoly->setAngle(angle);
-		fillPoly->SetMaterial(_fillMaterial);
+	{	
+		_polygon->setPosition(position);
+		_polygon->setAngle(angle);
+
+		fillsubpoly = _polygon->createSubPolygon(DM_TRIANGLE_FAN);
+		fillsubpoly->SetMaterial(_fillMaterial);
+		linesubpoly = _polygon->createSubPolygon(DM_LINE_LOOP);
+		linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
 
 		switch (fixture->GetType())
 		{
@@ -123,20 +96,21 @@ void PhysicsBody::reconstructPolygons()
 
 				std::vector<Vector2> circleVec = Polygon::GetCircleVertices(circle->m_p, circle->m_radius, 180);
 				size_t nVerts = circleVec.size();
+				Vector2 v;
 				for (size_t i = 0; i < nVerts; i++)
 				{
-					fillPoly->addVertex(circleVec[i]);
+					v = circleVec[i];
+					fillsubpoly->addVertex(v);
+					linesubpoly->addVertex(v);
 				}
 				
-				linePoly = new Polygon(*fillPoly, polyNamePrefix + "line");
-				
-				linePoly->addVertex(Vector2(circle->m_radius, 0.0f));
-				linePoly->addVertex(Vector2(-circle->m_radius, 0.0f));
-				linePoly->addVertex(Vector2(0.0f, 0.0f));
-				linePoly->addVertex(Vector2(0.0f, circle->m_radius));
-				linePoly->addVertex(Vector2(0.0f, -circle->m_radius));
-				linePoly->addVertex(Vector2(0.0f, 0.0f));				
-				
+				// Add extra lines in circle
+				linesubpoly->addVertex(Vector2(circle->m_radius, 0.0f));
+				linesubpoly->addVertex(Vector2(-circle->m_radius, 0.0f));
+				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
+				linesubpoly->addVertex(Vector2(0.0f, circle->m_radius));
+				linesubpoly->addVertex(Vector2(0.0f, -circle->m_radius));
+				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
 			}
 			break;
 
@@ -145,11 +119,13 @@ void PhysicsBody::reconstructPolygons()
 				b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
 				int32 vertexCount = box2dpoly->m_count;
 
+				Vector2 v;
 				for (int32 i = 0; i < vertexCount; ++i)
 				{
-					fillPoly->addVertex(box2dpoly->m_vertices[i]);
+					v = box2dpoly->m_vertices[i];
+					fillsubpoly->addVertex(v);
+					linesubpoly->addVertex(v);
 				}
-				linePoly = new Polygon(*fillPoly, polyNamePrefix + "line");
 			}
 			break;
 			// 		case b2Shape::e_edge:
@@ -164,12 +140,6 @@ void PhysicsBody::reconstructPolygons()
 		default:
 			break;
 		}
-
-		linePoly->setDrawingMode(Polygon::DM_LINE_LOOP);
-		linePoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
-
-		_fillPolygons.push_back(fillPoly);
-		_linePolygons.push_back(linePoly);
 	}
 }
 
@@ -301,17 +271,7 @@ void PhysicsBody::scale( Vector2 factor )
 	}
 
 
-	size_t i;
-	uint fillPolyCount = _fillPolygons.size();
-	for (i = 0; i < fillPolyCount; ++i)
-	{
-		_fillPolygons[i]->scale(factor);
-	}
-	uint linePolyCount = _linePolygons.size();
-	for (i = 0; i < linePolyCount; i++)
-	{
-		_linePolygons[i]->scale(factor);
-	}
+	_polygon->scale(factor);
 
 	_body->ResetMassData();
 }

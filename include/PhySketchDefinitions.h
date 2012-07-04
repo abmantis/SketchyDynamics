@@ -97,6 +97,7 @@ namespace PhySketch
 	class Renderer;
 	class Shader_GL;
 	class ShaderProgram_GL;
+	class SubPolygon;
 	class Vector2;
 
 } //namespace PhySketch
