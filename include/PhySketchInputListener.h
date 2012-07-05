@@ -166,9 +166,11 @@ namespace PhySketch
 		{
 			IS_NONE,
 			IS_GESTURING,
-			IS_SELECTING,
-			IS_MOVING,
-			IS_TRANSFORMING,
+			IS_SELECTING_BODIES,
+			IS_SELECTING_JOINTS,
+			IS_MOVING_BODIES,
+			IS_MOVING_JOINTS,
+			IS_TRANSFORMING_BODIES,
 		};
 	public:
 		MainInputListener();

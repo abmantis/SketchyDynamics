@@ -5,12 +5,15 @@
 
 namespace PhySketch
 {
-PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, ulong id ) :
-	Polygon(VV_Static, "PS_Joint" + toString(ulong(id))),
-	_joint(joint), 
-	_pjr(representation), 
-	_material(material), 
-	_id(id)
+PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, const Material& selectedMaterial, ulong id ) :
+	Polygon				(VV_Static, "PS_Joint" + toString(ulong(id))),
+	_joint				(joint), 
+	_pjr				(representation), 
+	_material			(material), 
+	_selectedMaterial	(selectedMaterial),
+	_id					(id),
+	_selectable			(true),
+	_selected			(false)
 {
 	_joint->SetUserData(this);
 
@@ -56,6 +59,11 @@ const b2Joint* PhysicsJoint::getBox2DJoint() const
 
 void PhysicsJoint::update()
 {
+	if(_selected)
+	{
+		// Do not sync the polygon with the b2d joint when it is selected
+		return;
+	}
 	switch (_pjr)
 	{
 	case PJR_Circle:			
@@ -89,7 +97,8 @@ void PhysicsJoint::setScale( const Vector2& scale )
 
 void PhysicsJoint::translate( const Vector2& amount )
 {
-	throw std::exception("The method or operation is not implemented.");
+	PHYSKETCH_ASSERT(_selected && "Cannot translate an unselected joint");
+	Polygon::translate(amount);
 }
 
 void PhysicsJoint::rotate( const float& angle )
@@ -105,6 +114,28 @@ void PhysicsJoint::scale( const Vector2& factor )
 bool PhysicsJoint::isPointInside( const Vector2& pt ) const
 {
 	return getWorldAABB(true).isPointInside(pt);
+}
+
+void PhysicsJoint::select()
+{
+	_selected = true;
+	_subPolygons[0]->SetMaterial(_selectedMaterial);
+}
+
+void PhysicsJoint::unselect()
+{
+	_selected = false;
+	_subPolygons[0]->SetMaterial(_material);
+}
+
+bool PhysicsJoint::isSelectable() const
+{
+	return _selectable;
+}
+
+bool PhysicsJoint::isSelected() const
+{
+	return _selected;
 }
 
 }

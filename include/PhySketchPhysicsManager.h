@@ -70,6 +70,16 @@ namespace PhySketch
 		/// <param name="joint"> The PhysicsJoint to be destroyed. </param>
 		virtual void destroyJoint(PhysicsJoint* joint, bool destroyB2DJoint = true);
 
+		virtual void selectJoint(PhysicsJoint *j);
+		virtual void unselectJoint(PhysicsJoint *j);
+		virtual void setUnselectableJoint(PhysicsJoint *j);
+		virtual void setSelectableJoint(PhysicsJoint *j);
+		virtual void unselectAllJoints();
+		virtual const PhysicsJointList& getSelectedJoints() const;
+		virtual void translateSelectedJoints(Vector2 translation);
+
+		// virtual void translateSelectedJoints(Vector2 translation);
+
 		/// <summary> Updates the physics objects and advances in the simulation
 		/// 	by 'advanceTime' millisecconds. </summary>
 		/// <param name="advanceTime"> Millisecconds to advance in the
@@ -106,11 +116,13 @@ namespace PhySketch
 		PhysicsBodyList _physicsBodies;
 		PhysicsBodyList _selectedBodies;
 		PhysicsJointList _physicsJoints;
+		PhysicsJointList _selectedJoints;
 		ulong _physicsBodiesIDSeed;
 		ulong _physicsJointsIDSeed;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
 		bool _simulationPaused;
+		bool _simulationPaused_internal;
 		
 	};
 }

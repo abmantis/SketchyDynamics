@@ -21,7 +21,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 
-		PhysicsJoint(b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, ulong id);
+		PhysicsJoint(b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, const Material& selectedMaterial, ulong id);
 		virtual ~PhysicsJoint();
 	
 	public:				
@@ -45,6 +45,12 @@ namespace PhySketch
 
 		virtual bool isPointInside( const Vector2& pt ) const;
 
+		virtual bool isSelectable() const;
+		virtual bool isSelected() const;
+
+	protected:
+		virtual void select();
+		virtual void unselect();		
 	protected:
 		PhysicsJointRepresentation _pjr;
 		b2Joint* _joint;
@@ -52,6 +58,10 @@ namespace PhySketch
 		ulong _id;
 
 		Material _material;
+		Material _selectedMaterial;
+
+		bool _selected;
+		bool _selectable;
 	};
 }
 #endif // PhySketchPhysicsJoint_h__

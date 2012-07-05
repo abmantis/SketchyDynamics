@@ -42,6 +42,39 @@ namespace PhySketch
 
 	};
 
+	class SimpleSceneQueryCallback : public SceneQueryCallback
+	{
+	public:
+		SimpleSceneQueryCallback(Vector2 pt, uint maxPolyCount) : 
+		  _point(pt),
+			  _maxPolyCount(maxPolyCount),
+			  _intersectedPolyCount(0)
+		  {
+		  }
+
+		  virtual bool reportPolygon(Polygon *p) 
+		  {
+			  if(p->isPointInside(_point))
+			  {
+				  _intersectedPolygons.push_back(p);
+				  ++_intersectedPolyCount;
+			  }
+
+			  if(_intersectedPolyCount >= _maxPolyCount)
+			  {
+				  return false;
+			  }
+
+			  return true;
+		  }
+
+		  uint _maxPolyCount;
+		  uint _intersectedPolyCount;
+		  Vector2 _point;
+		  std::vector<Polygon*> _intersectedPolygons;
+
+	};
+
 
 
 MainInputListener::MainInputListener() : InputListener()
@@ -140,64 +173,132 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 				switch(_interactionState)
 				{
 				case IS_NONE:
-				case IS_SELECTING:
+				{
+					FirstObjectSceneQueryCallback callback(sceneMousePos);
+					_renderer->queryScene(sceneMousePos, &callback);
+					if(callback._firstPolygon != nullptr)
 					{
-						bool onSelectableBody = false;
-						
-						FirstObjectSceneQueryCallback callback(sceneMousePos);
-						_renderer->queryScene(sceneMousePos, &callback);
-						if(callback._firstPolygon != nullptr)
+						PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
+						if( pb != nullptr)
 						{
-							PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
-							if( pb != nullptr)
+							if(pb->isSelectable())
+							{								
+								_physicsMgr->selectBody(pb);
+								_interactionState = IS_SELECTING_BODIES;
+							}
+						}
+						else 
+						{
+							// If it is not a body, is it a joint?
+							PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
+							if( pj != nullptr)
 							{
-								if(pb->isSelectable())
+								if(pj->isSelectable())
 								{
-									onSelectableBody = true;
-									if(pb->isSelected())
-									{
-										_physicsMgr->unselectBody(pb);
-									}
-									else
-									{
-										_physicsMgr->selectBody(pb);	
-									}
+									_physicsMgr->selectJoint(pj);
+									_interactionState = IS_SELECTING_JOINTS;
 								}
 							}
-							
 						}
-
-						if(!onSelectableBody)
-						{
-							// clicked outside a bodie, deselect!
-							_physicsMgr->unselectAllBodies();
-							_interactionState = IS_NONE;
-						}
-						else if(_physicsMgr->getSelectedBodies().empty())
-						{
-							// no more selected bodies
-							_interactionState = IS_NONE;
-						}
-						else
-						{
-							// we have at least one body selected
-							_interactionState = IS_SELECTING;
-						}
-						
-						break;
 					}
+					break;
+				}
+				case IS_SELECTING_BODIES:
+				{
+					bool onSelectableBody = false;
+						
+					FirstObjectSceneQueryCallback callback(sceneMousePos);
+					_renderer->queryScene(sceneMousePos, &callback);
+					if(callback._firstPolygon != nullptr)
+					{
+						PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
+						if( pb != nullptr)
+						{
+							if(pb->isSelectable())
+							{
+								onSelectableBody = true;
+								if(pb->isSelected())
+								{
+									_physicsMgr->unselectBody(pb);
+								}
+								else
+								{
+									_physicsMgr->selectBody(pb);	
+								}
+							}
+						}						
+							
+					}
+
+					if(!onSelectableBody)
+					{
+						// clicked outside a bodie, deselect!
+						_physicsMgr->unselectAllBodies();
+						_interactionState = IS_NONE;
+					}
+					else if(_physicsMgr->getSelectedBodies().empty())
+					{
+						// no more selected objects
+						_interactionState = IS_NONE;
+					}
+						
+					break;
+				}
+				case IS_SELECTING_JOINTS:
+				{
+					bool onSelectableJoint = false;
+
+					FirstObjectSceneQueryCallback callback(sceneMousePos);
+					_renderer->queryScene(sceneMousePos, &callback);
+					if(callback._firstPolygon != nullptr)
+					{
+						PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
+						if( pj != nullptr)
+						{
+							if(pj->isSelectable())
+							{
+								onSelectableJoint = true;
+								if(pj->isSelected())
+								{
+									_physicsMgr->unselectJoint(pj);
+								}
+								else
+								{
+									_physicsMgr->selectJoint(pj);	
+								}
+							}
+						}						
+
+					}
+
+					if(!onSelectableJoint)
+					{
+						_physicsMgr->unselectAllJoints();
+						_interactionState = IS_NONE;
+					}
+					else if(_physicsMgr->getSelectedJoints().empty())
+					{
+						// no more selected objects
+						_interactionState = IS_NONE;
+					}
+
+					break;
+				}
 				case IS_GESTURING:
 					stopDrawingGesture();
 					_interactionState = IS_NONE;
 					break;
-				case IS_MOVING:
-					_interactionState = IS_SELECTING;
+				case IS_MOVING_BODIES:
+					_interactionState = IS_SELECTING_BODIES;
 					break;
-				case IS_TRANSFORMING:
+				case IS_MOVING_JOINTS:
+					_interactionState = IS_SELECTING_JOINTS;
+					break;
+				case IS_TRANSFORMING_BODIES:
 					// Remove AABB and center indicator polygons
 					_renderer->removePolygon(_selectedBodiesAABBPoly);
 					_renderer->removePolygon(_transformIndicator);
-					_interactionState = IS_SELECTING;
+					_interactionState = IS_SELECTING_BODIES;
 					break;
 				}
 
@@ -238,7 +339,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 				
 				break;
 			}		
-		case IS_SELECTING:
+		case IS_SELECTING_BODIES:
 		{
 			if(position.distanceTo(_lastMousePositions.left) < 3)
 			{
@@ -256,10 +357,10 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// When in the IS_SELECTING state and the left button 
 					// is pressed and the mouse is moved we need to check if it 
 					// was moved inside or outside a selected object and change
-					// to the IS_MOVING or IS_TRANSFORMING states accordingly				
+					// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
 					if(pb->isSelected())
 					{	
-						_interactionState = IS_MOVING;					
+						_interactionState = IS_MOVING_BODIES;					
 					}
 					else
 					{					
@@ -278,8 +379,34 @@ void MainInputListener::mouseMoved( Vector2 position )
 						_transformIndicator->setPosition(aabbCenter);
 						_renderer->addPolygon(_transformIndicator);
 
-						_interactionState = IS_TRANSFORMING;
+						_interactionState = IS_TRANSFORMING_BODIES;
 					}
+				}
+			}
+			break;
+		}
+		case IS_SELECTING_JOINTS:
+		{
+			if(position.distanceTo(_lastMousePositions.left) < 3)
+			{
+				// Make sure the mouse moved more than 3 pixels to remove jitter
+				break;
+			}
+
+			FirstObjectSceneQueryCallback callback(sceneMousePos);
+			_renderer->queryScene(sceneMousePos, &callback);
+			if(callback._firstPolygon != nullptr)
+			{
+				PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
+				if( pj != nullptr)
+				{
+					// When in the IS_SELECTING_JOINT state and the left button 
+					// is pressed and the mouse is moved we need to check if it 
+					// was moved inside the selected joint
+					if(pj->isSelected())
+					{	
+						_interactionState = IS_MOVING_JOINTS;					
+					}						
 				}
 			}
 			break;
@@ -290,14 +417,21 @@ void MainInputListener::mouseMoved( Vector2 position )
 			_gestureSubPolygon->addVertex(sceneMousePos);
 			break;
 		}
-		case IS_MOVING:
+		case IS_MOVING_BODIES:
 		{
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
 			_physicsMgr->translateSelectedBodies(translation);
 			break;
 		}
-		case IS_TRANSFORMING:
+		case IS_MOVING_JOINTS:
+		{
+			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
+			_lastMousePositions.leftScene = sceneMousePos;
+			_physicsMgr->translateSelectedJoints(translation);
+			break;
+		}
+		case IS_TRANSFORMING_BODIES:
 		{
 			Vector2 selectedAABBCenter = _selectedBodiesAABB.getCenter();
 			Vector2 prevMouseToCenterVec = _lastMousePositions.leftScene - selectedAABBCenter;

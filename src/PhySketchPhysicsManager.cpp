@@ -10,9 +10,10 @@ namespace PhySketch
 template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
 PhysicsManager::PhysicsManager(Vector2 gravity) :
-	_physicsBodiesIDSeed(0),
-	_physicsJointsIDSeed(0),
-	_simulationPaused	(false)
+	_physicsBodiesIDSeed		(0),
+	_physicsJointsIDSeed		(0),
+	_simulationPaused			(false),
+	_simulationPaused_internal	(false)
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
@@ -82,6 +83,7 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 {
 	// remove the body from the bodies' list
 	_physicsBodies.remove(b);
+	_selectedBodies.remove(b);
 		
 	_renderer->removePolygon(b);
 	
@@ -98,7 +100,7 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 
 PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation )
 {
-	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), ++_physicsJointsIDSeed);
+	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
 	_physicsJoints.push_back(j);
 
 	// get the ID from the body A
@@ -110,6 +112,7 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepre
 void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*= true*/ )
 {
 	_physicsJoints.remove(joint);
+	_selectedJoints.remove(joint);
 	_renderer->removePolygon(joint);
 
 	if(destroyB2DJoint)
@@ -123,8 +126,7 @@ void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*=
 
 void PhysicsManager::update( ulong advanceTime )
 {	
-
-	if(!_simulationPaused)
+	if(!_simulationPaused && !_simulationPaused_internal)
 	{
 		stepPhysics(advanceTime);
 	}
@@ -169,18 +171,13 @@ void PhysicsManager::toggleSimulation()
 
 bool PhysicsManager::isSimulationPaused() const
 {
-	return _simulationPaused;
+	return _simulationPaused || _simulationPaused_internal;
 }
 
 void PhysicsManager::selectBody( PhysicsBody *b )
 {
 	if(b->_selectable == true && b->_selected == false)
 	{
-		// Deactivate physics of the selected body 
-		b2Body *b2d_body = b->_body;		
-		b2d_body->SetAwake(false);
-		b2d_body->SetActive(false);	
-		
 		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
@@ -189,7 +186,11 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 
 		b->_selected = true;
 		_selectedBodies.push_back(b);
-		selectConnectedBodiesRecurse(b);
+		
+		// put the body in sleep so that forces stop being applied
+		b->_body->SetAwake(false);
+
+		_simulationPaused_internal = true;
 	}
 }
 
@@ -197,11 +198,6 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 {
 	if(b->_selected)
 	{
-		// Re-activate physics of the selected body 
-		b2Body *b2d_body = b->_body;		
-		b2d_body->SetAwake(true);
-		b2d_body->SetActive(true);			
-
 		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
@@ -210,7 +206,14 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 
 		b->_selected = false;
 		_selectedBodies.remove(b);
-		unselectConnectedBodiesRecurse(b);
+
+		// wake up the body
+		b->_body->SetAwake(true);
+		
+		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
+		{
+			_simulationPaused_internal = false;
+		}
 	}
 }
 
@@ -289,7 +292,6 @@ void PhysicsManager::scaleSelectedBodies( Vector2 factor )
 	}
 }
 
-
 const PhysicsManager::PhysicsBodyList& PhysicsManager::getSelectedBodies() const
 {
 	return _selectedBodies;
@@ -326,6 +328,133 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 	}
 
 	return aabb;
+}
+
+void PhysicsManager::selectJoint( PhysicsJoint *j )
+{
+	if(j->_selectable == true && j->_selected == false)
+	{
+		j->select();
+		_selectedJoints.push_back(j);
+		_simulationPaused_internal = true;
+	}
+}
+
+void PhysicsManager::unselectJoint( PhysicsJoint *j )
+{
+	if(j->_selected)
+	{
+		Vector2 newJointPos = j->getPosition();
+		b2Joint* oldb2djoint = j->_joint;
+		if(Vector2(oldb2djoint->GetAnchorA()) != newJointPos)
+		{
+			// the joint polygon was manually moved so we need to reposition or destroy the joint
+			
+			PhysicsBody* bA = static_cast<PhysicsBody*>(oldb2djoint->GetBodyA()->GetUserData());
+			PhysicsBody* bB = static_cast<PhysicsBody*>(oldb2djoint->GetBodyB()->GetUserData());
+			// Check if the joint is still inside both bodies
+			if(bA->isPointInside(newJointPos) && bB->isPointInside(newJointPos))
+			{
+				// The joint is still inside both bodies, recreate it
+				b2Joint* newb2djoint = nullptr;
+				b2JointType type = oldb2djoint->GetType();
+				switch (type)
+				{
+				case e_revoluteJoint:
+				{
+					b2RevoluteJointDef jd;
+					b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(oldb2djoint);
+					jd.Initialize(revj->GetBodyA(), revj->GetBodyB(), newJointPos.tob2Vec2());
+					jd.collideConnected	= revj->GetCollideConnected();
+					jd.enableLimit		= revj->IsLimitEnabled();
+					jd.enableMotor		= revj->IsMotorEnabled();
+					jd.lowerAngle		= revj->GetLowerLimit();
+					jd.maxMotorTorque	= revj->GetMaxMotorTorque();
+					jd.motorSpeed		= revj->GetMotorSpeed();
+					jd.upperAngle		= revj->GetUpperLimit();
+					newb2djoint			= _physicsWorld->CreateJoint(&jd);
+					break;
+				}
+				case e_weldJoint:
+				{
+					b2WeldJointDef jd;
+					b2WeldJoint* weldj = static_cast<b2WeldJoint*>(oldb2djoint);
+					jd.Initialize(weldj->GetBodyA(), weldj->GetBodyB(), newJointPos.tob2Vec2());
+					jd.collideConnected	= weldj->GetCollideConnected();
+					jd.dampingRatio		= weldj->GetDampingRatio();
+					jd.frequencyHz		= weldj->GetFrequency();
+					newb2djoint			= _physicsWorld->CreateJoint(&jd);
+					break;
+				}
+// 				case e_prismaticJoint
+// 				case e_distanceJoint
+// 				case e_pulleyJoint
+// 				case e_mouseJoint
+// 				case e_gearJoint
+// 				case e_wheelJoint				
+// 				case e_frictionJoint
+// 				case e_ropeJoint
+// 				case e_motorJoint 
+				}
+
+				PHYSKETCH_ASSERT(newb2djoint && "Joint type not implemented");
+				newb2djoint->SetUserData(j);
+				j->_joint = newb2djoint;
+				_physicsWorld->DestroyJoint(oldb2djoint);
+			}
+			else
+			{
+				destroyJoint(j, true);
+				j = nullptr;
+			}
+		}
+
+		// Make sure the joint is still valid (could've been destroyed)
+		if(j)
+		{
+			j->unselect();
+			_selectedJoints.remove(j);	
+		}
+		
+				
+		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
+		{
+			_simulationPaused_internal = false;
+		}
+	}
+}
+
+void PhysicsManager::setUnselectableJoint( PhysicsJoint *j )
+{
+	j->_selectable = false;
+	unselectJoint(j);
+}
+
+void PhysicsManager::setSelectableJoint( PhysicsJoint *j )
+{
+	j->_selectable = true;
+}
+
+void PhysicsManager::unselectAllJoints()
+{
+	while(!_selectedJoints.empty())
+	{
+		unselectJoint(_selectedJoints.front());
+	}
+}
+
+const PhysicsManager::PhysicsJointList& PhysicsManager::getSelectedJoints() const
+{
+	return _selectedJoints;
+}
+
+void PhysicsManager::translateSelectedJoints( Vector2 translation )
+{
+	PhysicsJointList::iterator itEnd = _selectedJoints.end();
+	for (PhysicsJointList::iterator it = _selectedJoints.begin(); it != itEnd; ++it)
+	{
+		(*it)->translate(translation);
+	}
 }
 
 
