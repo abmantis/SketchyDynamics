@@ -481,7 +481,7 @@ namespace PhySketch
 				it--;
 
 				p = it->polygon;
-				aabb = p->getWorldAABB(true);
+				aabb = p->getTransformedAABB(true);
 				if(aabb.isPointInside(pt))
 				{
 					continueQuery = callback->reportPolygon(p);

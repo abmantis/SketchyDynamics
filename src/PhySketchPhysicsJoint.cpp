@@ -113,7 +113,7 @@ void PhysicsJoint::scale( const Vector2& factor )
 
 bool PhysicsJoint::isPointInside( const Vector2& pt ) const
 {
-	return getWorldAABB(true).isPointInside(pt);
+	return getTransformedAABB(true).isPointInside(pt);
 }
 
 void PhysicsJoint::select()

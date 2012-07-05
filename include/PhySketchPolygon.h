@@ -193,7 +193,7 @@ namespace PhySketch
 
 		/// <summary> Gets the axis aligned bounding box in world space. </summary>
 		/// <returns> The axis aligned bounding box. </returns>
-		virtual AABB getWorldAABB(bool bestFit) const;		
+		virtual AABB getTransformedAABB(bool bestFit) const;		
 
 		/// <summary> Sets a custom type to identify this polygon. </summary>
 		/// <remarks> User-defined types should be greater that

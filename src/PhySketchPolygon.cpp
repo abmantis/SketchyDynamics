@@ -307,10 +307,13 @@ void Polygon::updateAABB()
 {
 	_aabb.invalidate();
 
+	SubPolygon *subpoly = nullptr;
 	uint subpolycount = _subPolygons.size();
 	for (uint i = 0; i < subpolycount; ++i)
 	{
-		_aabb.update(_subPolygons[i]->_aabb);
+		subpoly = _subPolygons[i];
+		subpoly->updateAABB();
+		_aabb.update(subpoly->_aabb);
 	}
 }
 
@@ -319,7 +322,7 @@ const AABB& Polygon::getAABB() const
 	return _aabb;
 }
 
-PhySketch::AABB Polygon::getWorldAABB( bool bestFit ) const
+PhySketch::AABB Polygon::getTransformedAABB( bool bestFit ) const
 {
 	AABB aabb;
 	if(bestFit)

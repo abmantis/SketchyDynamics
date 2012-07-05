@@ -189,6 +189,7 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		
 		// put the body in sleep so that forces stop being applied
 		b->_body->SetAwake(false);
+		selectConnectedBodiesRecurse(b);
 
 		_simulationPaused_internal = true;
 	}
@@ -209,6 +210,7 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 
 		// wake up the body
 		b->_body->SetAwake(true);
+		unselectConnectedBodiesRecurse(b);
 		
 		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 		{
@@ -323,7 +325,7 @@ PhySketch::AABB PhysicsManager::getSelectedBodiesAABB() const
 	PhysicsBodyList::const_iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::const_iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		polyAABB = (*it)->getWorldAABB(true);
+		polyAABB = (*it)->getTransformedAABB(true);
 		aabb.update(polyAABB);
 	}
 
