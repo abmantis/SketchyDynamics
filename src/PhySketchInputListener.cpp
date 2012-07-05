@@ -442,6 +442,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 			
 			float mouseMoveDist = Vector2::distance(_lastMousePositions.leftScene, sceneMousePos);
 			float scale = mouseMoveDist / _initialDistFromSelectedBodiesCenter;
+			if(scale > 0.5f) scale = 0.5f;	// prevent supa-scaling
 			if(prevMouseToCenterVec.sqrdLength() < currMouseToCenterVec.sqrdLength())
 			{
 				// if the mouse is moving away from the AABB center then we need to scale up

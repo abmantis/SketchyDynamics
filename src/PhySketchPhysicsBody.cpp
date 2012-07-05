@@ -188,6 +188,11 @@ void PhysicsBody::rotateAroundPoint( float angle, const Vector2& rotationPoint )
 
 void PhysicsBody::scale( const Vector2& factor )
 {
+	updateAABB();
+	Vector2 newAABBSize = _aabb.getSize()*_scale*factor;
+	if(newAABBSize.x < 0.01f || newAABBSize.y < 0.01f )
+		return;
+
 	b2Fixture* node_fixture = _body->GetFixtureList();
 	b2Fixture* fixture;
 	while(node_fixture) 
