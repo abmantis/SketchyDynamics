@@ -225,7 +225,7 @@ void PhysicsManager::selectConnectedBodiesRecurse( PhysicsBody *b )
 	for (b2JointEdge* jointEdge = b->_body->GetJointList(); jointEdge != NULL; jointEdge = jointEdge->next)
 	{
 		otherPhysicsBody = static_cast<PhysicsBody*>(jointEdge->other->GetUserData());
-		if(otherPhysicsBody->_selected == false)
+		if(otherPhysicsBody->_selectable == true && otherPhysicsBody->_selected == false)
 		{
 			selectBody(otherPhysicsBody);
 			selectConnectedBodiesRecurse(otherPhysicsBody);
