@@ -225,6 +225,14 @@ void Polygon::rotate( const float& angle )
 	computeTransformationMatrix();
 }
 
+void Polygon::rotateAroundPoint( float angle, const Vector2& rotationPoint )
+{
+	Vector2 rotatedDist = Vector2::Rotate(_position - rotationPoint, angle);
+	_position = rotationPoint + rotatedDist;
+	_angle += angle;	
+	computeTransformationMatrix();
+}
+
 void Polygon::scale( const Vector2& factor )
 {
 	_scale *= factor;
