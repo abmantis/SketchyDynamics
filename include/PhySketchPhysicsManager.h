@@ -61,10 +61,9 @@ namespace PhySketch
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 
 		/// <summary> Creates a new PhysicsJoint. </summary>
-		/// <param name="b2d_joint"> The box2d joint. </param>
-		/// <param name="representation"> The visual representation. </param>
+		/// <param name="b2d_joint"> The box2d joint. </param>		
 		/// <returns> The new PhysicsJoint. </returns>
-		virtual PhysicsJoint* createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation);
+		virtual PhysicsJoint* createJoint( b2Joint *b2d_joint);
 
 		/// <summary> Destroys a PhysicsJoint. </summary>
 		/// <param name="joint"> The PhysicsJoint to be destroyed. </param>

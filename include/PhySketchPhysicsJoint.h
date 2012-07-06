@@ -6,14 +6,17 @@
 #include "PhySketchPolygon.h"
 
 class b2Joint;
+class b2RevoluteJoint;
+class b2WeldJoint;
+
 namespace PhySketch
 {
-	enum PhysicsJointRepresentation
+	enum PhysicsJointType
 	{
-		PJR_Circle,
-		PJR_Cross,
-		PJR_Zigzag,
-		PJR_Line,
+		PJT_Revolute,
+		PJT_Weld,
+		PJT_Distance,
+		PJT_Rope,
 	};
 
 	class PhysicsJoint : public Polygon
@@ -21,15 +24,13 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 
-		PhysicsJoint(b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, const Material& selectedMaterial, ulong id);
+		PhysicsJoint(b2Joint *joint, PhysicsJointType type, const Material& material, const Material& selectedMaterial, ulong id);
 		virtual ~PhysicsJoint();
 	
 	public:				
 		virtual const b2Joint* getBox2DJoint() const;
 
-		/// <summary> Updates . </summary>
-		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
-		virtual void update();
+		virtual void update() = 0;
 
 		virtual void setAngle( float angle );
 
@@ -52,7 +53,7 @@ namespace PhySketch
 		virtual void select();
 		virtual void unselect();		
 	protected:
-		PhysicsJointRepresentation _pjr;
+		PhysicsJointType _pjt;
 		b2Joint* _joint;
 
 		ulong _id;
@@ -62,6 +63,34 @@ namespace PhySketch
 
 		bool _selected;
 		bool _selectable;
+	};
+
+	class PhysicsJointRevolute : public PhysicsJoint
+	{	
+	protected:
+		friend class PhysicsManager;
+
+		PhysicsJointRevolute(b2RevoluteJoint *joint, const Material& material, const Material& selectedMaterial, ulong id);
+		virtual ~PhysicsJointRevolute() {};
+
+	public:				
+		virtual const b2RevoluteJoint* getBox2DRevoluteJoint() const;
+
+		virtual void update();
+	};
+
+	class PhysicsJointWeld : public PhysicsJoint
+	{	
+	protected:
+		friend class PhysicsManager;
+
+		PhysicsJointWeld(b2WeldJoint *joint, const Material& material, const Material& selectedMaterial, ulong id);
+		virtual ~PhysicsJointWeld() {};
+
+	public:				
+		virtual const b2WeldJoint* getBox2DWeldJoint() const;
+
+		virtual void update();
 	};
 }
 #endif // PhySketchPhysicsJoint_h__

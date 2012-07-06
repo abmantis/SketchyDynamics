@@ -1,14 +1,16 @@
 #include "PhySketchPhysicsJoint.h"
 #include <Box2D/Dynamics/Joints/b2Joint.h>
+#include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
+#include <Box2D/Dynamics/Joints/b2WeldJoint.h>
 #include <Box2D/Dynamics/b2Body.h>
 #include "PhySketchUtils.h"
 
 namespace PhySketch
 {
-PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation representation, const Material& material, const Material& selectedMaterial, ulong id ) :
+PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointType type, const Material& material, const Material& selectedMaterial, ulong id ) :
 	Polygon				(VV_Static, "PS_Joint" + toString(ulong(id))),
 	_joint				(joint), 
-	_pjr				(representation), 
+	_pjt				(type), 
 	_material			(material), 
 	_selectedMaterial	(selectedMaterial),
 	_id					(id),
@@ -16,36 +18,6 @@ PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointRepresentation represent
 	_selected			(false)
 {
 	_joint->SetUserData(this);
-
-	//////////////////////////////////////////////////////////////////////////
-	// Construct subpolygons
-	Vector2 positionA(_joint->GetAnchorA());
-	Vector2 positionB(_joint->GetAnchorB());
-
-	switch (_pjr)
-	{
-	case PJR_Circle:			
-		Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80);
-		Polygon::setPosition(positionA);
-		break;
-	case PJR_Cross:
-	{
-		SubPolygon *subpoly = createSubPolygon(DM_LINES);
-		subpoly->addVertex(Vector2(-0.10f,-0.10f));
-		subpoly->addVertex(Vector2( 0.10f, 0.10f));
-		subpoly->addVertex(Vector2(-0.10f, 0.10f));
-		subpoly->addVertex(Vector2( 0.10f,-0.10f));
-		Polygon::setPosition(positionA);
-		Polygon::setAngle(_joint->GetBodyA()->GetAngle());
-		break;
-	}
-	case PJR_Zigzag:
-		break;
-	case PJR_Line:
-		break;
-	}		
-
-	_subPolygons[0]->SetMaterial(_material);
 }
 
 PhysicsJoint::~PhysicsJoint()
@@ -57,29 +29,6 @@ const b2Joint* PhysicsJoint::getBox2DJoint() const
 	return _joint;
 }
 
-void PhysicsJoint::update()
-{
-	if(_selected)
-	{
-		// Do not sync the polygon with the b2d joint when it is selected
-		return;
-	}
-	switch (_pjr)
-	{
-	case PJR_Circle:			
-		Polygon::setPosition(Vector2(_joint->GetAnchorA()));
-		break;
-	case PJR_Cross:
-		Polygon::setPosition(Vector2(_joint->GetAnchorA()));
-		Polygon::setAngle(_joint->GetBodyA()->GetAngle());
-		break;
-	case PJR_Zigzag:
-		break;
-	case PJR_Line:
-		break;
-	}		
-}
-
 void PhysicsJoint::setAngle( float angle )
 {
 	throw std::exception("The method or operation is not implemented.");
@@ -87,7 +36,8 @@ void PhysicsJoint::setAngle( float angle )
 
 void PhysicsJoint::setPosition( const Vector2& position )
 {
-	throw std::exception("The method or operation is not implemented.");
+	PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
+	Polygon::setPosition(position);
 }
 
 void PhysicsJoint::setScale( const Vector2& scale )
@@ -136,6 +86,62 @@ bool PhysicsJoint::isSelectable() const
 bool PhysicsJoint::isSelected() const
 {
 	return _selected;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PhysicsJointRevolute class
+PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
+	PhysicsJoint(joint, PJT_Revolute, material, selectedMaterial, id)
+{
+	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->SetMaterial(_material);;
+	Polygon::setPosition(_joint->GetAnchorA());
+}
+
+const b2RevoluteJoint* PhysicsJointRevolute::getBox2DRevoluteJoint() const
+{
+	return static_cast<b2RevoluteJoint*>(_joint);
+}
+
+void PhysicsJointRevolute::update()
+{
+	if(_selected)
+	{
+		// Do not sync the polygon with the b2d joint when it is selected
+		return;
+	}
+	
+	Polygon::setPosition(Vector2(_joint->GetAnchorA()));
+}
+
+
+PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
+	PhysicsJoint(joint, PJT_Weld, material, selectedMaterial, id)
+{
+	SubPolygon *subpoly = createSubPolygon(DM_LINES);
+	subpoly->addVertex(Vector2(-0.10f,-0.10f));
+	subpoly->addVertex(Vector2( 0.10f, 0.10f));
+	subpoly->addVertex(Vector2(-0.10f, 0.10f));
+	subpoly->addVertex(Vector2( 0.10f,-0.10f));
+	subpoly->SetMaterial(_material);
+	Polygon::setPosition(_joint->GetAnchorA());
+	Polygon::setAngle(_joint->GetBodyA()->GetAngle());		
+}
+
+const b2WeldJoint* PhysicsJointWeld::getBox2DWeldJoint() const
+{
+	return static_cast<b2WeldJoint*>(_joint);
+}
+
+void PhysicsJointWeld::update()
+{
+	if(_selected)
+	{
+		// Do not sync the polygon with the b2d joint when it is selected
+		return;
+	}
+
+	Polygon::setPosition(Vector2(_joint->GetAnchorA()));
+	Polygon::setAngle(_joint->GetBodyA()->GetAngle());
 }
 
 }

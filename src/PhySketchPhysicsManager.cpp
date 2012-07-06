@@ -98,9 +98,30 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 	b = nullptr;
 }
 
-PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint, PhysicsJointRepresentation representation )
+PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 {
-	PhysicsJoint *j = new PhysicsJoint(b2d_joint, representation, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
+	PhysicsJoint *j = nullptr;
+	b2JointType type = b2d_joint->GetType();
+	switch (type)
+	{
+	case e_revoluteJoint:
+		{
+			b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(b2d_joint);
+			j = new PhysicsJointRevolute(revj, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
+			break;
+		}
+	case e_weldJoint:
+		{
+			b2WeldJoint* weldj = static_cast<b2WeldJoint*>(b2d_joint);
+			j = new PhysicsJointWeld(weldj, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
+			break;
+		}
+	default:
+		throw std::exception("Unsupported joint type");
+		return NULL;
+	}
+
+	 
 	_physicsJoints.push_back(j);
 
 	// get the ID from the body A
