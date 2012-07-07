@@ -19,6 +19,13 @@ namespace PhySketch
 		PJT_Rope,
 	};
 
+	enum JointAnchorsSituation
+	{
+		JAS_NOT_MOVED,	// Joint was not manually moved
+		JAS_MOVED,		// Joint was moved but remains inside both bodies
+		JAS_MOVED_OUT	// Joint was moved and is now outside both bodies
+	};
+
 	class PhysicsJoint : public Polygon
 	{	
 	protected:
@@ -28,7 +35,7 @@ namespace PhySketch
 		virtual ~PhysicsJoint();
 	
 	public:				
-		virtual const b2Joint* getBox2DJoint() const;
+		virtual b2Joint* getBox2DJoint();
 
 		virtual void update() = 0;
 
@@ -42,6 +49,8 @@ namespace PhySketch
 
 		virtual void rotate( const float& angle );
 
+		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
+
 		virtual void scale( const Vector2& factor );
 
 		virtual bool isPointInside( const Vector2& pt ) const;
@@ -49,9 +58,12 @@ namespace PhySketch
 		virtual bool isSelectable() const;
 		virtual bool isSelected() const;
 
+		virtual JointAnchorsSituation checkAnchorsSituation() const = 0;
+		
 	protected:
 		virtual void select();
 		virtual void unselect();		
+
 	protected:
 		PhysicsJointType _pjt;
 		b2Joint* _joint;
@@ -74,9 +86,12 @@ namespace PhySketch
 		virtual ~PhysicsJointRevolute() {};
 
 	public:				
-		virtual const b2RevoluteJoint* getBox2DRevoluteJoint() const;
+		virtual b2RevoluteJoint* getBox2DRevoluteJoint();
 
 		virtual void update();
+
+		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
 	};
 
 	class PhysicsJointWeld : public PhysicsJoint
@@ -88,9 +103,12 @@ namespace PhySketch
 		virtual ~PhysicsJointWeld() {};
 
 	public:				
-		virtual const b2WeldJoint* getBox2DWeldJoint() const;
+		virtual b2WeldJoint* getBox2DWeldJoint();
 
 		virtual void update();
+
+		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
 	};
 }
 #endif // PhySketchPhysicsJoint_h__

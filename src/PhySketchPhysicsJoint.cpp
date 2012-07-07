@@ -24,7 +24,7 @@ PhysicsJoint::~PhysicsJoint()
 {
 }
 
-const b2Joint* PhysicsJoint::getBox2DJoint() const
+b2Joint* PhysicsJoint::getBox2DJoint()
 {
 	return _joint;
 }
@@ -54,6 +54,12 @@ void PhysicsJoint::translate( const Vector2& amount )
 void PhysicsJoint::rotate( const float& angle )
 {
 	throw std::exception("The method or operation is not implemented.");
+}
+
+void PhysicsJoint::rotateAroundPoint( float angle, const Vector2& rotationPoint )
+{
+	PHYSKETCH_ASSERT(_selected && "Cannot rotateAroundPoint an unselected joint");
+	Polygon::rotateAroundPoint(angle, rotationPoint);
 }
 
 void PhysicsJoint::scale( const Vector2& factor )
@@ -88,6 +94,7 @@ bool PhysicsJoint::isSelected() const
 	return _selected;
 }
 
+
 //////////////////////////////////////////////////////////////////////////
 // PhysicsJointRevolute class
 PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
@@ -97,7 +104,7 @@ PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, const Materi
 	Polygon::setPosition(_joint->GetAnchorA());
 }
 
-const b2RevoluteJoint* PhysicsJointRevolute::getBox2DRevoluteJoint() const
+b2RevoluteJoint* PhysicsJointRevolute::getBox2DRevoluteJoint()
 {
 	return static_cast<b2RevoluteJoint*>(_joint);
 }
@@ -111,6 +118,28 @@ void PhysicsJointRevolute::update()
 	}
 	
 	Polygon::setPosition(Vector2(_joint->GetAnchorA()));
+}
+
+PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() const
+{
+	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorA()) != _position)
+	{
+		// The joint polygon was manually moved. Check if the joint is still inside both bodies
+		Polygon* bA = static_cast<Polygon*>(_joint->GetBodyA()->GetUserData());
+		Polygon* bB = static_cast<Polygon*>(_joint->GetBodyB()->GetUserData());		
+		if(bA->isPointInside(_position) && bB->isPointInside(_position))
+		{
+			// the joint was only moved INSIDE the bodies
+			return JAS_MOVED;
+		}
+		else
+		{
+			// the joint is now outside one (or both) bodies
+			return JAS_MOVED_OUT;
+		}
+	}
+
+	return JAS_NOT_MOVED;
 }
 
 
@@ -127,7 +156,7 @@ PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, const Material& material
 	Polygon::setAngle(_joint->GetBodyA()->GetAngle());		
 }
 
-const b2WeldJoint* PhysicsJointWeld::getBox2DWeldJoint() const
+b2WeldJoint* PhysicsJointWeld::getBox2DWeldJoint()
 {
 	return static_cast<b2WeldJoint*>(_joint);
 }
@@ -142,6 +171,28 @@ void PhysicsJointWeld::update()
 
 	Polygon::setPosition(Vector2(_joint->GetAnchorA()));
 	Polygon::setAngle(_joint->GetBodyA()->GetAngle());
+}
+
+PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation() const
+{
+	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorA()) != _position)
+	{
+		// The joint polygon was manually moved. Check if the joint is still inside both bodies
+		Polygon* bA = static_cast<Polygon*>(_joint->GetBodyA()->GetUserData());
+		Polygon* bB = static_cast<Polygon*>(_joint->GetBodyB()->GetUserData());		
+		if(bA->isPointInside(_position) && bB->isPointInside(_position))
+		{
+			// the joint was only moved INSIDE the bodies
+			return JAS_MOVED;
+		}
+		else
+		{
+			// the joint is now outside one (or both) bodies
+			return JAS_MOVED_OUT;
+		}
+	}
+
+	return JAS_NOT_MOVED;
 }
 
 }

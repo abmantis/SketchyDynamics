@@ -76,6 +76,19 @@ namespace PhySketch
 		virtual void unselectAllJoints();
 		virtual const PhysicsJointList& getSelectedJoints() const;
 		virtual void translateSelectedJoints(Vector2 translation);
+		virtual void rotateSelectedJoints(float angle, Vector2 rotationCenter);
+
+		/// <summary> Check if a joint was moved and if its anchor points are
+		/// 	still inside the respective bodies. The joint is recreated if it
+		/// 	was moved and the anchor points remain inside the bodies, or
+		/// 	destroyed if the anchors are outside one of the bodies. </summary>
+		/// <remarks> Deadvirus, 7/6/2012. </remarks>
+		/// <param name="joint"> The PhysicsJoint to be validated. </param>
+		/// <returns> false if the joint is invalid and so was destroyed, true if
+		/// 	it is still valid. </returns>
+		virtual bool validateJointAnchors(PhysicsJoint *j);
+		virtual void validateSelectedJointsAnchors();
+
 
 		// virtual void translateSelectedJoints(Vector2 translation);
 

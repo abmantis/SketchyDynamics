@@ -287,17 +287,28 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 				case IS_GESTURING:
 					stopDrawingGesture();
 					_interactionState = IS_NONE;
+					break;				
+				case IS_MOVING_JOINTS:
+					_physicsMgr->validateSelectedJointsAnchors();
+					if(_physicsMgr->getSelectedJoints().empty())
+					{
+						// no more selected objects
+						_interactionState = IS_NONE;
+					}
+					else
+					{
+						_interactionState = IS_SELECTING_JOINTS;
+					}
 					break;
 				case IS_MOVING_BODIES:
+					_physicsMgr->validateSelectedJointsAnchors();
 					_interactionState = IS_SELECTING_BODIES;
-					break;
-				case IS_MOVING_JOINTS:
-					_interactionState = IS_SELECTING_JOINTS;
 					break;
 				case IS_TRANSFORMING_BODIES:
 					// Remove AABB and center indicator polygons
 					_renderer->removePolygon(_selectedBodiesAABBPoly);
 					_renderer->removePolygon(_transformIndicator);
+					_physicsMgr->validateSelectedJointsAnchors();
 					_interactionState = IS_SELECTING_BODIES;
 					break;
 				}

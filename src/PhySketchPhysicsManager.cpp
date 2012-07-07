@@ -96,6 +96,11 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 	// delete the body and clear the pointer
 	delete b;
 	b = nullptr;
+
+	if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
+	{
+		_simulationPaused_internal = false;
+	}
 }
 
 PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
@@ -143,6 +148,11 @@ void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*=
 
 	delete joint;
 	joint = nullptr;
+
+	if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
+	{
+		_simulationPaused_internal = false;
+	}
 }
 
 void PhysicsManager::update( ulong advanceTime )
@@ -242,7 +252,8 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 
 void PhysicsManager::selectConnectedBodiesRecurse( PhysicsBody *b )
 {	
-	PhysicsBody *otherPhysicsBody = nullptr;
+	PhysicsJoint *phyjoint = nullptr;
+	PhysicsBody *otherPhysicsBody = nullptr;	
 	for (b2JointEdge* jointEdge = b->_body->GetJointList(); jointEdge != NULL; jointEdge = jointEdge->next)
 	{
 		otherPhysicsBody = static_cast<PhysicsBody*>(jointEdge->other->GetUserData());
@@ -251,20 +262,38 @@ void PhysicsManager::selectConnectedBodiesRecurse( PhysicsBody *b )
 			selectBody(otherPhysicsBody);
 			selectConnectedBodiesRecurse(otherPhysicsBody);
 		}
+		phyjoint = static_cast<PhysicsJoint*>(jointEdge->joint->GetUserData());
+		if(phyjoint->_selectable == true && phyjoint->_selected == false)
+		{
+			selectJoint(phyjoint);
+		}
+
 	}
 }
 
 void PhysicsManager::unselectConnectedBodiesRecurse( PhysicsBody *b )
 {	
+	PhysicsJoint *phyjoint = nullptr;
 	PhysicsBody *otherPhysicsBody = nullptr;
-	for (b2JointEdge* jointEdge = b->_body->GetJointList(); jointEdge != NULL; jointEdge = jointEdge->next)
+	b2JointEdge* nextJointEdge = b->_body->GetJointList(); 
+	b2JointEdge* jointEdge = nullptr;
+	while (nextJointEdge != NULL)
 	{
+		jointEdge = nextJointEdge;
+		nextJointEdge = nextJointEdge->next;
+
+		phyjoint = static_cast<PhysicsJoint*>(jointEdge->joint->GetUserData());
 		otherPhysicsBody = static_cast<PhysicsBody*>(jointEdge->other->GetUserData());
+		if(phyjoint->_selected == true)
+		{
+			unselectJoint(phyjoint);
+		}		
 		if(otherPhysicsBody->_selected == true)
 		{
 			unselectBody(otherPhysicsBody);
 			unselectConnectedBodiesRecurse(otherPhysicsBody);
 		}
+		
 	}
 }
 
@@ -295,6 +324,8 @@ void PhysicsManager::translateSelectedBodies( Vector2 translation )
 	{
 		(*it)->translate(translation);
 	}
+
+	translateSelectedJoints(translation);
 }
 
 void PhysicsManager::rotateSelectedBodies( float angle, Vector2 rotationCenter )
@@ -304,6 +335,8 @@ void PhysicsManager::rotateSelectedBodies( float angle, Vector2 rotationCenter )
 	{
 		(*it)->rotateAroundPoint(angle, rotationCenter);
 	}
+
+	rotateSelectedJoints(angle, rotationCenter);
 }
 
 void PhysicsManager::scaleSelectedBodies( Vector2 factor )
@@ -367,73 +400,10 @@ void PhysicsManager::unselectJoint( PhysicsJoint *j )
 {
 	if(j->_selected)
 	{
-		Vector2 newJointPos = j->getPosition();
-		b2Joint* oldb2djoint = j->_joint;
-		if(Vector2(oldb2djoint->GetAnchorA()) != newJointPos)
-		{
-			// the joint polygon was manually moved so we need to reposition or destroy the joint
-			
-			PhysicsBody* bA = static_cast<PhysicsBody*>(oldb2djoint->GetBodyA()->GetUserData());
-			PhysicsBody* bB = static_cast<PhysicsBody*>(oldb2djoint->GetBodyB()->GetUserData());
-			// Check if the joint is still inside both bodies
-			if(bA->isPointInside(newJointPos) && bB->isPointInside(newJointPos))
-			{
-				// The joint is still inside both bodies, recreate it
-				b2Joint* newb2djoint = nullptr;
-				b2JointType type = oldb2djoint->GetType();
-				switch (type)
-				{
-				case e_revoluteJoint:
-				{
-					b2RevoluteJointDef jd;
-					b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(oldb2djoint);
-					jd.Initialize(revj->GetBodyA(), revj->GetBodyB(), newJointPos.tob2Vec2());
-					jd.collideConnected	= revj->GetCollideConnected();
-					jd.enableLimit		= revj->IsLimitEnabled();
-					jd.enableMotor		= revj->IsMotorEnabled();
-					jd.lowerAngle		= revj->GetLowerLimit();
-					jd.maxMotorTorque	= revj->GetMaxMotorTorque();
-					jd.motorSpeed		= revj->GetMotorSpeed();
-					jd.upperAngle		= revj->GetUpperLimit();
-					newb2djoint			= _physicsWorld->CreateJoint(&jd);
-					break;
-				}
-				case e_weldJoint:
-				{
-					b2WeldJointDef jd;
-					b2WeldJoint* weldj = static_cast<b2WeldJoint*>(oldb2djoint);
-					jd.Initialize(weldj->GetBodyA(), weldj->GetBodyB(), newJointPos.tob2Vec2());
-					jd.collideConnected	= weldj->GetCollideConnected();
-					jd.dampingRatio		= weldj->GetDampingRatio();
-					jd.frequencyHz		= weldj->GetFrequency();
-					newb2djoint			= _physicsWorld->CreateJoint(&jd);
-					break;
-				}
-// 				case e_prismaticJoint
-// 				case e_distanceJoint
-// 				case e_pulleyJoint
-// 				case e_mouseJoint
-// 				case e_gearJoint
-// 				case e_wheelJoint				
-// 				case e_frictionJoint
-// 				case e_ropeJoint
-// 				case e_motorJoint 
-				}
-
-				PHYSKETCH_ASSERT(newb2djoint && "Joint type not implemented");
-				newb2djoint->SetUserData(j);
-				j->_joint = newb2djoint;
-				_physicsWorld->DestroyJoint(oldb2djoint);
-			}
-			else
-			{
-				destroyJoint(j, true);
-				j = nullptr;
-			}
-		}
+		bool valid = validateJointAnchors(j);
 
 		// Make sure the joint is still valid (could've been destroyed)
-		if(j)
+		if(valid)
 		{
 			j->unselect();
 			_selectedJoints.remove(j);	
@@ -477,6 +447,89 @@ void PhysicsManager::translateSelectedJoints( Vector2 translation )
 	for (PhysicsJointList::iterator it = _selectedJoints.begin(); it != itEnd; ++it)
 	{
 		(*it)->translate(translation);
+	}
+}
+
+bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
+{
+	JointAnchorsSituation jas = j->checkAnchorsSituation();
+	switch(jas)
+	{
+	case JAS_MOVED:
+		{
+			// The joint is still inside both bodies, recreate it
+			b2Joint* newb2djoint = nullptr;
+			b2Joint* oldb2djoint = j->getBox2DJoint();
+			b2JointType type = oldb2djoint->GetType();
+			switch (type)
+			{
+			case e_revoluteJoint:
+				{
+					b2RevoluteJointDef jd;
+					b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(oldb2djoint);
+					jd.Initialize(revj->GetBodyA(), revj->GetBodyB(), j->getPosition().tob2Vec2());
+					jd.collideConnected	= revj->GetCollideConnected();
+					jd.enableLimit		= revj->IsLimitEnabled();
+					jd.enableMotor		= revj->IsMotorEnabled();
+					jd.lowerAngle		= revj->GetLowerLimit();
+					jd.maxMotorTorque	= revj->GetMaxMotorTorque();
+					jd.motorSpeed		= revj->GetMotorSpeed();
+					jd.upperAngle		= revj->GetUpperLimit();
+					newb2djoint			= _physicsWorld->CreateJoint(&jd);
+					break;
+				}
+			case e_weldJoint:
+				{
+					b2WeldJointDef jd;
+					b2WeldJoint* weldj = static_cast<b2WeldJoint*>(oldb2djoint);
+					jd.Initialize(weldj->GetBodyA(), weldj->GetBodyB(), j->getPosition().tob2Vec2());
+					jd.collideConnected	= weldj->GetCollideConnected();
+					jd.dampingRatio		= weldj->GetDampingRatio();
+					jd.frequencyHz		= weldj->GetFrequency();
+					newb2djoint			= _physicsWorld->CreateJoint(&jd);
+					break;
+				}
+			}
+
+			PHYSKETCH_ASSERT(newb2djoint && "Joint type not implemented");
+			newb2djoint->SetUserData(j);
+			j->_joint = newb2djoint;
+			_physicsWorld->DestroyJoint(oldb2djoint);
+			
+			break;
+		}	
+		case JAS_MOVED_OUT:
+		{
+			destroyJoint(j, true);
+			j = nullptr;
+			return false;
+			break;
+		}
+	}
+
+	// the joint still exists
+	return true;
+}
+
+void PhysicsManager::validateSelectedJointsAnchors()
+{
+	PhysicsJointList::iterator itEnd = _selectedJoints.end();
+	PhysicsJointList::iterator nextIt = _selectedJoints.begin();
+	PhysicsJointList::iterator it;
+	while ( nextIt != itEnd)
+	{
+		it = nextIt;
+		 ++nextIt;
+		 validateJointAnchors(*it);		
+	}
+}
+
+void PhysicsManager::rotateSelectedJoints( float angle, Vector2 rotationCenter )
+{
+	PhysicsJointList::iterator itEnd = _selectedJoints.end();
+	for (PhysicsJointList::iterator it = _selectedJoints.begin(); it != itEnd; ++it)
+	{
+		(*it)->rotateAroundPoint(angle, rotationCenter);
 	}
 }
 
