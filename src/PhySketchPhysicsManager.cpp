@@ -129,6 +129,7 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 	 
 	_physicsJoints.push_back(j);
 
+	// TODO: get the ID from the frontest body
 	// get the ID from the body A
 	ulong bodyid = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
 	_renderer->addPolygon(j, bodyid, RQT_Scene);
@@ -260,7 +261,6 @@ void PhysicsManager::selectConnectedBodiesRecurse( PhysicsBody *b )
 		if(otherPhysicsBody->_selectable == true && otherPhysicsBody->_selected == false)
 		{
 			selectBody(otherPhysicsBody);
-			selectConnectedBodiesRecurse(otherPhysicsBody);
 		}
 		phyjoint = static_cast<PhysicsJoint*>(jointEdge->joint->GetUserData());
 		if(phyjoint->_selectable == true && phyjoint->_selected == false)
@@ -291,7 +291,6 @@ void PhysicsManager::unselectConnectedBodiesRecurse( PhysicsBody *b )
 		if(otherPhysicsBody->_selected == true)
 		{
 			unselectBody(otherPhysicsBody);
-			unselectConnectedBodiesRecurse(otherPhysicsBody);
 		}
 		
 	}
@@ -400,15 +399,8 @@ void PhysicsManager::unselectJoint( PhysicsJoint *j )
 {
 	if(j->_selected)
 	{
-		bool valid = validateJointAnchors(j);
-
-		// Make sure the joint is still valid (could've been destroyed)
-		if(valid)
-		{
-			j->unselect();
-			_selectedJoints.remove(j);	
-		}
-		
+		j->unselect();
+		_selectedJoints.remove(j);			
 				
 		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 		{
