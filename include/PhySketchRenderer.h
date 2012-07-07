@@ -8,6 +8,7 @@
 
 namespace PhySketch
 {
+	/// <summary> Scene query callback abstract class. </summary>
 	class SceneQueryCallback
 	{
 	public:
@@ -16,6 +17,69 @@ namespace PhySketch
 		/// <param name="p"> The intersected Polygon . </param>
 		/// <returns> true to continue querying other for more Polygons. </returns>
 		virtual bool reportPolygon(Polygon *p) = 0;
+	};
+
+	/// <summary> Scene query callback implementation that stores the first
+	/// 	intersected object. </summary>
+	class FirstObjectSceneQueryCallback : public SceneQueryCallback
+	{
+	public:
+		FirstObjectSceneQueryCallback(Vector2 pt) : 
+		  _point(pt),
+			  _firstPolygon(nullptr)
+		  {
+		  }
+
+		  virtual bool reportPolygon(Polygon *p) 
+		  {
+			  if(p->isPointInside(_point))
+			  {
+				  _firstPolygon = p;
+				  return false;
+			  }
+
+			  return true;
+		  }
+
+		  Vector2 _point;
+		  Polygon* _firstPolygon;
+
+	};
+
+	/// <summary> Scene query callback implementation that stores an array of
+	/// 	intersected objects up to a established number of objects. The
+	/// 	objects are storend front-to-back (closest first). </summary>
+	class SimpleSceneQueryCallback : public SceneQueryCallback
+	{
+	public:
+		SimpleSceneQueryCallback(Vector2 pt, uint maxPolyCount) : 
+		  _point(pt),
+			  _maxPolyCount(maxPolyCount),
+			  _intersectedPolyCount(0)
+		  {
+		  }
+
+		  virtual bool reportPolygon(Polygon *p) 
+		  {
+			  if(p->isPointInside(_point))
+			  {
+				  _intersectedPolygons.push_back(p);
+				  ++_intersectedPolyCount;
+			  }
+
+			  if(_intersectedPolyCount >= _maxPolyCount)
+			  {
+				  return false;
+			  }
+
+			  return true;
+		  }
+
+		  uint _maxPolyCount;
+		  uint _intersectedPolyCount;
+		  Vector2 _point;
+		  std::vector<Polygon*> _intersectedPolygons;
+
 	};
 
 	enum RenderQueueType

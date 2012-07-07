@@ -16,67 +16,6 @@
 
 namespace PhySketch
 {
-
-	class FirstObjectSceneQueryCallback : public SceneQueryCallback
-	{
-	public:
-		FirstObjectSceneQueryCallback(Vector2 pt) : 
-			_point(pt),
-			_firstPolygon(nullptr)
-		{
-		}
-
-		virtual bool reportPolygon(Polygon *p) 
-		{
-			if(p->isPointInside(_point))
-			{
-				_firstPolygon = p;
-				return false;
-			}
-			
-			return true;
-		}
-
-		Vector2 _point;
-		Polygon* _firstPolygon;
-
-	};
-
-	class SimpleSceneQueryCallback : public SceneQueryCallback
-	{
-	public:
-		SimpleSceneQueryCallback(Vector2 pt, uint maxPolyCount) : 
-		  _point(pt),
-			  _maxPolyCount(maxPolyCount),
-			  _intersectedPolyCount(0)
-		  {
-		  }
-
-		  virtual bool reportPolygon(Polygon *p) 
-		  {
-			  if(p->isPointInside(_point))
-			  {
-				  _intersectedPolygons.push_back(p);
-				  ++_intersectedPolyCount;
-			  }
-
-			  if(_intersectedPolyCount >= _maxPolyCount)
-			  {
-				  return false;
-			  }
-
-			  return true;
-		  }
-
-		  uint _maxPolyCount;
-		  uint _intersectedPolyCount;
-		  Vector2 _point;
-		  std::vector<Polygon*> _intersectedPolygons;
-
-	};
-
-
-
 MainInputListener::MainInputListener() : InputListener()
 {
 	_renderer = Renderer::getSingletonPtr();
