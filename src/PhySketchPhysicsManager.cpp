@@ -129,10 +129,10 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 	 
 	_physicsJoints.push_back(j);
 
-	// TODO: get the ID from the frontest body
-	// get the ID from the body A
-	ulong bodyid = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
-	_renderer->addPolygon(j, bodyid, RQT_Scene);
+	// get the ID from the front body
+	ulong bodyA_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
+	ulong bodyB_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyB()->GetUserData()))->_id;
+	_renderer->addPolygon(j, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
 	return j;
 }
 

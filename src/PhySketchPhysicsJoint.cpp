@@ -122,6 +122,7 @@ void PhysicsJointRevolute::update()
 
 PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() const
 {
+	// TODO: improve anchor check (sometimes A and B anchors can be different)
 	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorB()) != _position)
 	{
 		// The joint polygon was manually moved. Check if the joint is still inside both bodies
@@ -142,7 +143,8 @@ PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() c
 	return JAS_NOT_MOVED;
 }
 
-
+//////////////////////////////////////////////////////////////////////////
+// PhysicsJointWeld class
 PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Weld, material, selectedMaterial, id)
 {
@@ -175,6 +177,7 @@ void PhysicsJointWeld::update()
 
 PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation() const
 {
+	// TODO: improve anchor check (sometimes A and B anchors can be different)
 	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorB()) != _position)
 	{
 		// The joint polygon was manually moved. Check if the joint is still inside both bodies
