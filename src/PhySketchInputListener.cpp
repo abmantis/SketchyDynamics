@@ -511,7 +511,7 @@ void MainInputListener::stopDrawingGesture()
 
 void MainInputListener::processGesture( CIGesture *gesture )
 {
-	std::string gestureName = gesture->getName();
+	std::string gestureName = gesture->getName();	
 
 	if (gestureName.compare("Triangle") == 0)
 	{
@@ -557,29 +557,32 @@ void MainInputListener::processGesture( CIGesture *gesture )
 						
 		Vector2 position =  _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		Vector2 vectToOrient = rectP2 - rectP1;
-		float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
-		if(vectToOrient.y < 0)
+		if(size.x > FLT_MIN && size.y > FLT_MIN)
 		{
-			angle = M_PI - angle;
-		}
+			Vector2 vectToOrient = rectP2 - rectP1;
+			float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
+			if(vectToOrient.y < 0)
+			{
+				angle = M_PI - angle;
+			}
 
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(position.x, position.y);
-		bodyDef.angle = angle;
-		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(position.x, position.y);
+			bodyDef.angle = angle;
+			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
-		b2PolygonShape dynamicBox;
-		dynamicBox.SetAsBox(size.x*0.5f, size.y*0.5f);
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &dynamicBox;
-		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
-		body->CreateFixture(&fixtureDef);
+			b2PolygonShape dynamicBox;
+			dynamicBox.SetAsBox(size.x*0.5f, size.y*0.5f);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &dynamicBox;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.3f;
+			fixtureDef.restitution = 0.2f;	
+			body->CreateFixture(&fixtureDef);
 
-		_physicsMgr->createBody(body);
+			_physicsMgr->createBody(body);
+		}		
 	} 
 	else if (gestureName.compare("Circle") == 0)
 	{
@@ -590,27 +593,29 @@ void MainInputListener::processGesture( CIGesture *gesture )
 
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		
-		if(checkForCircleJoint(size, position) == false)
+		if(size.x > FLT_MIN && size.y > FLT_MIN)
 		{
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(position.x, position.y);
-			bodyDef.angle = 0.0f;
-			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+			if(checkForCircleJoint(size, position) == false)
+			{
+				b2BodyDef bodyDef;
+				bodyDef.type = b2_dynamicBody;
+				bodyDef.position.Set(position.x, position.y);
+				bodyDef.angle = 0.0f;
+				b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
-			b2CircleShape circleShape;
-			circleShape.m_p.Set(0.0f, 0.0f);
-			circleShape.m_radius = size.x * 0.5f;
+				b2CircleShape circleShape;
+				circleShape.m_p.Set(0.0f, 0.0f);
+				circleShape.m_radius = size.x * 0.5f;
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circleShape;
-			fixtureDef.density = 1.0f;
-			fixtureDef.friction = 0.3f;
-			fixtureDef.restitution = 0.2f;	
-			body->CreateFixture(&fixtureDef);
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = 1.0f;
+				fixtureDef.friction = 0.3f;
+				fixtureDef.restitution = 0.2f;	
+				body->CreateFixture(&fixtureDef);
 
-			_physicsMgr->createBody(body);
+				_physicsMgr->createBody(body);
+			}
 		}
 
 	} 
@@ -624,26 +629,29 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 
-		if(checkForCircleJoint(size, position) == false)
+		if(size.x > FLT_MIN && size.y > FLT_MIN)
 		{
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(position.x, position.y);
-			bodyDef.angle = 0.0f;
-			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+			if(checkForCircleJoint(size, position) == false)
+			{
+				b2BodyDef bodyDef;
+				bodyDef.type = b2_dynamicBody;
+				bodyDef.position.Set(position.x, position.y);
+				bodyDef.angle = 0.0f;
+				b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
-			b2CircleShape circleShape;	//TODO: ellipse and not circle
-			circleShape.m_p.Set(0.0f, 0.0f);
-			circleShape.m_radius = size.x * 0.5f;
+				b2CircleShape circleShape;	//TODO: ellipse and not circle
+				circleShape.m_p.Set(0.0f, 0.0f);
+				circleShape.m_radius = size.x * 0.5f;
 
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &circleShape;
-			fixtureDef.density = 1.0f;
-			fixtureDef.friction = 0.3f;
-			fixtureDef.restitution = 0.2f;	
-			body->CreateFixture(&fixtureDef);
+				b2FixtureDef fixtureDef;
+				fixtureDef.shape = &circleShape;
+				fixtureDef.density = 1.0f;
+				fixtureDef.friction = 0.3f;
+				fixtureDef.restitution = 0.2f;	
+				body->CreateFixture(&fixtureDef);
 
-			_physicsMgr->createBody(body);
+				_physicsMgr->createBody(body);
+			}
 		}
 		
 	} 
