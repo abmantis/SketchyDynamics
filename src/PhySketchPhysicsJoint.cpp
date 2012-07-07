@@ -122,7 +122,7 @@ void PhysicsJointRevolute::update()
 
 PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() const
 {
-	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorA()) != _position)
+	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorB()) != _position)
 	{
 		// The joint polygon was manually moved. Check if the joint is still inside both bodies
 		Polygon* bA = static_cast<Polygon*>(_joint->GetBodyA()->GetUserData());
@@ -175,7 +175,7 @@ void PhysicsJointWeld::update()
 
 PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation() const
 {
-	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorA()) != _position)
+	if(Vector2(_joint->GetAnchorA()) != _position || Vector2(_joint->GetAnchorB()) != _position)
 	{
 		// The joint polygon was manually moved. Check if the joint is still inside both bodies
 		Polygon* bA = static_cast<Polygon*>(_joint->GetBodyA()->GetUserData());
