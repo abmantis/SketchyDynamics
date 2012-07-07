@@ -494,15 +494,18 @@ namespace PhySketch
 				it--;
 
 				p = it->polygon;
-				aabb = p->getTransformedAABB(true);
-				if(aabb.isPointInside(pt))
+				if(p->_visible)
 				{
-					continueQuery = callback->reportPolygon(p);
-					if(continueQuery == false)
+					aabb = p->getTransformedAABB(true);
+					if(aabb.isPointInside(pt))
 					{
-						break;
-					}
-				}			
+						continueQuery = callback->reportPolygon(p);
+						if(continueQuery == false)
+						{
+							break;
+						}
+					}	
+				}		
 			}
 
 
