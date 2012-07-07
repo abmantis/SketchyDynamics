@@ -299,26 +299,39 @@ namespace PhySketch
 		glLoadIdentity();
 
 		RenderQueue::iterator it, it_end;
+		Polygon* poly = nullptr;
 
 		it = _backgroundRenderQueue.begin();
 		it_end = _backgroundRenderQueue.end();
 		for(; it != it_end; it++)
 		{
-			renderPolygon(it->polygon);			
+			poly = it->polygon;
+			if(poly->_visible)
+			{
+				renderPolygon(poly);
+			}
 		}
 
 		it = _sceneRenderQueue.begin();
 		it_end = _sceneRenderQueue.end();
 		for(; it != it_end; it++)
 		{
-			renderPolygon(it->polygon);			
+			poly = it->polygon;
+			if(poly->_visible)
+			{
+				renderPolygon(poly);
+			}
 		}
 
 		it = _uiRenderQueue.begin();
 		it_end = _uiRenderQueue.end();
 		for(; it != it_end; it++)
 		{
-			renderPolygon(it->polygon);			
+			poly = it->polygon;
+			if(poly->_visible)
+			{
+				renderPolygon(poly);
+			}
 		}
 	}
 

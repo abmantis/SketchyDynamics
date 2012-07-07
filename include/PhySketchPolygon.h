@@ -217,6 +217,14 @@ namespace PhySketch
 		/// <returns> true if point is inside, false if not. </returns>
 		virtual bool isPointInside(const Vector2& pt) const;
 
+		/// <summary> Sets the visibility flag of this Polygon. </summary>
+		/// <param name="visible"> true to show, false to hide. </param>
+		virtual void setVisible(bool visible);
+
+		/// <summary> Query if this object is visible. </summary>
+		/// <returns> true if visible, false if not. </returns>
+		virtual bool isVisible() const;
+
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
 		virtual void update() {}
@@ -244,6 +252,8 @@ namespace PhySketch
 		CoordinateSystem _coordSystem;	// the type of coordinates in wich vertices are defined
 		VertexVariance _vertexVariance;
 		AABB _aabb;
+
+		bool _visible;
 
 		void* _userData;
 		ulong _userType;			

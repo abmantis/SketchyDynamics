@@ -143,16 +143,17 @@ PhySketch::AABB SubPolygon::getWorldAABB( bool bestFit, Matrix3 transformMatrix 
 // Polygon class
 
 Polygon::Polygon(VertexVariance vv /*= VV_Static*/, std::string name /*= ""*/, CoordinateSystem cs /*= CS_Scene*/) :
-	_name(name),	
-	_angle			(0.0f), 
-	_position		(Vector2::ZERO_XY), 
-	_scale			(Vector2::UNIT_XY), 
-	_transformMatrix(Matrix3::IDENTITY),
-	_coordSystem	(cs), 
-	_vertexVariance	(vv),
-	_inRenderingQueue(false),
-	_userData(NULL),
-	_userType(PHYSKETCH_POLYGON_UTYPE_NONE)
+	_name				(name),	
+	_angle				(0.0f), 
+	_position			(Vector2::ZERO_XY), 
+	_scale				(Vector2::UNIT_XY), 
+	_transformMatrix	(Matrix3::IDENTITY),
+	_coordSystem		(cs), 
+	_vertexVariance		(vv),
+	_inRenderingQueue	(false),
+	_userData			(NULL),
+	_userType			(PHYSKETCH_POLYGON_UTYPE_NONE),
+	_visible			(true)
 {
 }
 
@@ -424,6 +425,16 @@ PhySketch::uint Polygon::getSubPolygonCount() const
 SubPolygon* Polygon::getSubPolygon( uint i )
 {
 	return _subPolygons[i];
+}
+
+void Polygon::setVisible( bool visible )
+{
+	_visible = visible;
+}
+
+bool Polygon::isVisible() const
+{
+	return _visible;
 }
 
 
