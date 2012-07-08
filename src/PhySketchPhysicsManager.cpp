@@ -17,6 +17,7 @@ PhysicsManager::PhysicsManager(Vector2 gravity) :
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
+	_physicsWorld->SetDestructionListener(this);
 }
 
 PhysicsManager::~PhysicsManager()
@@ -59,6 +60,20 @@ PhysicsManager& PhysicsManager::getSingleton( void )
 {
 	PHYSKETCH_ASSERT(ms_Singleton != NULL);
 	return *ms_Singleton;
+}
+
+void PhysicsManager::SayGoodbye( b2Joint* joint )
+{
+	void *userdata = joint->GetUserData();
+	if(userdata != nullptr)
+	{
+		PhysicsJoint *pj = static_cast<PhysicsJoint*>(userdata);
+		destroyJoint(pj, false);
+	}
+}
+
+void PhysicsManager::SayGoodbye( b2Fixture* fixture )
+{
 }
 
 PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
@@ -316,6 +331,19 @@ void PhysicsManager::unselectAllBodies()
 	
 }
 
+void PhysicsManager::destroySelectedBodies()
+{
+	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
+	PhysicsBodyList::iterator nextIt = _selectedBodies.begin();
+	PhysicsBodyList::iterator it;
+	while ( nextIt != itEnd)
+	{
+		it = nextIt;
+		++nextIt;
+		destroyBody(*it, true);
+	}
+}
+
 void PhysicsManager::translateSelectedBodies( Vector2 translation )
 {
 	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
@@ -524,6 +552,21 @@ void PhysicsManager::rotateSelectedJoints( float angle, Vector2 rotationCenter )
 		(*it)->rotateAroundPoint(angle, rotationCenter);
 	}
 }
+
+void PhysicsManager::destroySelectedJoints()
+{
+	PhysicsJointList::iterator itEnd = _selectedJoints.end();
+	PhysicsJointList::iterator nextIt = _selectedJoints.begin();
+	PhysicsJointList::iterator it;
+	while ( nextIt != itEnd)
+	{
+		it = nextIt;
+		++nextIt;
+		destroyJoint(*it, true);
+	}
+}
+
+
 
 
 

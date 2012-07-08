@@ -251,6 +251,12 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;				
 				case IS_MOVING_JOINTS:
+					_destructionArea->setVisible(false);
+					if(_destructionArea->isPointInside(sceneMousePos))
+					{
+						_physicsMgr->destroySelectedJoints();
+					}
+
 					_physicsMgr->validateSelectedJointsAnchors();
 					if(_physicsMgr->getSelectedJoints().empty())
 					{
@@ -263,8 +269,21 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					}
 					break;
 				case IS_MOVING_BODIES:
+					_destructionArea->setVisible(false);
+					if(_destructionArea->isPointInside(sceneMousePos))
+					{
+						_physicsMgr->destroySelectedBodies();
+					}
 					_physicsMgr->validateSelectedJointsAnchors();
-					_interactionState = IS_SELECTING_BODIES;
+					if(_physicsMgr->getSelectedBodies().empty())
+					{
+						// no more selected objects
+						_interactionState = IS_NONE;
+					}
+					else
+					{
+						_interactionState = IS_SELECTING_BODIES;
+					}
 					break;
 				case IS_TRANSFORMING_BODIES:
 					// Hide AABB and center indicator polygons
@@ -333,6 +352,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
 					if(pb->isSelected())
 					{	
+						_destructionArea->setVisible(true);
 						_interactionState = IS_MOVING_BODIES;					
 					}
 					else
@@ -378,6 +398,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// was moved inside the selected joint
 					if(pj->isSelected())
 					{	
+						_destructionArea->setVisible(true);
 						_interactionState = IS_MOVING_JOINTS;					
 					}						
 				}
@@ -395,6 +416,10 @@ void MainInputListener::mouseMoved( Vector2 position )
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
 			_physicsMgr->translateSelectedBodies(translation);
+			if(_destructionArea->isPointInside(sceneMousePos))
+			{
+				// TODO: visual fx!
+			}
 			break;
 		}
 		case IS_MOVING_JOINTS:
@@ -402,6 +427,10 @@ void MainInputListener::mouseMoved( Vector2 position )
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
 			_physicsMgr->translateSelectedJoints(translation);
+			if(_destructionArea->isPointInside(sceneMousePos))
+			{
+				// TODO: visual fx!
+			}
 			break;
 		}
 		case IS_TRANSFORMING_BODIES:

@@ -9,7 +9,7 @@
 
 namespace PhySketch
 {
-	class PhysicsManager : public Singleton<PhysicsManager>
+	class PhysicsManager : public Singleton<PhysicsManager>, public b2DestructionListener
 	{	
 	public:
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
@@ -46,18 +46,14 @@ namespace PhySketch
 		virtual void unselectBody(PhysicsBody *b);
 		virtual void setUnselectableBody(PhysicsBody *b);
 		virtual void setSelectableBody(PhysicsBody *b);
-
 		virtual void unselectAllBodies();
-
+		virtual void destroySelectedBodies();
 		virtual void translateSelectedBodies(Vector2 translation);
 		virtual void rotateSelectedBodies(float angle, Vector2 rotationCenter);
 		virtual void scaleSelectedBodies(Vector2 factor);
-
 		virtual void setActiveOnSelectedBodies(bool flag);
 		virtual void setAwakeOnSelectedBodies(bool flag);
-
 		virtual AABB getSelectedBodiesAABB() const;
-
 		virtual const PhysicsBodyList& getSelectedBodies() const;
 
 		/// <summary> Creates a new PhysicsJoint. </summary>
@@ -75,6 +71,7 @@ namespace PhySketch
 		virtual void setSelectableJoint(PhysicsJoint *j);
 		virtual void unselectAllJoints();
 		virtual const PhysicsJointList& getSelectedJoints() const;
+		virtual void destroySelectedJoints();
 		virtual void translateSelectedJoints(Vector2 translation);
 		virtual void rotateSelectedJoints(float angle, Vector2 rotationCenter);
 
@@ -123,7 +120,13 @@ namespace PhySketch
 
 		virtual void selectConnectedBodiesRecurse(PhysicsBody *b);
 		virtual void unselectConnectedBodiesRecurse(PhysicsBody *b);
-		
+
+		/// <summary> b2DestructionListener method. </summary>
+		virtual void SayGoodbye(b2Joint* joint);
+		/// <summary> b2DestructionListener method. </summary>
+		virtual void SayGoodbye( b2Fixture* fixture );
+
+
 	protected:
 		PhysicsBodyList _physicsBodies;
 		PhysicsBodyList _selectedBodies;
