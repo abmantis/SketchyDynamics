@@ -16,22 +16,16 @@
 
 namespace PhySketch
 {
-MainInputListener::MainInputListener() : InputListener()
+MainInputListener::MainInputListener() : 
+	InputListener		(),
+	_isLeftMouseDown	(false),
+	_caliStroke			(nullptr),
+	_caliScribble		(nullptr),
+	_gesturePolygon		(nullptr),
+	_gestureSubPolygon	(nullptr),
+	_caliRecognizer		(new CIRecognizer()),
+	_interactionState	(IS_NONE)
 {
-	_renderer = Renderer::getSingletonPtr();
-	_physicsMgr = PhysicsManager::getSingletonPtr();
-	_isLeftMouseDown = false;
-	_caliStroke = nullptr;
-	_caliScribble = nullptr;
-	_gesturePolygon = nullptr;
-	_gestureSubPolygon = nullptr;
-	_caliRecognizer = new CIRecognizer();
-	_interactionState = IS_NONE;
-
-	_transformIndicator = new Polygon(VV_Static, "PS_transform_indicator");
-	_transformIndicator->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80);
-	_selectedBodiesAABBPoly = new Polygon(VV_Static, "PS_selected_bodies_aabb");
-	_selectedBodiesAABBPoly->CreateSquareSubPolygon(DM_LINE_LOOP);
 }
 
 MainInputListener::~MainInputListener()
@@ -63,6 +57,35 @@ MainInputListener::~MainInputListener()
 		delete _selectedBodiesAABBPoly;
 		_selectedBodiesAABBPoly = nullptr;
 	}
+	if(_destructionArea)
+	{
+		_renderer->removePolygon(_destructionArea);
+		delete _destructionArea;
+		_destructionArea = nullptr;
+	}
+}
+
+void MainInputListener::init()
+{
+	_renderer = Renderer::getSingletonPtr();
+	_physicsMgr = PhysicsManager::getSingletonPtr();
+
+	_transformIndicator = new Polygon(VV_Static, "PS_transform_indicator");
+	_transformIndicator->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80);
+	_transformIndicator->setVisible(false);
+	_renderer->addPolygon(_transformIndicator, RQT_UI);
+
+	_selectedBodiesAABBPoly = new Polygon(VV_Static, "PS_selected_bodies_aabb");
+	_selectedBodiesAABBPoly->CreateSquareSubPolygon(DM_LINE_LOOP);
+	_selectedBodiesAABBPoly->setVisible(false);
+	_renderer->addPolygon(_selectedBodiesAABBPoly, RQT_UI);
+
+	_destructionArea = new Polygon(VV_Static, "PS_destruction_area");
+	_destructionArea->CreateSquareSubPolygon(DM_TRIANGLE_FAN);
+	_destructionArea->setScale(Vector2(14.0f, 0.7f));
+	_destructionArea->setPosition(Vector2(0.0f, 4.2f));
+	_destructionArea->setVisible(false);
+	_renderer->addPolygon(_destructionArea, RQT_UI);
 }
 
 void MainInputListener::keyDown( Key key )
@@ -244,9 +267,9 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_SELECTING_BODIES;
 					break;
 				case IS_TRANSFORMING_BODIES:
-					// Remove AABB and center indicator polygons
-					_renderer->removePolygon(_selectedBodiesAABBPoly);
-					_renderer->removePolygon(_transformIndicator);
+					// Hide AABB and center indicator polygons
+					_selectedBodiesAABBPoly->setVisible(false);
+					_transformIndicator->setVisible(false);
 					_physicsMgr->validateSelectedJointsAnchors();
 					_interactionState = IS_SELECTING_BODIES;
 					break;
@@ -324,10 +347,10 @@ void MainInputListener::mouseMoved( Vector2 position )
 						_selectedBodiesAABBPoly->setPosition(aabbCenter);
 						_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
 						_selectedBodiesAABBPoly->setAngle(0.0f);
-						_renderer->addPolygon(_selectedBodiesAABBPoly);
+						_selectedBodiesAABBPoly->setVisible(true);
 					
 						_transformIndicator->setPosition(aabbCenter);
-						_renderer->addPolygon(_transformIndicator);
+						_transformIndicator->setVisible(true);
 
 						_interactionState = IS_TRANSFORMING_BODIES;
 					}
@@ -681,6 +704,8 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 
 	return false;
 }
+
+
 
 
 }

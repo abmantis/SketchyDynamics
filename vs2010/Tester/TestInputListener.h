@@ -43,6 +43,10 @@ public:
 
 	}
 
+	virtual void init() 
+	{
+	}
+
 	PhySketch::PhysicsManager *_physicsMgr;
 };
 #endif // TestInputListener_h__

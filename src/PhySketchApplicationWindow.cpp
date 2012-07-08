@@ -21,6 +21,7 @@ ApplicationWindow::~ApplicationWindow( void )
 void ApplicationWindow::addInputListener( InputListener * inputListener )
 {
 	_inputListeners.insert(inputListener);
+	inputListener->init();
 }
 
 void ApplicationWindow::removeInputListener( InputListener * inputListener )

@@ -23,6 +23,8 @@ namespace PhySketch
 		InputListener() {};
 		virtual ~InputListener() {};
 
+		virtual void init() = 0;
+
 		virtual void keyDown(Key key) = 0;
 		virtual void keyUp(Key key) = 0;
 
@@ -174,7 +176,9 @@ namespace PhySketch
 		};
 	public:
 		MainInputListener();
-		virtual ~MainInputListener();;
+		virtual ~MainInputListener();
+
+		virtual void init();
 
 		virtual void keyDown(Key key);
 		virtual void keyUp(Key key);
@@ -196,6 +200,8 @@ namespace PhySketch
 		/// <returns> true if the joint was created. </returns>
 		virtual bool checkForCircleJoint(Vector2 size, Vector2 position);
 
+		
+
 	protected:
 		bool _isLeftMouseDown;
 		CIStroke *_caliStroke;
@@ -205,6 +211,7 @@ namespace PhySketch
 		SubPolygon *_gestureSubPolygon;
 		Polygon *_transformIndicator;
 		Polygon *_selectedBodiesAABBPoly;
+		Polygon *_destructionArea;
 		AABB _selectedBodiesAABB;
 		float _initialDistFromSelectedBodiesCenter;
 		Renderer *_renderer;
