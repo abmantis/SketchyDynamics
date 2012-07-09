@@ -14,7 +14,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 	
-		PhysicsBody(b2Body *body, uint id);
+		PhysicsBody(b2Body *body, uint id, Material* fillMaterial, Material* lineMaterial, Material* selectedMaterial);
 		virtual ~PhysicsBody();
 	
 	public:	
@@ -45,16 +45,16 @@ namespace PhySketch
 		virtual void scale(const Vector2& factor);
 
 		// Access the FillMaterial
-		const Material& getFillMaterial(void) const;
-		void setFillMaterial(const Material& fillMaterial);
+		Material* getFillMaterial(void) const;
+		void setFillMaterial(Material* fillMaterial);
 		
 		// Access the LineMaterial
-		const Material& getLineMaterial(void) const;
-		void setLineMaterial(const Material& lineMaterial);
+		Material* getLineMaterial(void) const;
+		void setLineMaterial(Material* lineMaterial);
 
 		// Access the SelectedMaterial
-		const Material& getSelectedMaterial(void) const;
-		void setSelectedMaterial(const Material& material);
+		Material* getSelectedMaterial(void) const;
+		void setSelectedMaterial(Material* material);
 
 		virtual void reconstructPolygon();
 
@@ -64,9 +64,9 @@ namespace PhySketch
 		bool _selectable;
 		bool _selected;
 	
-		Material _fillMaterial;
-		Material _lineMaterial;
-		Material _selectedMaterial;
+		Material* _fillMaterial;
+		Material* _lineMaterial;
+		Material* _selectedMaterial;
 	};
 }
 #endif // PhySketchPhysicsBody_h__

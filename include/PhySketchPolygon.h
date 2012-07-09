@@ -59,12 +59,11 @@ namespace PhySketch
 
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
-		virtual const Material& GetMaterial(void) const;
+		virtual Material* GetMaterial(void) const;
 
 		/// <summary> Sets this Polygon's material. </summary>
-		/// <remarks> Deadvirus, 6/19/2012. </remarks>
 		/// <param name="material"> The material. </param>
-		virtual void SetMaterial(const Material& material);
+		virtual void SetMaterial(Material* material);
 
 		/// <summary> Gets the drawing mode. </summary>
 		/// <returns> The drawing mode. </returns>
@@ -92,7 +91,7 @@ namespace PhySketch
 	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<uint> _vertexIndexes;
-		Material _material;
+		Material* _material;
 		DrawingMode _drawingMode;
 		bool _hasNewVertices;
 		AABB _aabb;

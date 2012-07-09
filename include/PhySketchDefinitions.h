@@ -93,6 +93,7 @@ namespace PhySketch
 	class Logger;
 	class MainInputListener;
 	class Material;
+	class MaterialManager;
 	class Polygon;
 	class Renderer;
 	class Shader_GL;

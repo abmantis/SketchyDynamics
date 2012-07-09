@@ -7,7 +7,7 @@
 
 namespace PhySketch
 {
-PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointType type, const Material& material, const Material& selectedMaterial, ulong id ) :
+PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointType type, Material* material, Material* selectedMaterial, ulong id ) :
 	Polygon				(VV_Static, "PS_Joint" + toString(ulong(id))),
 	_joint				(joint), 
 	_pjt				(type), 
@@ -97,7 +97,7 @@ bool PhysicsJoint::isSelected() const
 
 //////////////////////////////////////////////////////////////////////////
 // PhysicsJointRevolute class
-PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
+PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Revolute, material, selectedMaterial, id)
 {
 	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->SetMaterial(_material);;
@@ -145,7 +145,7 @@ PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() c
 
 //////////////////////////////////////////////////////////////////////////
 // PhysicsJointWeld class
-PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, const Material& material, const Material& selectedMaterial, ulong id ) :
+PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Weld, material, selectedMaterial, id)
 {
 	SubPolygon *subpoly = createSubPolygon(DM_LINES);

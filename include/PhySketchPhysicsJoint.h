@@ -31,7 +31,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 
-		PhysicsJoint(b2Joint *joint, PhysicsJointType type, const Material& material, const Material& selectedMaterial, ulong id);
+		PhysicsJoint(b2Joint *joint, PhysicsJointType type, Material* material, Material* selectedMaterial, ulong id);
 		virtual ~PhysicsJoint();
 	
 	public:				
@@ -70,8 +70,8 @@ namespace PhySketch
 
 		ulong _id;
 
-		Material _material;
-		Material _selectedMaterial;
+		Material* _material;
+		Material* _selectedMaterial;
 
 		bool _selected;
 		bool _selectable;
@@ -82,7 +82,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 
-		PhysicsJointRevolute(b2RevoluteJoint *joint, const Material& material, const Material& selectedMaterial, ulong id);
+		PhysicsJointRevolute(b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id);
 		virtual ~PhysicsJointRevolute() {};
 
 	public:				
@@ -99,7 +99,7 @@ namespace PhySketch
 	protected:
 		friend class PhysicsManager;
 
-		PhysicsJointWeld(b2WeldJoint *joint, const Material& material, const Material& selectedMaterial, ulong id);
+		PhysicsJointWeld(b2WeldJoint *joint, Material* material, Material* selectedMaterial, ulong id);
 		virtual ~PhysicsJointWeld() {};
 
 	public:				

@@ -6,6 +6,7 @@
 #include "PhySketchLogger.h"
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsManager.h"
+#include "PhySketchMaterialManager.h"
 
 
 namespace PhySketch
@@ -30,6 +31,10 @@ Core::~Core( void )
 	if (_physicsMgr != nullptr)
 	{
 		delete _physicsMgr; _physicsMgr = nullptr;
+	}
+	if(_materialManager != nullptr)
+	{
+		delete _materialManager; _materialManager = nullptr;
 	}
 	if(_renderer != nullptr)
 	{
@@ -69,6 +74,7 @@ void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGr
 	}
 
 	_renderer = new Renderer();
+	_materialManager = new MaterialManager();
 	_physicsMgr = new PhysicsManager(physicsGravity, physicsWorldSize);
 	_mainInputListener = new MainInputListener();
 

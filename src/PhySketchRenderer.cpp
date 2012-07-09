@@ -357,7 +357,7 @@ namespace PhySketch
 			}
 
 			uint indexCount = subpoly->_vertexIndexes.size();
-			Color color = subpoly->_material.getColor();
+			Color color = subpoly->_material->getColor();
 			GLenum mode;
 
 			switch(subpoly->_drawingMode)

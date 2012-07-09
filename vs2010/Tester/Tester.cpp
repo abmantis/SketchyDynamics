@@ -20,11 +20,13 @@
 #include "PhySketchPhysicsManager.h"
 #include "PhySketchPhysicsBody.h"
 #include "PhySketchPolygon.h"
+#include "PhySketchMaterialManager.h"
 
 PhySketch::Core _core;
 PhySketch::ApplicationWindow *_window;
 PhySketch::Renderer *_renderer;
 PhySketch::PhysicsManager *_physicsMgr;
+PhySketch::MaterialManager *_materialMgr;
 TestInputListener *_inputListener;
 
 int _tmain(int argc, _TCHAR* argv[])
@@ -37,14 +39,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
+	_materialMgr = PhySketch::MaterialManager::getSingletonPtr();
 		
 	_inputListener = new TestInputListener();
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 
 	{
-		PhySketch::Material backgroundMat;
-		backgroundMat.setColor(PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
+		PhySketch::Material* backgroundMat = _materialMgr->createMaterial("backgroundMaterial", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
 		b2BodyDef backgroundbodyDef;
 		backgroundbodyDef.position.Set(0.0f, 0.0f);
 		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);

@@ -144,6 +144,12 @@ namespace PhySketch
 		b2Fixture* _worldBoundsSensor;
 		bool _simulationPaused;
 		bool _simulationPaused_internal;
+
+		Material* _defaultBodyFillMat;
+		Material* _defaultBodyLineMat;
+		Material* _defaultBodySelectedMat;
+		Material* _defaultJointMat;
+		Material* _defaultJointSelectedMat;
 		
 	};
 }

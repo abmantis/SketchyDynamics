@@ -21,19 +21,21 @@ namespace PhySketch
 
 	class Material
 	{
+		friend class MaterialManager;
+	protected:
+		Material(std::string name) : 
+			 _name(name)
+		{
+		}		
+
 	public:
-		Material()
-		{
-		}
-		Material(Color c) 
-		{
-			_color = c;
-		}
+		
 
 		virtual void setColor(Color c) { _color = c; }
 		virtual Color getColor() { return _color; }
 
 	protected:
+		std::string _name;
 		Color _color;
 	};
 }

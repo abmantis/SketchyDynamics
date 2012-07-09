@@ -3,6 +3,7 @@
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsBody.h"
 #include "PhySketchPolygon.h"
+#include "PhySketchMaterialManager.h"
 
 namespace PhySketch
 {
@@ -17,10 +18,23 @@ PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	_worldSize					(worldsize)
 {
 	_renderer = Renderer::getSingletonPtr();
+
+	//////////////////////////////////////////////////////////////////////////
+	// Create default Materials
+	MaterialManager* matMgr = MaterialManager::getSingletonPtr();	
+	_defaultBodyFillMat		= matMgr->createMaterial("PS_defaultBodyFillMat",		Color(0.7f, 0.7f, 0.8f, 0.0f));
+	_defaultBodyLineMat		= matMgr->createMaterial("PS_defaultBodyLineMat",		Color(0.3f, 0.3f, 1.0f, 0.0f));
+	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(1.0f, 0.5f, 0.5f, 0.0f));
+	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.3f, 0.3f, 0.0f));
+	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.3f, 0.3f, 0.0f));
+
+	//////////////////////////////////////////////////////////////////////////
+	// Init physics world 
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
 	_physicsWorld->SetDestructionListener(this);
 	_physicsWorld->SetContactListener(this);
 
+	//////////////////////////////////////////////////////////////////////////
 	// create world bounds sensor to destroy bodies that go out of the worldsize
 	b2BodyDef bodyDef;
 	bodyDef.position.Set(0.0f, 0.0f);
@@ -113,7 +127,9 @@ void PhysicsManager::BeginContact( b2Contact* contact )
 PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 {
 	// Create new PhysicsBody
-	PhySketch::PhysicsBody *b = new PhySketch::PhysicsBody(b2d_body, ++_physicsBodiesIDSeed);
+	PhySketch::PhysicsBody *b = new PhySketch::PhysicsBody(b2d_body, 
+		++_physicsBodiesIDSeed, _defaultBodyFillMat, _defaultBodyLineMat,
+		_defaultBodySelectedMat);
 
 	_physicsBodies.push_back(b);
 
@@ -161,13 +177,13 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 	case e_revoluteJoint:
 		{
 			b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(b2d_joint);
-			j = new PhysicsJointRevolute(revj, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
+			j = new PhysicsJointRevolute(revj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
 			break;
 		}
 	case e_weldJoint:
 		{
 			b2WeldJoint* weldj = static_cast<b2WeldJoint*>(b2d_joint);
-			j = new PhysicsJointWeld(weldj, Material(Color(1.0f, 0.3f, 0.3f, 0.0f)), Material(Color(1.0f, 0.7f, 0.7f, 0.0f)), ++_physicsJointsIDSeed);
+			j = new PhysicsJointWeld(weldj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
 			break;
 		}
 	default:

@@ -10,17 +10,16 @@
 
 namespace PhySketch
 {
-PhysicsBody::PhysicsBody( b2Body *body, uint id ) :	
-	Polygon(VV_Static, "PS_Body" + toString(ulong(id)) ),
-	_body(body),
-	_selected(false),
-	_selectable(true),
-	_id(id)
+PhysicsBody::PhysicsBody( b2Body *body, uint id, Material* fillMaterial, Material* lineMaterial, Material* selectedMaterial ) :	
+	Polygon				(VV_Static, "PS_Body" + toString(ulong(id)) ),
+	_body				(body),
+	_selected			(false),
+	_selectable			(true),
+	_id					(id),
+	_fillMaterial		(fillMaterial),
+	_lineMaterial		(lineMaterial),
+	_selectedMaterial	(selectedMaterial)
 {
-	_fillMaterial.setColor(Color(0.7f, 0.7f, 0.8f, 0.0f));
-	_lineMaterial.setColor(Color(0.3f, 0.3f, 1.0f, 0.0f));
-	_selectedMaterial.setColor(Color(1.0f, 0.5f, 0.5f, 0.0f));
-
 	_body->SetUserData(this);
 	reconstructPolygon();
 }
@@ -138,32 +137,32 @@ void PhysicsBody::reconstructPolygon()
 	}
 }
 
-const Material& PhysicsBody::getFillMaterial( void ) const
+Material* PhysicsBody::getFillMaterial( void ) const
 {
 	return(_fillMaterial);
 }
 
-void PhysicsBody::setFillMaterial( const Material& fillMaterial )
+void PhysicsBody::setFillMaterial( Material* fillMaterial )
 {
 	_fillMaterial = fillMaterial;
 }
 
-const Material& PhysicsBody::getLineMaterial( void ) const
+Material* PhysicsBody::getLineMaterial( void ) const
 {
 	return(_lineMaterial);
 }
 
-void PhysicsBody::setLineMaterial( const Material& lineMaterial )
+void PhysicsBody::setLineMaterial( Material* lineMaterial )
 {
 	_lineMaterial = lineMaterial;
 }
 
-const Material& PhysicsBody::getSelectedMaterial( void ) const
+Material* PhysicsBody::getSelectedMaterial( void ) const
 {
 	return _selectedMaterial;
 }
 
-void PhysicsBody::setSelectedMaterial( const Material& material )
+void PhysicsBody::setSelectedMaterial( Material* material )
 {
 	_selectedMaterial = material;
 }

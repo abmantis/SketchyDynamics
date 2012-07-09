@@ -41,6 +41,7 @@ namespace PhySketch
 		ApplicationWindow* _window;
 		Logger *_logger;
 		Renderer *_renderer;
+		MaterialManager* _materialManager;
 		MainInputListener *_mainInputListener;
 		PhysicsManager *_physicsMgr;
 		clock_t _currentFrame, _lastFrame;

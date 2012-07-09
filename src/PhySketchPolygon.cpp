@@ -1,5 +1,6 @@
 #include "PhySketchPolygon.h"
 #include "PhySketchUtils.h"
+#include "PhySketchMaterialManager.h"
 
 namespace PhySketch
 {
@@ -13,6 +14,7 @@ SubPolygon::SubPolygon( DrawingMode dm ) :
 	_vertexBuffer	(0), 
 	_elementBuffer	(0)
 {
+	_material = MaterialManager::getSingletonPtr()->getDefaultMaterial();
 }
 
 void SubPolygon::addVertex( const Vector2& vertex )
@@ -25,12 +27,12 @@ void SubPolygon::addVertex( const Vector2& vertex )
 	_hasNewVertices = true;
 }
 
-const Material& SubPolygon::GetMaterial( void ) const
+Material* SubPolygon::GetMaterial( void ) const
 {
 	return(_material);
 }
 
-void SubPolygon::SetMaterial( const Material& material )
+void SubPolygon::SetMaterial( Material* material )
 {
 	_material = material;
 }
