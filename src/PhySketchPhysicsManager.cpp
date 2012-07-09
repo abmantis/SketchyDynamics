@@ -9,15 +9,34 @@ namespace PhySketch
 
 template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
-PhysicsManager::PhysicsManager(Vector2 gravity) :
+PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	_physicsBodiesIDSeed		(0),
 	_physicsJointsIDSeed		(0),
 	_simulationPaused			(false),
-	_simulationPaused_internal	(false)
+	_simulationPaused_internal	(false),
+	_worldSize					(worldsize)
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsWorld = new b2World(b2Vec2((float32)gravity.x, (float32)gravity.y));
 	_physicsWorld->SetDestructionListener(this);
+	_physicsWorld->SetContactListener(this);
+
+	// create world bounds sensor to destroy bodies that go out of the worldsize
+	b2BodyDef bodyDef;
+	bodyDef.position.Set(0.0f, 0.0f);
+	b2Body *worldBoundsSensorBody = _physicsWorld->CreateBody(&bodyDef);	
+	b2Vec2 vs[4];
+	vs[0].Set(-worldsize.x*0.5f,-worldsize.y*0.5f);
+	vs[1].Set( worldsize.x*0.5f,-worldsize.y*0.5f);
+	vs[2].Set( worldsize.x*0.5f, worldsize.y*0.5f);
+	vs[3].Set(-worldsize.x*0.5f, worldsize.y*0.5f);
+	b2ChainShape worldBoundsSensorBoxChain;
+	worldBoundsSensorBoxChain.CreateLoop(vs, 4);
+	b2FixtureDef fd;
+	fd.shape = &worldBoundsSensorBoxChain;
+	fd.isSensor = true;
+	_worldBoundsSensor = worldBoundsSensorBody->CreateFixture(&fd);	
+
 }
 
 PhysicsManager::~PhysicsManager()
@@ -74,6 +93,21 @@ void PhysicsManager::SayGoodbye( b2Joint* joint )
 
 void PhysicsManager::SayGoodbye( b2Fixture* fixture )
 {
+}
+
+void PhysicsManager::BeginContact( b2Contact* contact )
+{
+	b2Fixture* fixtureA = contact->GetFixtureA();
+	b2Fixture* fixtureB = contact->GetFixtureB();
+
+	if (fixtureA == _worldBoundsSensor)
+	{
+		_bodiesToDestruct.insert(static_cast<PhysicsBody*>(fixtureB->GetBody()->GetUserData()));
+	}
+	else if (fixtureB == _worldBoundsSensor)
+	{
+		_bodiesToDestruct.insert(static_cast<PhysicsBody*>(fixtureA->GetBody()->GetUserData()));
+	}
 }
 
 PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
@@ -178,6 +212,13 @@ void PhysicsManager::update( ulong advanceTime )
 		stepPhysics(advanceTime);
 	}
 
+	PhysicsBodySet::iterator it = _bodiesToDestruct.begin();
+	PhysicsBodySet::iterator itEnd = _bodiesToDestruct.end();
+	for( ; it != itEnd; ++it)
+	{
+		destroyBody(*it);
+	}
+	_bodiesToDestruct.clear();
 }
 
 void PhysicsManager::stepPhysics( ulong ellapsedMillisec )
@@ -240,6 +281,8 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 
 		_simulationPaused_internal = true;
 	}
+
+	createBody(_worldBoundsSensor->GetBody());
 }
 
 void PhysicsManager::unselectBody( PhysicsBody *b )
@@ -565,6 +608,8 @@ void PhysicsManager::destroySelectedJoints()
 		destroyJoint(*it, true);
 	}
 }
+
+
 
 
 

@@ -13,7 +13,7 @@ namespace PhySketch
 		Core(void);
 		virtual ~Core(void);
 
-		virtual void initialise(std::string logfile, bool logToConsole,  Vector2 physicsGravity);	
+		virtual void initialise(std::string logfile, bool logToConsole, Vector2 physicsGravity, Vector2 physicsWorldSize);	
 		
 		/// <summary> Creates a window. </summary>
 		/// <param name="title"> The title. </param>

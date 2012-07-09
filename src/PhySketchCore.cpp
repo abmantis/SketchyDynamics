@@ -57,7 +57,7 @@ Core& Core::getSingleton( void )
 	return *ms_Singleton;
 }
 
-void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGravity )
+void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGravity, Vector2 physicsWorldSize )
 {
 	if(logfile.empty())
 	{
@@ -69,7 +69,7 @@ void Core::initialise( std::string logfile, bool logToConsole, Vector2 physicsGr
 	}
 
 	_renderer = new Renderer();
-	_physicsMgr = new PhysicsManager(physicsGravity);
+	_physicsMgr = new PhysicsManager(physicsGravity, physicsWorldSize);
 	_mainInputListener = new MainInputListener();
 
 }

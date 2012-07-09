@@ -1,8 +1,9 @@
 #include "PhySketchPhysicsBody.h"
-#include "Box2D\Dynamics\b2Body.h"
-#include "Box2D\Dynamics\b2Fixture.h"
-#include "Box2D\Collision\Shapes\b2CircleShape.h"
-#include "Box2D\Collision\Shapes\b2PolygonShape.h"
+#include <Box2D\Dynamics\b2Body.h>
+#include <Box2D\Dynamics\b2Fixture.h>
+#include <Box2D\Collision\Shapes\b2CircleShape.h>
+#include <Box2D\Collision\Shapes\b2PolygonShape.h>
+#include <Box2D\Collision\Shapes\b2ChainShape.h>
 #include "PhySketchRenderer.h"
 #include "PhySketchUtils.h"
 
@@ -60,16 +61,16 @@ void PhysicsBody::reconstructPolygon()
 	SubPolygon* fillsubpoly = nullptr;
 	SubPolygon* linesubpoly = nullptr;
 	for (b2Fixture* fixture = _body->GetFixtureList(); fixture; fixture = fixture->GetNext())
-	{	
-		fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
-		fillsubpoly->SetMaterial(_fillMaterial);
-		linesubpoly = createSubPolygon(DM_LINE_LOOP);
-		linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
-
+	{
 		switch (fixture->GetType())
 		{
 		case b2Shape::e_circle:
 			{
+				fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
+				fillsubpoly->SetMaterial(_fillMaterial);
+				linesubpoly = createSubPolygon(DM_LINE_LOOP);
+				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+
 				b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();
 
 				std::vector<Vector2> circleVec = Polygon::GetCircleVertices(circle->m_p, circle->m_radius, 180);
@@ -94,6 +95,11 @@ void PhysicsBody::reconstructPolygon()
 
 		case b2Shape::e_polygon:
 			{
+				fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
+				fillsubpoly->SetMaterial(_fillMaterial);
+				linesubpoly = createSubPolygon(DM_LINE_LOOP);
+				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+
 				b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
 				int32 vertexCount = box2dpoly->m_count;
 
@@ -106,15 +112,26 @@ void PhysicsBody::reconstructPolygon()
 				}
 			}
 			break;
-			// 		case b2Shape::e_edge:
-			// 			{
-			// 			}
-			// 			break;
-			// 
-			// 		case b2Shape::e_chain:
-			// 			{
-			// 			}
-			// 			break;
+		case b2Shape::e_chain:
+			{
+				linesubpoly = createSubPolygon(DM_LINE_LOOP);
+				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+
+				b2ChainShape* box2dchain = (b2ChainShape*)fixture->GetShape();
+				int32 vertexCount = box2dchain->m_count;
+
+				for (int32 i = 0; i < vertexCount; ++i)
+				{
+					linesubpoly->addVertex(box2dchain->m_vertices[i]);
+				}
+			}
+			break;
+		case b2Shape::e_edge:
+			{
+				throw std::exception("Edge bodies not implemented.");
+			}
+			break;
+
 		default:
 			break;
 		}
@@ -247,15 +264,17 @@ void PhysicsBody::scale( const Vector2& factor )
 				_body->CreateFixture(&newFixtureDef);
 			}
 			break;
-			// 		case b2Shape::e_edge:
-			// 			{
-			// 			}
-			// 			break;
-			// 
-			// 		case b2Shape::e_chain:
-			// 			{
-			// 			}
-			// 			break;
+		case b2Shape::e_edge:
+			{
+				throw std::exception("Edge body scaling is not implemented.");
+			}
+			break;
+
+		case b2Shape::e_chain:
+			{
+				throw std::exception("Chain body scaling is not implemented.");
+			}
+			break;
 		default:
 			break;
 		}		

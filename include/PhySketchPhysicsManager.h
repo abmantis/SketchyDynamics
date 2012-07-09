@@ -9,14 +9,15 @@
 
 namespace PhySketch
 {
-	class PhysicsManager : public Singleton<PhysicsManager>, public b2DestructionListener
+	class PhysicsManager : public Singleton<PhysicsManager>, public b2DestructionListener, private b2ContactListener
 	{	
 	public:
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
+		typedef std::set<PhysicsBody*> PhysicsBodySet;
 		typedef std::list<PhysicsJoint*> PhysicsJointList;
 
 	public:
-		PhysicsManager(Vector2 gravity);
+		PhysicsManager(Vector2 gravity, Vector2 worldsize);
 		virtual ~PhysicsManager();
 
 		/// <summary> Creates a new PhysicsBody. </summary>
@@ -125,17 +126,22 @@ namespace PhySketch
 		virtual void SayGoodbye(b2Joint* joint);
 		/// <summary> b2DestructionListener method. </summary>
 		virtual void SayGoodbye( b2Fixture* fixture );
+		/// <summary> b2ContactListener method. </summary>
+		virtual void BeginContact( b2Contact* contact );
 
 
 	protected:
 		PhysicsBodyList _physicsBodies;
 		PhysicsBodyList _selectedBodies;
+		PhysicsBodySet _bodiesToDestruct;
 		PhysicsJointList _physicsJoints;
 		PhysicsJointList _selectedJoints;
 		ulong _physicsBodiesIDSeed;
 		ulong _physicsJointsIDSeed;
 		Renderer* _renderer;
 		b2World *_physicsWorld;
+		Vector2 _worldSize;
+		b2Fixture* _worldBoundsSensor;
 		bool _simulationPaused;
 		bool _simulationPaused_internal;
 		

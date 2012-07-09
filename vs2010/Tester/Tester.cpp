@@ -31,7 +31,9 @@ int _tmain(int argc, _TCHAR* argv[])
 {	
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 
-	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10));
+	PhySketch::Vector2 worldSize(80.0f, 80.0f);
+
+	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10), worldSize);
 	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
@@ -48,8 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);
 
 		b2PolygonShape backgroundBox;
-		backgroundBox.SetAsBox((_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).x*0.5f,
-			(_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin()).y*0.5f);
+		backgroundBox.SetAsBox(worldSize.x*0.5f,worldSize.y*0.5f);
 		b2FixtureDef backgroundFixtureDef;
 		backgroundFixtureDef.shape = &backgroundBox;
 		backgroundFixtureDef.filter.categoryBits = 0x0;
