@@ -12,7 +12,7 @@ void main()
     //gl_FragColor = color;
 	gl_FragColor = mix(
                     color,
-                    texture2D(texture, texCoordVarying),
+                    texture2D(texture, texCoordVarying) * color,
                     textureFlag
                   );
 }
