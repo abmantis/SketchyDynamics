@@ -13,6 +13,7 @@
 #include "PhySketchLogger.h"
 #include "PhySketchPhysicsJoint.h"
 #include "Box2D\Dynamics\Joints\b2Joint.h"
+#include "PhySketchMaterialManager.h"
 
 namespace PhySketch
 {
@@ -24,7 +25,8 @@ MainInputListener::MainInputListener() :
 	_gesturePolygon		(nullptr),
 	_gestureSubPolygon	(nullptr),
 	_caliRecognizer		(new CIRecognizer()),
-	_interactionState	(IS_NONE)
+	_interactionState	(IS_NONE),
+	_gestureMaterial	(nullptr)
 {
 }
 
@@ -86,6 +88,8 @@ void MainInputListener::init()
 	_destructionArea->setPosition(Vector2(0.0f, 4.2f));
 	_destructionArea->setVisible(false);
 	_renderer->addPolygon(_destructionArea, RQT_UI);
+
+	_gestureMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_gesture_material", Color(0.0f, 0.0f, 8.0f, 1.0f));
 }
 
 void MainInputListener::keyDown( Key key )
@@ -482,6 +486,7 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 	}
 	_gesturePolygon = new Polygon(VV_Stream, "PS_gesture");
 	_gestureSubPolygon = _gesturePolygon->createSubPolygon(DM_LINE_STRIP);
+	_gestureSubPolygon->SetMaterial(_gestureMaterial);
 	_gestureSubPolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }

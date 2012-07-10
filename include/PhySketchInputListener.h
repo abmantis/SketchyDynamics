@@ -207,6 +207,7 @@ namespace PhySketch
 		CIStroke *_caliStroke;
 		CIScribble *_caliScribble;
 		CIRecognizer *_caliRecognizer;
+		Material* _gestureMaterial;
 		Polygon *_gesturePolygon;
 		SubPolygon *_gestureSubPolygon;
 		Polygon *_transformIndicator;
