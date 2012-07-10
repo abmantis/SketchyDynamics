@@ -192,6 +192,8 @@ namespace PhySketch
 			{
 				GLint transformation;
 				GLint color;
+				GLint textureFlag;
+				GLint texture;
 			} uniforms;
 
 		} _shaderVars;		

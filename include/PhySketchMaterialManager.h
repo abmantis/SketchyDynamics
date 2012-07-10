@@ -18,7 +18,7 @@ namespace PhySketch
 		virtual ~MaterialManager();
 
 		Material* createMaterial(std::string name, Color c);
-//		Material* createMaterial(std::string name, std::string texture);
+		Material* createMaterial(std::string name, std::string texture, bool generateMipMaps = false);
 
 		virtual Material* getDefaultMaterial() const;
 

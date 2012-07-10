@@ -113,6 +113,23 @@ namespace PhySketch
 		/// <returns> The physics world. </returns>
 		virtual b2World* getPhysicsWorld() const;
 
+		// Access the DefaultBodyFillMat
+		const Material* getDefaultBodyFillMat(void) 						{ return(_defaultBodyFillMat);				}
+		void setDefaultBodyFillMat(Material* defaultBodyFillMat)			{ _defaultBodyFillMat = defaultBodyFillMat;	}
+		// Access the DefaultBodyLineMat
+		const Material* getDefaultBodyLineMat(void) 						{ return(_defaultBodyLineMat);				}
+		void setDefaultBodyLineMat(Material* defaultBodyLineMat)			{ _defaultBodyLineMat = defaultBodyLineMat;	}
+		// Access the DefaultBodySelectedMat
+		const Material* getDefaultBodySelectedMat(void) 					{ return(_defaultBodySelectedMat);					}
+		void setDefaultBodySelectedMat(Material* defaultBodySelectedMat)	{ _defaultBodySelectedMat = defaultBodySelectedMat;	}
+		// Access the DefaultJointMat
+		const Material* getDefaultJointMat(void) 							{ return(_defaultJointMat);				}
+		void setDefaultJointMat(Material* defaultJointMat)					{ _defaultJointMat = defaultJointMat;	}
+		// Access the DefaultJointSelectedMat
+		const Material* getDefaultJointSelectedMat(void) const				{ return(_defaultJointSelectedMat);						}
+		void setDefaultJointSelectedMat(Material* defaultJointSelectedMat)	{ _defaultJointSelectedMat = defaultJointSelectedMat;	}
+		
+
 		static PhysicsManager* getSingletonPtr(void);
 		static PhysicsManager& getSingleton(void);
 
@@ -128,6 +145,9 @@ namespace PhySketch
 		virtual void SayGoodbye( b2Fixture* fixture );
 		/// <summary> b2ContactListener method. </summary>
 		virtual void BeginContact( b2Contact* contact );
+
+
+		
 
 
 	protected:

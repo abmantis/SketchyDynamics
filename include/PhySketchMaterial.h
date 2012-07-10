@@ -10,7 +10,7 @@ namespace PhySketch
 	class Color 
 	{
 	public:
-		Color() : r(0.0f), g(0.0f), b(0.0f), a(0.0f) {}
+		Color() : r(1.0f), g(1.0f), b(1.0f), a(0.0f) {}
 		Color(float r, float g, float b, float a) : r(r), g(g), b(b), a(a) {}
 
 		float r;
@@ -24,19 +24,24 @@ namespace PhySketch
 		friend class MaterialManager;
 	protected:
 		Material(std::string name) : 
-			 _name(name)
+			 _name		(name),
+			_textureID	(0)
 		{
 		}		
 
 	public:
 		
 
-		virtual void setColor(Color c) { _color = c; }
-		virtual Color getColor() { return _color; }
+		virtual void setColor(const Color& c) { _color = c; }
+		virtual const Color getColor() const { return _color; }
+
+		virtual const uint getTextureID() const { return _textureID; }		
 
 	protected:
 		std::string _name;
 		Color _color;
+		
+		uint _textureID;
 	};
 }
 #endif // PhySketchMaterial_h__

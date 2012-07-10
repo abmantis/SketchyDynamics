@@ -1,11 +1,16 @@
+//VERTEX SHADER
 #version 110
 
 attribute vec2 position;
-uniform mat3 trans_mat;
+attribute vec2 inTexCoord;
+uniform mat3 transMat;
+
+varying vec2 texCoordVarying;
 
 void main()
 {
-	vec3 transformedPos = trans_mat*vec3(position, 1);
+	vec3 transformedPos = transMat*vec3(position, 1);
 	gl_Position = gl_ModelViewProjectionMatrix * vec4(transformedPos, 1.0);
-//	gl_Position = vec4(position, 0.0, 1.0);
+	//texCoordVarying = inTexCoord;
+	texCoordVarying = position;
 }

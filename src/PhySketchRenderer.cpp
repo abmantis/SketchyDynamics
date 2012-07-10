@@ -111,9 +111,13 @@ namespace PhySketch
 		_shaderVars.attributes.position	
 			= glGetAttribLocation(_mainShaderProgram->getProgramID(), "position");
 		_shaderVars.uniforms.transformation	
-			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "trans_mat");
+			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "transMat");
 		_shaderVars.uniforms.color
 			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "color");
+		_shaderVars.uniforms.textureFlag
+			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "textureFlag");
+		_shaderVars.uniforms.texture
+			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "texture");
 
 		return true;		
 	}
@@ -357,9 +361,10 @@ namespace PhySketch
 			}
 
 			uint indexCount = subpoly->_vertexIndexes.size();
-			Color color = subpoly->_material->getColor();
+			Material *mat = subpoly->_material;
+			Color color = mat->getColor();
+			uint texID = mat->getTextureID();
 			GLenum mode;
-
 			switch(subpoly->_drawingMode)
 			{
 			case DM_POINTS:
@@ -385,10 +390,23 @@ namespace PhySketch
 				break;
 			default:
 				mode = GL_POINTS;
-			}		
+			}	
+	
 
 			glUniform4f(_shaderVars.uniforms.color, color.r, color.g, color.b, 
 				color.a);
+
+			if(texID > 0)
+			{
+				glActiveTexture(GL_TEXTURE0);
+				glBindTexture(GL_TEXTURE_2D, texID);
+				glUniform1i(_shaderVars.uniforms.texture, 0);
+				glUniform1f(_shaderVars.uniforms.textureFlag, 1.0f);
+			}
+			else
+			{
+				glUniform1f(_shaderVars.uniforms.textureFlag, 0.0f);
+			}
 
 
 			glBindBuffer(GL_ARRAY_BUFFER, subpoly->_vertexBuffer);
