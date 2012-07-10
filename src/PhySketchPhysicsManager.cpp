@@ -22,11 +22,11 @@ PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	//////////////////////////////////////////////////////////////////////////
 	// Create default Materials
 	MaterialManager* matMgr = MaterialManager::getSingletonPtr();	
-	_defaultBodyFillMat		= matMgr->createMaterial("PS_defaultBodyFillMat",		Color(0.7f, 0.7f, 0.8f, 0.0f));
-	_defaultBodyLineMat		= matMgr->createMaterial("PS_defaultBodyLineMat",		Color(0.3f, 0.3f, 1.0f, 0.0f));
-	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(1.0f, 0.5f, 0.5f, 0.0f));
-	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.3f, 0.3f, 0.0f));
-	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.3f, 0.3f, 0.0f));
+	_defaultBodyFillMat		= matMgr->createMaterial("PS_defaultBodyFillMat",		Color(0.7f, 0.7f, 0.8f, 1.0f));
+	_defaultBodyLineMat		= matMgr->createMaterial("PS_defaultBodyLineMat",		Color(0.3f, 0.3f, 1.0f, 1.0f));
+	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(1.0f, 0.5f, 0.5f, 1.0f));
+	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.3f, 0.3f, 1.0f));
+	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.3f, 0.3f, 1.0f));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Init physics world 
