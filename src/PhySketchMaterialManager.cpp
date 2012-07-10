@@ -7,7 +7,7 @@ namespace PhySketch
 
 	MaterialManager::MaterialManager()
 	{
-		_defaultMaterial = createMaterial("blackMaterial", Color(0.0f, 0.0f, 0.0f, 0.0f));
+		_defaultMaterial = createMaterial("blackMaterial", Color(0.0f, 0.0f, 0.0f, 1.0f));
 	}
 
 	MaterialManager::~MaterialManager()

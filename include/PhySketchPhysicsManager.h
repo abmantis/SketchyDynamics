@@ -114,19 +114,19 @@ namespace PhySketch
 		virtual b2World* getPhysicsWorld() const;
 
 		// Access the DefaultBodyFillMat
-		const Material* getDefaultBodyFillMat(void) 						{ return(_defaultBodyFillMat);				}
+		Material* getDefaultBodyFillMat(void) 								{ return(_defaultBodyFillMat);				}
 		void setDefaultBodyFillMat(Material* defaultBodyFillMat)			{ _defaultBodyFillMat = defaultBodyFillMat;	}
 		// Access the DefaultBodyLineMat
-		const Material* getDefaultBodyLineMat(void) 						{ return(_defaultBodyLineMat);				}
+		Material* getDefaultBodyLineMat(void) 								{ return(_defaultBodyLineMat);				}
 		void setDefaultBodyLineMat(Material* defaultBodyLineMat)			{ _defaultBodyLineMat = defaultBodyLineMat;	}
 		// Access the DefaultBodySelectedMat
-		const Material* getDefaultBodySelectedMat(void) 					{ return(_defaultBodySelectedMat);					}
+		Material* getDefaultBodySelectedMat(void) 							{ return(_defaultBodySelectedMat);					}
 		void setDefaultBodySelectedMat(Material* defaultBodySelectedMat)	{ _defaultBodySelectedMat = defaultBodySelectedMat;	}
 		// Access the DefaultJointMat
-		const Material* getDefaultJointMat(void) 							{ return(_defaultJointMat);				}
+		Material* getDefaultJointMat(void) 									{ return(_defaultJointMat);				}
 		void setDefaultJointMat(Material* defaultJointMat)					{ _defaultJointMat = defaultJointMat;	}
 		// Access the DefaultJointSelectedMat
-		const Material* getDefaultJointSelectedMat(void) const				{ return(_defaultJointSelectedMat);						}
+		Material* getDefaultJointSelectedMat(void) const					{ return(_defaultJointSelectedMat);						}
 		void setDefaultJointSelectedMat(Material* defaultJointSelectedMat)	{ _defaultJointSelectedMat = defaultJointSelectedMat;	}
 		
 
