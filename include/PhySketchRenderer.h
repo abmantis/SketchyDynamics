@@ -186,6 +186,7 @@ namespace PhySketch
 			struct 
 			{
 				GLint position;
+				GLint textCoord;
 			} attributes;
 			
 			struct

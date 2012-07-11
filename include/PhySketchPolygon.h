@@ -57,6 +57,8 @@ namespace PhySketch
 		/// <param name="vertex"> The vertex. </param>
 		virtual void addVertex(const Vector2& vertex);
 
+		virtual void addVertex(const Vector2& vertex, const Vector2& textureCoord);
+
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
 		virtual Material* GetMaterial(void) const;
@@ -90,6 +92,7 @@ namespace PhySketch
 
 	protected:
 		std::vector<Vector2> _vertices;
+		std::vector<Vector2> _textureCoords;
 		std::vector<uint> _vertexIndexes;
 		Material* _material;
 		DrawingMode _drawingMode;
@@ -98,6 +101,7 @@ namespace PhySketch
 
 		UINT _vertexBuffer;	
 		UINT _elementBuffer;
+		UINT _texCoordBuffer;
 	};
 
 	class Polygon 

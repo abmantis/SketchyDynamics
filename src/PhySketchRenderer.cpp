@@ -112,6 +112,8 @@ namespace PhySketch
 
 		_shaderVars.attributes.position	
 			= glGetAttribLocation(_mainShaderProgram->getProgramID(), "position");
+		_shaderVars.attributes.textCoord
+			= glGetAttribLocation(_mainShaderProgram->getProgramID(), "texCoord");
 		_shaderVars.uniforms.transformation	
 			= glGetUniformLocation(_mainShaderProgram->getProgramID(), "transMat");
 		_shaderVars.uniforms.color
@@ -218,7 +220,10 @@ namespace PhySketch
 		{
 			glGenBuffers(1, &subpolygon->_elementBuffer);
 		}
-		
+		if (subpolygon->_texCoordBuffer == 0)
+		{
+			glGenBuffers(1, &subpolygon->_texCoordBuffer);
+		}
 
 		float *vertBuff = new float[subpolygon->_vertices.size()*2];
 		for (uint i = 0, j = 0; i < subpolygon->_vertices.size(); i++, j = j+2)
@@ -232,19 +237,33 @@ namespace PhySketch
 		{
 			elemBuff[i] = subpolygon->_vertexIndexes[i];
 		}
+
+		float *texCoordBuff = new float[subpolygon->_textureCoords.size()*2];
+		for (uint i = 0, j = 0; i < subpolygon->_textureCoords.size(); i++, j = j+2)
+		{
+			texCoordBuff[j] = subpolygon->_textureCoords[i].x;
+			texCoordBuff[j+1] = subpolygon->_textureCoords[i].y;
+		}
 		
 		// Create vertex buffers
 		glBindBuffer(GL_ARRAY_BUFFER, subpolygon->_vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, subpolygon->_vertices.size()*sizeof(float)*2, 
 			vertBuff, usageHint); 	// TODO: use glSubBufferData?
 
+		// Create texture coordinate buffers
+		glBindBuffer(GL_ARRAY_BUFFER, subpolygon->_texCoordBuffer);
+		glBufferData(GL_ARRAY_BUFFER, subpolygon->_textureCoords.size()*sizeof(float)*2, 
+			texCoordBuff, usageHint); 	// TODO: use glSubBufferData?
+
 		// Create element buffers
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_elementBuffer);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, subpolygon->_vertexIndexes.size()*sizeof(uint), 
 			elemBuff, usageHint); 	// TODO: use glSubBufferData?
 
+
 		delete[] vertBuff;
 		delete[] elemBuff;
+		delete[] texCoordBuff;
 
 		subpolygon->_hasNewVertices = false;
 	}
@@ -416,9 +435,15 @@ namespace PhySketch
 				GL_FALSE, sizeof(GLfloat)*2, (void*)0);
 			glEnableVertexAttribArray(_shaderVars.attributes.position);
 
+			glBindBuffer(GL_ARRAY_BUFFER, subpoly->_texCoordBuffer);
+			glVertexAttribPointer(_shaderVars.attributes.textCoord, 2, GL_FLOAT, 
+				GL_FALSE, sizeof(GLfloat)*2, (void*)0);
+			glEnableVertexAttribArray(_shaderVars.attributes.textCoord);
+
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, subpoly->_elementBuffer);
 			glDrawElements(mode, indexCount, GL_UNSIGNED_INT, (void*)0);
 
+			glDisableVertexAttribArray(_shaderVars.attributes.textCoord);
 			glDisableVertexAttribArray(_shaderVars.attributes.position);
 		}
 

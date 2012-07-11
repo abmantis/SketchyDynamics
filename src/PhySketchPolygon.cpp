@@ -12,7 +12,8 @@ SubPolygon::SubPolygon( DrawingMode dm ) :
 	_drawingMode	(dm),
 	_hasNewVertices	(false), 
 	_vertexBuffer	(0), 
-	_elementBuffer	(0)
+	_elementBuffer	(0),
+	_texCoordBuffer(0)
 {
 	_material = MaterialManager::getSingletonPtr()->getDefaultMaterial();
 }
@@ -21,6 +22,18 @@ void SubPolygon::addVertex( const Vector2& vertex )
 {
 	_vertexIndexes.push_back(_vertexIndexes.size());
 	_vertices.push_back(vertex);	
+	_textureCoords.push_back(vertex);
+
+	_aabb.update(vertex);
+
+	_hasNewVertices = true;
+}
+
+void SubPolygon::addVertex( const Vector2& vertex, const Vector2& textureCoord )
+{
+	_vertexIndexes.push_back(_vertexIndexes.size());
+	_vertices.push_back(vertex);	
+	_textureCoords.push_back(textureCoord);
 
 	_aabb.update(vertex);
 
