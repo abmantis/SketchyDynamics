@@ -96,8 +96,8 @@ namespace PhySketch
 		PHYSKETCH_ASSERT(insresult.second && "A Material with the same name already exists.");
 
 
-		int format = bpp == 24 ? GL_BGR : bpp == 8 ? GL_LUMINANCE : 0; 
-		int internalFormat = bpp == 24 ? GL_RGB : GL_DEPTH_COMPONENT;  
+		int format = bpp == 32 ? GL_BGRA : bpp == 24 ? GL_BGR : bpp == 8 ? GL_LUMINANCE : 0; 
+		int internalFormat = bpp == 32 ? GL_RGBA : bpp == 24 ? GL_RGB : GL_DEPTH_COMPONENT;  
 
 		glGenTextures(1, &m->_textureID);
 		glBindTexture(GL_TEXTURE_2D, m->_textureID);
