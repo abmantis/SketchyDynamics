@@ -158,7 +158,7 @@ namespace PhySketch
 		virtual bool initGL();
 
 		virtual void renderPolygons();
-		virtual void renderPolygon(Polygon *poly) const;
+		virtual void renderPolygon(Polygon *poly);
 
 		virtual void updateOpenGLBuffers(SubPolygon *subpolygon, VertexVariance variance) const;
 
@@ -180,7 +180,7 @@ namespace PhySketch
 		Shader_GL* _mainVertexShader;
 		Shader_GL* _mainFragmentShader;
 		ShaderProgram_GL* _mainShaderProgram;
-
+		
 		struct
 		{
 			struct 

@@ -8,14 +8,19 @@ namespace PhySketch
 {
 	template<> Renderer* Singleton<Renderer>::ms_Singleton = 0;
 
-	Renderer::Renderer() : _sceneViewMin(-8.0f, -4.5f), _sceneViewMax(8.0f, 4.5f)
+	Renderer::Renderer() : 
+		_sceneViewMin		(-8.0f, -4.5f), 
+		_sceneViewMax		(8.0f, 4.5f), 
+		_mainVertexShader	(nullptr),
+		_mainFragmentShader	(nullptr),
+		_mainShaderProgram	(nullptr)		
 	{		
-		_mainVertexShader	= nullptr;
-		_mainFragmentShader	= nullptr;
-		_mainShaderProgram	= nullptr;
-
 		_shaderVars.attributes.position		= 0;
+		_shaderVars.attributes.textCoord	= 0;
 		_shaderVars.uniforms.transformation	= 0;
+		_shaderVars.uniforms.color			= 0;
+		_shaderVars.uniforms.textureFlag	= 0;
+		_shaderVars.uniforms.texture		= 0;
 	}
 
 	Renderer::~Renderer()
@@ -72,16 +77,16 @@ namespace PhySketch
 
 		glShadeModel(GL_SMOOTH);							// Enable Smooth Shading
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);				// Black Background
-		//glClearDepth(1.0f);									// Depth Buffer Setup
-		//glEnable(GL_DEPTH_TEST);							// Enables Depth Testing
-		//glDepthFunc(GL_LEQUAL);							// The Type Of Depth Testing To Do
 		glDisable(GL_DEPTH_TEST);							// Disables Depth Testing because we are in 2D	
-		//glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);	// Really Nice Perspective Calculations
 		glDisable(GL_CULL_FACE);
-		//glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
+		glHint(GL_POLYGON_SMOOTH_HINT, GL_NICEST );
+		glHint(GL_LINE_SMOOTH_HINT, GL_NICEST );
+		
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glLineWidth(2.0f);
+		//glPolygonMode( GL_FRONT_AND_BACK, GL_LINE );
 
 
 
@@ -216,14 +221,15 @@ namespace PhySketch
 		{
 			glGenBuffers(1, &subpolygon->_vertexBuffer);
 		}
-		if (subpolygon->_elementBuffer == 0)
-		{
-			glGenBuffers(1, &subpolygon->_elementBuffer);
-		}
 		if (subpolygon->_texCoordBuffer == 0)
 		{
 			glGenBuffers(1, &subpolygon->_texCoordBuffer);
 		}
+		if (subpolygon->_elementBuffer == 0)
+		{
+			glGenBuffers(1, &subpolygon->_elementBuffer);
+		}
+		
 
 		float *vertBuff = new float[subpolygon->_vertices.size()*2];
 		for (uint i = 0, j = 0; i < subpolygon->_vertices.size(); i++, j = j+2)
@@ -232,18 +238,20 @@ namespace PhySketch
 			vertBuff[j+1] = subpolygon->_vertices[i].y;
 		}
 
-		uint *elemBuff = new uint[subpolygon->_vertexIndexes.size()];
-		for (uint i = 0; i < subpolygon->_vertexIndexes.size(); i++)
-		{
-			elemBuff[i] = subpolygon->_vertexIndexes[i];
-		}
-
 		float *texCoordBuff = new float[subpolygon->_textureCoords.size()*2];
 		for (uint i = 0, j = 0; i < subpolygon->_textureCoords.size(); i++, j = j+2)
 		{
 			texCoordBuff[j] = subpolygon->_textureCoords[i].x;
 			texCoordBuff[j+1] = subpolygon->_textureCoords[i].y;
 		}
+
+
+		uint *elemBuff = new uint[subpolygon->_vertexIndexes.size()];
+		for (uint i = 0; i < subpolygon->_vertexIndexes.size(); i++)
+		{
+			elemBuff[i] = subpolygon->_vertexIndexes[i];
+		}
+
 		
 		// Create vertex buffers
 		glBindBuffer(GL_ARRAY_BUFFER, subpolygon->_vertexBuffer);
@@ -262,8 +270,8 @@ namespace PhySketch
 
 
 		delete[] vertBuff;
-		delete[] elemBuff;
 		delete[] texCoordBuff;
+		delete[] elemBuff;		
 
 		subpolygon->_hasNewVertices = false;
 	}
@@ -360,7 +368,7 @@ namespace PhySketch
 		}
 	}
 
-	void Renderer::renderPolygon( Polygon *poly ) const
+	void Renderer::renderPolygon( Polygon *poly ) 
 	{
 		// make sure the polygon is updated before being rendered
 		poly->update();
@@ -419,7 +427,7 @@ namespace PhySketch
 
 			if(texID > 0)
 			{
-				glActiveTexture(GL_TEXTURE0);
+				//glActiveTexture(GL_TEXTURE0);  TODO: when we implement multi-texture materials, check what the current text unit is and only activate if it is different. 
 				glBindTexture(GL_TEXTURE_2D, texID);
 				glUniform1i(_shaderVars.uniforms.texture, 0);
 				glUniform1f(_shaderVars.uniforms.textureFlag, 1.0f);
