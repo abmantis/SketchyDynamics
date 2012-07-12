@@ -292,10 +292,10 @@ SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm )
 {
 	SubPolygon *subpoly = createSubPolygon(dm);
 
-	subpoly->addVertex(Vector2(-0.5f, -0.5f));
-	subpoly->addVertex(Vector2(-0.5f, 0.5f));
-	subpoly->addVertex(Vector2(0.5f, 0.5f));
-	subpoly->addVertex(Vector2(0.5f, -0.5f));	
+	subpoly->addVertex(Vector2(-0.5f, -0.5f), Vector2(0.0f, 0.0f));
+	subpoly->addVertex(Vector2(-0.5f,  0.5f), Vector2(0.0f, 1.0f));
+	subpoly->addVertex(Vector2( 0.5f,  0.5f), Vector2(1.0f, 1.0f));
+	subpoly->addVertex(Vector2( 0.5f, -0.5f), Vector2(1.0f, 0.0f));	
 
 	return subpoly;
 }
