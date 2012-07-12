@@ -6,6 +6,7 @@
 #include <Box2D\Collision\Shapes\b2ChainShape.h>
 #include "PhySketchRenderer.h"
 #include "PhySketchUtils.h"
+#include "PhySketchVector2.h"
 
 
 namespace PhySketch
@@ -54,6 +55,8 @@ void PhysicsBody::reconstructPolygon()
 {	
 	// Remove old subpolygons
 	clearSubPolygons();
+
+	float lineWidth = 0.025f;
 	
 	//////////////////////////////////////////////////////////////////////////
 	// Create new subpolygons
@@ -72,23 +75,45 @@ void PhysicsBody::reconstructPolygon()
 
 				b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();
 
-				std::vector<Vector2> circleVec = Polygon::GetCircleVertices(circle->m_p, circle->m_radius, 180);
+				std::vector<Vector2> circleVec = Polygon::GetCircleVertices(circle->m_p, circle->m_radius, 60);
 				size_t nVerts = circleVec.size();
 				Vector2 v;
 				for (size_t i = 0; i < nVerts; i++)
 				{
 					v = circleVec[i];
 					fillsubpoly->addVertex(v);
-					linesubpoly->addVertex(v);
 				}
 				
-				// Add extra lines in circle
-				linesubpoly->addVertex(Vector2(circle->m_radius, 0.0f));
-				linesubpoly->addVertex(Vector2(-circle->m_radius, 0.0f));
-				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
-				linesubpoly->addVertex(Vector2(0.0f, circle->m_radius));
-				linesubpoly->addVertex(Vector2(0.0f, -circle->m_radius));
-				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
+// 				// Add extra lines in circle
+// 				linesubpoly->addVertex(Vector2(circle->m_radius, 0.0f));
+// 				linesubpoly->addVertex(Vector2(-circle->m_radius, 0.0f));
+// 				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
+// 				linesubpoly->addVertex(Vector2(0.0f, circle->m_radius));
+// 				linesubpoly->addVertex(Vector2(0.0f, -circle->m_radius));
+// 				linesubpoly->addVertex(Vector2(0.0f, 0.0f));
+
+				Vector2 prev_v = circleVec[0];
+				Vector2 vecOrig, normal;
+				for (size_t i = 1; i < nVerts; ++i)
+				{
+					v = circleVec[i];
+					normal = Vector2::lineNormal(prev_v, v).normalised() * lineWidth;
+
+					linesubpoly->addVertex(prev_v + normal, Vector2(0.0f, 1.0f));
+					linesubpoly->addVertex(prev_v - normal, Vector2(1.0f, 1.0f));
+					linesubpoly->addVertex(v + normal, Vector2(0.0f, 0.0f));
+					linesubpoly->addVertex(v - normal, Vector2(1.0f, 0.0f));
+					
+					prev_v = v;
+				}
+
+				v = circleVec[0];
+				normal = Vector2::lineNormal(prev_v, v).normalised() * lineWidth;
+
+				linesubpoly->addVertex(prev_v + normal, Vector2(0.0f, 1.0f));
+				linesubpoly->addVertex(prev_v - normal, Vector2(1.0f, 1.0f));
+				linesubpoly->addVertex(v + normal, Vector2(0.0f, 0.0f));
+				linesubpoly->addVertex(v - normal, Vector2(1.0f, 0.0f));
 			}
 			break;
 
@@ -102,13 +127,117 @@ void PhysicsBody::reconstructPolygon()
 				b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
 				int32 vertexCount = box2dpoly->m_count;
 
-				Vector2 v;
+				Vector2 pt;
 				for (int32 i = 0; i < vertexCount; ++i)
 				{
-					v = box2dpoly->m_vertices[i];
-					fillsubpoly->addVertex(v);
-					linesubpoly->addVertex(v);
+					pt = box2dpoly->m_vertices[i];
+					fillsubpoly->addVertex(pt);
 				}
+
+				Vector2 prev_pt = box2dpoly->m_vertices[0];
+				Vector2 normal, prevNormal;
+				Vector2 p1, p2, p3, p4, prev_p3, prev_p4;
+				float angleBetweenEdges = 0.0f;
+
+				prevNormal = Vector2::lineNormal(prev_pt, box2dpoly->m_vertices[1]).normalised() * lineWidth;
+				for (int32 i = 1; i < vertexCount; ++i)
+				{
+					pt = box2dpoly->m_vertices[i];
+					normal = Vector2::lineNormal(prev_pt, pt).normalised() * lineWidth;
+					angleBetweenEdges = prevNormal.angleTo(normal);
+
+					p1 = prev_pt + normal;
+					p2 = prev_pt - normal;
+					p3 = pt + normal;
+					p4 = pt - normal;
+
+					linesubpoly->addVertex(p1, Vector2(0.0f, 1.0f));
+					linesubpoly->addVertex(p2, Vector2(1.0f, 1.0f));
+					linesubpoly->addVertex(p3, Vector2(0.0f, 0.0f));
+					linesubpoly->addVertex(p2, Vector2(1.0f, 1.0f));
+					linesubpoly->addVertex(p4, Vector2(1.0f, 0.0f));
+					linesubpoly->addVertex(p3, Vector2(0.0f, 0.0f));
+
+					
+					if( angleBetweenEdges < 0 )
+					{
+						linesubpoly->addVertex(prev_p3, Vector2(0.0f, 0.0f));
+						linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+						linesubpoly->addVertex(p1,		Vector2(0.0f, 0.0f));
+					}
+					else if( angleBetweenEdges > 0 )
+					{
+						linesubpoly->addVertex(prev_p4, Vector2(1.0f, 0.0f));
+						linesubpoly->addVertex(p2,		Vector2(1.0f, 1.0f));
+						linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+
+					}
+
+					
+					prev_pt = pt;
+					prevNormal = normal;
+					prev_p3 = p3;
+					prev_p4 = p4;
+				}
+
+				// Connect last and first vertices
+				pt = box2dpoly->m_vertices[0];
+				normal = Vector2::lineNormal(prev_pt, pt).normalised() * lineWidth;
+				angleBetweenEdges = prevNormal.angleTo(normal);
+
+				p1 = prev_pt + normal;
+				p2 = prev_pt - normal;
+				p3 = pt + normal;
+				p4 = pt - normal;
+
+				linesubpoly->addVertex(p1, Vector2(0.0f, 1.0f));
+				linesubpoly->addVertex(p2, Vector2(1.0f, 1.0f));
+				linesubpoly->addVertex(p3, Vector2(0.0f, 0.0f));
+				linesubpoly->addVertex(p2, Vector2(1.0f, 1.0f));
+				linesubpoly->addVertex(p4, Vector2(1.0f, 0.0f));
+				linesubpoly->addVertex(p3, Vector2(0.0f, 0.0f));
+
+				if( angleBetweenEdges < 0 )
+				{
+					linesubpoly->addVertex(prev_p3, Vector2(0.0f, 0.0f));
+					linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+					linesubpoly->addVertex(p1,		Vector2(0.0f, 0.0f));
+				}
+				else if( angleBetweenEdges > 0 )
+				{
+					linesubpoly->addVertex(prev_p4, Vector2(1.0f, 0.0f));
+					linesubpoly->addVertex(p2,		Vector2(1.0f, 1.0f));
+					linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+
+				}
+
+				// Add last corner
+				prev_pt = pt;
+				prevNormal = normal;
+				prev_p3 = p3;
+				prev_p4 = p4;
+
+				pt = box2dpoly->m_vertices[1];
+				normal = Vector2::lineNormal(prev_pt, pt).normalised() * lineWidth;
+				angleBetweenEdges = prevNormal.angleTo(normal);
+
+				p1 = prev_pt + normal;
+				p2 = prev_pt - normal;
+
+				if( angleBetweenEdges < 0 )
+				{
+					linesubpoly->addVertex(prev_p3, Vector2(0.0f, 0.0f));
+					linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+					linesubpoly->addVertex(p1,		Vector2(0.0f, 0.0f));
+				}
+				else if( angleBetweenEdges > 0 )
+				{
+					linesubpoly->addVertex(prev_p4, Vector2(1.0f, 0.0f));
+					linesubpoly->addVertex(p2,		Vector2(1.0f, 1.0f));
+					linesubpoly->addVertex(prev_pt, Vector2(0.5f, 0.0f));
+
+				}
+
 			}
 			break;
 		case b2Shape::e_chain:
