@@ -153,6 +153,34 @@ PhySketch::AABB SubPolygon::getWorldAABB( bool bestFit, Matrix3 transformMatrix 
 	return aabb;
 }
 
+void SubPolygon::recomputeTexCoordsToFit()
+{
+	updateAABB();
+
+	_textureCoords.clear();
+	Vector2 aabbMin = _aabb.getMin();
+	Vector2 aabbMax = _aabb.getMax();
+
+	uint vertCount = _vertices.size();
+	for (uint i = 0; i < vertCount; ++i)
+	{
+		 _textureCoords.push_back((_vertices[i] - aabbMin) / (aabbMax - aabbMin));
+	}
+	_hasNewVertices = true;
+}
+
+void SubPolygon::recomputeTexCoordsAsVertices()
+{
+	_textureCoords.clear();
+
+	uint vertCount = _vertices.size();
+	for (uint i = 0; i < vertCount; ++i)
+	{
+		_textureCoords.push_back(_vertices[i]);
+	}
+	_hasNewVertices = true;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Polygon class
@@ -452,6 +480,23 @@ bool Polygon::isVisible() const
 	return _visible;
 }
 
+void Polygon::recomputeTexCoordsToFit()
+{
+	uint subpolycount = _subPolygons.size();
+	for (uint i = 0; i < subpolycount; ++i)
+	{
+		_subPolygons[i]->recomputeTexCoordsToFit();
+	}
+}
+
+void Polygon::recomputeTexCoordsAsVertices()
+{
+	uint subpolycount = _subPolygons.size();
+	for (uint i = 0; i < subpolycount; ++i)
+	{
+		_subPolygons[i]->recomputeTexCoordsAsVertices();
+	}
+}
 
 void Polygon::setMaterial( Material* material )
 {

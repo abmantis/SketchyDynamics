@@ -90,6 +90,8 @@ namespace PhySketch
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual AABB getWorldAABB(bool bestFit, Matrix3 transformMatrix) const;		
 
+		virtual void recomputeTexCoordsToFit();
+		virtual void recomputeTexCoordsAsVertices();
 	protected:
 		std::vector<Vector2> _vertices;
 		std::vector<Vector2> _textureCoords;
@@ -237,6 +239,9 @@ namespace PhySketch
 		virtual void update() {}
 
 		const VertexVariance& GetVertexVariance() const;
+
+		virtual void recomputeTexCoordsToFit();
+		virtual void recomputeTexCoordsAsVertices();
 
 		static std::vector<Vector2> GetCircleVertices(Vector2 center, float radius, int num_segments);
 
