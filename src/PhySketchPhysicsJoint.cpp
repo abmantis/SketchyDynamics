@@ -75,13 +75,13 @@ bool PhysicsJoint::isPointInside( const Vector2& pt ) const
 void PhysicsJoint::select()
 {
 	_selected = true;
-	_subPolygons[0]->SetMaterial(_selectedMaterial);
+	_subPolygons[0]->setMaterial(_selectedMaterial);
 }
 
 void PhysicsJoint::unselect()
 {
 	_selected = false;
-	_subPolygons[0]->SetMaterial(_material);
+	_subPolygons[0]->setMaterial(_material);
 }
 
 bool PhysicsJoint::isSelectable() const
@@ -100,7 +100,7 @@ bool PhysicsJoint::isSelected() const
 PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Revolute, material, selectedMaterial, id)
 {
-	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->SetMaterial(_material);;
+	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->setMaterial(_material);;
 	Polygon::setPosition(_joint->GetAnchorA());
 }
 
@@ -153,7 +153,7 @@ PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, Material* material, Mate
 	subpoly->addVertex(Vector2( 0.10f, 0.10f));
 	subpoly->addVertex(Vector2(-0.10f, 0.10f));
 	subpoly->addVertex(Vector2( 0.10f,-0.10f));
-	subpoly->SetMaterial(_material);
+	subpoly->setMaterial(_material);
 	Polygon::setPosition(_joint->GetAnchorA());
 	Polygon::setAngle(_joint->GetBodyA()->GetAngle());		
 }

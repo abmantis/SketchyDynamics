@@ -486,7 +486,7 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 	}
 	_gesturePolygon = new Polygon(VV_Stream, "PS_gesture");
 	_gestureSubPolygon = _gesturePolygon->createSubPolygon(DM_LINE_STRIP);
-	_gestureSubPolygon->SetMaterial(_gestureMaterial);
+	_gestureSubPolygon->setMaterial(_gestureMaterial);
 	_gestureSubPolygon->addVertex(startPoint);
 	_renderer->addPolygon(_gesturePolygon);
 }

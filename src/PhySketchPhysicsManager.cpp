@@ -26,7 +26,7 @@ PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	_defaultBodyLineMat		= matMgr->createMaterial("PS_defaultBodyLineMat",		Color(0.3f, 0.3f, 1.0f, 1.0f));
 	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(1.0f, 0.5f, 0.5f, 1.0f));
 	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.3f, 0.3f, 1.0f));
-	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.3f, 0.3f, 1.0f));
+	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.7f, 0.7f, 1.0f));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Init physics world 
@@ -285,7 +285,7 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
-			b->getSubPolygon(i)->SetMaterial(b->_selectedMaterial);
+			b->getSubPolygon(i)->setMaterial(b->_selectedMaterial);
 		}
 
 		b->_selected = true;
@@ -308,7 +308,7 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 		uint subPolyCount = b->getSubPolygonCount();
 		for (uint i = 1; i < subPolyCount; i += 2)
 		{
-			b->getSubPolygon(i)->SetMaterial(b->_lineMaterial);
+			b->getSubPolygon(i)->setMaterial(b->_lineMaterial);
 		}
 
 		b->_selected = false;

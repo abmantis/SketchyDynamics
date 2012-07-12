@@ -66,9 +66,9 @@ void PhysicsBody::reconstructPolygon()
 		case b2Shape::e_circle:
 			{
 				fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
-				fillsubpoly->SetMaterial(_fillMaterial);
-				linesubpoly = createSubPolygon(DM_LINE_LOOP);
-				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+				fillsubpoly->setMaterial(_fillMaterial);
+				linesubpoly = createSubPolygon(DM_TRIANGLE_STRIP);
+				linesubpoly->setMaterial(_selected? _selectedMaterial : _lineMaterial);
 
 				b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();
 
@@ -95,9 +95,9 @@ void PhysicsBody::reconstructPolygon()
 		case b2Shape::e_polygon:
 			{
 				fillsubpoly = createSubPolygon(DM_TRIANGLE_FAN);
-				fillsubpoly->SetMaterial(_fillMaterial);
-				linesubpoly = createSubPolygon(DM_LINE_LOOP);
-				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+				fillsubpoly->setMaterial(_fillMaterial);
+				linesubpoly = createSubPolygon(DM_TRIANGLES);
+				linesubpoly->setMaterial(_selected? _selectedMaterial : _lineMaterial);
 
 				b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
 				int32 vertexCount = box2dpoly->m_count;
@@ -114,7 +114,7 @@ void PhysicsBody::reconstructPolygon()
 		case b2Shape::e_chain:
 			{
 				linesubpoly = createSubPolygon(DM_LINE_LOOP);
-				linesubpoly->SetMaterial(_selected? _selectedMaterial : _lineMaterial);
+				linesubpoly->setMaterial(_selected? _selectedMaterial : _lineMaterial);
 
 				b2ChainShape* box2dchain = (b2ChainShape*)fixture->GetShape();
 				int32 vertexCount = box2dchain->m_count;

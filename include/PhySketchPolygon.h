@@ -61,11 +61,11 @@ namespace PhySketch
 
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
-		virtual Material* GetMaterial(void) const;
+		virtual Material* getMaterial(void) const;
 
 		/// <summary> Sets this Polygon's material. </summary>
 		/// <param name="material"> The material. </param>
-		virtual void SetMaterial(Material* material);
+		virtual void setMaterial(Material* material);
 
 		/// <summary> Gets the drawing mode. </summary>
 		/// <returns> The drawing mode. </returns>
@@ -219,6 +219,10 @@ namespace PhySketch
 		/// <param name="pt"> The point. </param>
 		/// <returns> true if point is inside, false if not. </returns>
 		virtual bool isPointInside(const Vector2& pt) const;
+
+		/// <summary> Sets the material for all SubPolygon. </summary>
+		/// <param name="material"> The material. </param>
+		virtual void setMaterial(Material* material);
 
 		/// <summary> Sets the visibility flag of this Polygon. </summary>
 		/// <param name="visible"> true to show, false to hide. </param>

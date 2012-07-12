@@ -40,12 +40,12 @@ void SubPolygon::addVertex( const Vector2& vertex, const Vector2& textureCoord )
 	_hasNewVertices = true;
 }
 
-Material* SubPolygon::GetMaterial( void ) const
+Material* SubPolygon::getMaterial( void ) const
 {
 	return(_material);
 }
 
-void SubPolygon::SetMaterial( Material* material )
+void SubPolygon::setMaterial( Material* material )
 {
 	_material = material;
 }
@@ -450,6 +450,16 @@ void Polygon::setVisible( bool visible )
 bool Polygon::isVisible() const
 {
 	return _visible;
+}
+
+
+void Polygon::setMaterial( Material* material )
+{
+	uint subpolycount = _subPolygons.size();
+	for (uint i = 0; i < subpolycount; ++i)
+	{
+		_subPolygons[i]->setMaterial(material);
+	}
 }
 
 
