@@ -410,7 +410,11 @@ void PhysicsBody::scale( const Vector2& factor )
 	
 	_body->ResetMassData();
 
-	Polygon::scale(factor);
+
+	// TODO: Prevent scaling of the line subpolygons without reconstructing everything (if it stays cheaper than reconstructing)
+	// 	Polygon::scale(factor);
+
+	reconstructPolygon();
 }
 
 void PhysicsBody::setAngle( float angle )
