@@ -124,6 +124,15 @@ namespace PhySketch
 			return Vector2(x - scalar, y - scalar);
 		}
 
+		friend Vector2 operator/(const float& scalar, const Vector2& vector) 
+		{
+			return Vector2(scalar / vector.x, scalar / vector.y);
+		}
+		friend Vector2 operator-(const float& scalar, const Vector2& vector) 
+		{
+			return Vector2(scalar - vector.x, scalar - vector.y);
+		}
+
 		virtual b2Vec2 tob2Vec2() const
 		{
 			return b2Vec2(x, y);
