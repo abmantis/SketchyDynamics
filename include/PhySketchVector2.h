@@ -225,6 +225,11 @@ namespace PhySketch
 			return retP;
 		}
 
+		static Vector2 lineNormal(const Vector2& v1, const Vector2& v2)
+		{
+			 return Vector2(-(v2.y - v1.y), v2.x - v1.x);
+		}
+
 		friend std::ostream& operator<<(std::ostream& out, const Vector2& vector)
 		{
 			out << "(" << vector.x << ", " << vector.y << ")";
