@@ -26,41 +26,51 @@ PhySketch::Core _core;
 PhySketch::ApplicationWindow *_window;
 PhySketch::Renderer *_renderer;
 PhySketch::PhysicsManager *_physicsMgr;
-PhySketch::MaterialManager *_materialMgr;
+PhySketch::MaterialManager *_matMgr;
 TestInputListener *_inputListener;
 
 int _tmain(int argc, _TCHAR* argv[])
 {	
 	_CrtSetDbgFlag ( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 
-	PhySketch::Vector2 worldSize(80.0f, 80.0f);
+	PhySketch::Vector2 worldSize(100.0f,100.0f);
 
 	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10), worldSize);
 	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
-	_materialMgr = PhySketch::MaterialManager::getSingletonPtr();
+	_matMgr = PhySketch::MaterialManager::getSingletonPtr();
 		
 	_inputListener = new TestInputListener();
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 
+	//PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
+	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/CLP_blackboardSmooth_.jpg");
+
+	PhySketch::Polygon* backPoly = new PhySketch::Polygon(PhySketch::VV_Static, "background");
+	backPoly->CreateSquareSubPolygon(PhySketch::DM_TRIANGLE_FAN);
+	backPoly->setScale(_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin());
+	backPoly->setMaterial(backgroundMat);	
+	_renderer->addPolygon(backPoly, 0);
+	
+
 	{
-		PhySketch::Material* backgroundMat = _materialMgr->createMaterial("backgroundMaterial", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
+		PhySketch::Material* transparentMat = _matMgr->createMaterial("transparentMat", PhySketch::Color(0.0f, 0.0f, 0.0f, 0.0f));
 		b2BodyDef backgroundbodyDef;
 		backgroundbodyDef.position.Set(0.0f, 0.0f);
 		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);
 
 		b2PolygonShape backgroundBox;
-		backgroundBox.SetAsBox(worldSize.x*0.5f,worldSize.y*0.5f);
+		backgroundBox.SetAsBox(worldSize.x*0.5f, worldSize.y*0.5f);
 		b2FixtureDef backgroundFixtureDef;
 		backgroundFixtureDef.shape = &backgroundBox;
 		backgroundFixtureDef.filter.categoryBits = 0x0;
 		backgroundPhyBody->getBox2DBody()->CreateFixture(&backgroundFixtureDef);
-		backgroundPhyBody->setFillMaterial(backgroundMat);
-		backgroundPhyBody->setLineMaterial(backgroundMat);
+ 		backgroundPhyBody->setFillMaterial(transparentMat);
+ 		backgroundPhyBody->setLineMaterial(transparentMat);
 		backgroundPhyBody->reconstructPolygon();		
-		_physicsMgr->setUnselectableBody(backgroundPhyBody);
+		_physicsMgr->setUnselectableBody(backgroundPhyBody);		
 	}
 	
 		
@@ -76,7 +86,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		_physicsMgr->setUnselectableBody(phyBody);
 	}
 	
+	//PhySketch::Material* polyFill = _matMgr->createMaterial("polyFill", "../../../textures/314199-green-chalkboard--.jpg");
+	//polyFill->setColor(PhySketch::Color(0.7f, 0.7f, 0.8f, 0.5f));
+	//_physicsMgr->setDefaultBodyFillMat(polyFill);
+	PhySketch::Material* polyLine = _matMgr->createMaterial("polyLine", "../../../textures/laser_w.png");
+	_physicsMgr->setDefaultBodyLineMat(polyLine);
 	
+
 	_core.startLoop();
 
 	delete _inputListener; _inputListener = 0;
