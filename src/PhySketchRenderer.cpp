@@ -323,13 +323,13 @@ namespace PhySketch
 	
 	void Renderer::renderPolygons()
 	{
-		// change the view to scene coordinates
-		glMatrixMode(GL_PROJECTION);						
-		glLoadIdentity();									
-		gluOrtho2D(_sceneViewMin.x, _sceneViewMax.x, 
-			_sceneViewMin.y, _sceneViewMax.y);
-		glMatrixMode(GL_MODELVIEW);	
-		glLoadIdentity();
+// 		// change the view to scene coordinates
+// 		glMatrixMode(GL_PROJECTION);						
+// 		glLoadIdentity();									
+// 		gluOrtho2D(_sceneViewMin.x, _sceneViewMax.x, 
+// 			_sceneViewMin.y, _sceneViewMax.y);
+// 		glMatrixMode(GL_MODELVIEW);	
+// 		glLoadIdentity();
 
 		RenderQueue::iterator it, it_end;
 		Polygon* poly = nullptr;
