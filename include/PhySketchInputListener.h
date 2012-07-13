@@ -200,6 +200,10 @@ namespace PhySketch
 		/// <returns> true if the joint was created. </returns>
 		virtual bool checkForCircleJoint(Vector2 size, Vector2 position);
 
+		virtual void highlightDestructionArea(bool flag);
+		virtual void showDestructionArea();
+		virtual void hideDestructionArea();
+
 		
 
 	protected:
@@ -218,6 +222,7 @@ namespace PhySketch
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
 		InteractionStates _interactionState;
+		bool _insideDestructionArea;
 
 		// struct to store mouse positions. the positions are updated when 
 		// needed depending on the current state and are not synchronized

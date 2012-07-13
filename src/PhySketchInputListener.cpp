@@ -26,7 +26,8 @@ MainInputListener::MainInputListener() :
 	_gestureSubPolygon	(nullptr),
 	_caliRecognizer		(new CIRecognizer()),
 	_interactionState	(IS_NONE),
-	_gestureMaterial	(nullptr)
+	_gestureMaterial	(nullptr),
+	_insideDestructionArea(false)
 {
 }
 
@@ -82,8 +83,7 @@ void MainInputListener::init()
 	_selectedBodiesAABBPoly->setVisible(false);
 	_renderer->addPolygon(_selectedBodiesAABBPoly, RQT_UI);
 
-	Material* destructAreaMat = MaterialManager::getSingletonPtr()->createMaterial("PS_destruction_area", "../../../textures/destruct_area.png");
-	//destructAreaMat->setColor(Color(1.0f, 1.0f, 1.0f, 0.2f));
+	Material* destructAreaMat = MaterialManager::getSingletonPtr()->createMaterial("PS_destruction_area", "../../../textures/destruct_area.png");	
 	_destructionArea = new AnimatedPolygon(VV_Static, "PS_destruction_area");
 	_destructionArea->CreateSquareSubPolygon(DM_TRIANGLE_FAN);
 	_destructionArea->setScale(Vector2(14.0f, 0.7f));
@@ -258,9 +258,10 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;				
 				case IS_MOVING_JOINTS:
-					_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
-					if(_destructionArea->isPointInside(sceneMousePos))
+					hideDestructionArea();
+					if(_insideDestructionArea)
 					{
+						highlightDestructionArea(false);
 						_physicsMgr->destroySelectedJoints();
 					}
 
@@ -276,9 +277,10 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					}
 					break;
 				case IS_MOVING_BODIES:
-					_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
-					if(_destructionArea->isPointInside(sceneMousePos))
+					hideDestructionArea();
+					if(_insideDestructionArea)
 					{
+						highlightDestructionArea(false);
 						_physicsMgr->destroySelectedBodies();
 					}
 					_physicsMgr->validateSelectedJointsAnchors();
@@ -359,7 +361,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
 					if(pb->isSelected())
 					{	
-						_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
+						showDestructionArea();
 						_interactionState = IS_MOVING_BODIES;					
 					}
 					else
@@ -405,7 +407,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// was moved inside the selected joint
 					if(pj->isSelected())
 					{	
-						_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
+						showDestructionArea();
 						_interactionState = IS_MOVING_JOINTS;					
 					}						
 				}
@@ -423,9 +425,16 @@ void MainInputListener::mouseMoved( Vector2 position )
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
 			_physicsMgr->translateSelectedBodies(translation);
-			if(_destructionArea->isPointInside(sceneMousePos))
+			bool newInsideDestructArea =_destructionArea->isPointInside(sceneMousePos);
+			if(!_insideDestructionArea && newInsideDestructArea)
 			{
-				// TODO: visual fx!
+				_insideDestructionArea = true;
+				highlightDestructionArea(true);
+			}
+			else if(_insideDestructionArea && !newInsideDestructArea)
+			{
+				_insideDestructionArea = false;
+				highlightDestructionArea(false);
 			}
 			break;
 		}
@@ -434,9 +443,16 @@ void MainInputListener::mouseMoved( Vector2 position )
 			Vector2 translation = sceneMousePos - _lastMousePositions.leftScene;
 			_lastMousePositions.leftScene = sceneMousePos;
 			_physicsMgr->translateSelectedJoints(translation);
-			if(_destructionArea->isPointInside(sceneMousePos))
+			bool newInsideDestructArea =_destructionArea->isPointInside(sceneMousePos);
+			if(!_insideDestructionArea && newInsideDestructArea)
 			{
-				// TODO: visual fx!
+				_insideDestructionArea = true;
+				highlightDestructionArea(true);
+			}
+			else if(_insideDestructionArea && !newInsideDestructArea)
+			{
+				_insideDestructionArea = false;
+				highlightDestructionArea(false);
 			}
 			break;
 		}
@@ -740,6 +756,24 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 	}
 
 	return false;
+}
+
+void MainInputListener::highlightDestructionArea(bool flag)
+{
+	if(flag)
+		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
+	else
+		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+void MainInputListener::showDestructionArea()
+{
+	_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
+}
+
+void MainInputListener::hideDestructionArea()
+{
+	_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
 }
 
 
