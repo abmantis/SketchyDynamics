@@ -43,6 +43,9 @@ namespace PhySketch
 		VV_Stream	// For polygons that change vertices almost every frame
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// <summary> SubPolygon class. Represents a (sub)polygon that is part of
+	/// 	a main polygon. </summary>
 	class SubPolygon
 	{
 		friend class Polygon;
@@ -106,6 +109,8 @@ namespace PhySketch
 		UINT _texCoordBuffer;
 	};
 
+	//////////////////////////////////////////////////////////////////////////
+	/// <summary> Polygon class. </summary>
 	class Polygon 
 	{
 		friend class Renderer;
@@ -273,5 +278,32 @@ namespace PhySketch
 		bool _inRenderingQueue;
 		
 	};
+
+	//////////////////////////////////////////////////////////////////////////
+	/// <summary> Animated polygon class. </summary>
+	class AnimatedPolygon : public Polygon
+	{
+	public:
+		AnimatedPolygon(VertexVariance vv = VV_Static, std::string name = "");
+		virtual ~AnimatedPolygon();
+
+		virtual void translate( const Vector2& amount, float unitsPerSec );
+		virtual void setPosition( const Vector2& position, float unitsPerSec );
+
+		virtual void update( ulong timeSinceLastFrame );		
+
+	protected:
+		Vector2 _translationDirection;
+		float _translationUnitsPerMs;
+		ulong _translationMsToComplete;
+		
+		
+	};
+
+	
+
+	
+
+
 }
 #endif // PhySketchPolygon_h__

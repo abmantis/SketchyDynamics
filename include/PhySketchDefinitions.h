@@ -83,6 +83,7 @@ namespace PhySketch
 	// Pre-declare classes so we can use pointers in header files 
 	// without including individual .h
 	class AABB;
+	class AnimatedPolygon;
 	class ApplicationWindow;
 	class ApplicationWindow_WGL;
 	class Core;
