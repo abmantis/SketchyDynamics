@@ -82,13 +82,13 @@ void MainInputListener::init()
 	_selectedBodiesAABBPoly->setVisible(false);
 	_renderer->addPolygon(_selectedBodiesAABBPoly, RQT_UI);
 
-	PhySketch::Material* destructAreaMat = MaterialManager::getSingletonPtr()->createMaterial("PS_destruction_area", "../../../textures/destruct_area.png");
+	Material* destructAreaMat = MaterialManager::getSingletonPtr()->createMaterial("PS_destruction_area", "../../../textures/destruct_area.png");
 	//destructAreaMat->setColor(Color(1.0f, 1.0f, 1.0f, 0.2f));
-	_destructionArea = new Polygon(VV_Static, "PS_destruction_area");
+	_destructionArea = new AnimatedPolygon(VV_Static, "PS_destruction_area");
 	_destructionArea->CreateSquareSubPolygon(DM_TRIANGLE_FAN);
 	_destructionArea->setScale(Vector2(14.0f, 0.7f));
-	_destructionArea->setPosition(Vector2(0.0f, 4.2f));
-	_destructionArea->setVisible(false);
+	((Polygon*)_destructionArea)->setPosition(Vector2(0.0f, 4.85f));
+//	_destructionArea->setVisible(false);
 	_destructionArea->setMaterial(destructAreaMat);
 	_renderer->addPolygon(_destructionArea, RQT_UI);
 
@@ -258,7 +258,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_interactionState = IS_NONE;
 					break;				
 				case IS_MOVING_JOINTS:
-					_destructionArea->setVisible(false);
+					_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
 					if(_destructionArea->isPointInside(sceneMousePos))
 					{
 						_physicsMgr->destroySelectedJoints();
@@ -276,7 +276,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					}
 					break;
 				case IS_MOVING_BODIES:
-					_destructionArea->setVisible(false);
+					_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
 					if(_destructionArea->isPointInside(sceneMousePos))
 					{
 						_physicsMgr->destroySelectedBodies();
@@ -359,7 +359,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
 					if(pb->isSelected())
 					{	
-						_destructionArea->setVisible(true);
+						_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
 						_interactionState = IS_MOVING_BODIES;					
 					}
 					else
@@ -405,7 +405,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					// was moved inside the selected joint
 					if(pj->isSelected())
 					{	
-						_destructionArea->setVisible(true);
+						_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
 						_interactionState = IS_MOVING_JOINTS;					
 					}						
 				}

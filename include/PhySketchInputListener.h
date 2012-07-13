@@ -212,7 +212,7 @@ namespace PhySketch
 		SubPolygon *_gestureSubPolygon;
 		Polygon *_transformIndicator;
 		Polygon *_selectedBodiesAABBPoly;
-		Polygon *_destructionArea;
+		AnimatedPolygon *_destructionArea;
 		AABB _selectedBodiesAABB;
 		float _initialDistFromSelectedBodiesCenter;
 		Renderer *_renderer;
