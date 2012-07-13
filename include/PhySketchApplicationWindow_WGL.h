@@ -30,7 +30,7 @@ namespace PhySketch
 		 */
 		virtual void destroyWindow(void);
 
-		virtual bool updateWindow();
+		virtual bool updateWindow(ulong timeSinceLastFrame);
 
 		/// <summary> Turns VSync on/off. </summary>
 		/// <param name="on"> true to turn VSync on. </param>
@@ -67,7 +67,7 @@ namespace PhySketch
 		 */		
 		virtual void resizeGLScene(int width, int height);
 
-		virtual void drawGLScene();
+		virtual void drawGLScene(ulong timeSinceLastFrame);
 
 	protected:
 		HDC			_hDC;			// Private GDI Device Context

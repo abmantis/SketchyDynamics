@@ -29,7 +29,7 @@ PhysicsBody::~PhysicsBody()
 {
 }
 
-void PhysicsBody::update()
+void PhysicsBody::update(ulong timeSinceLastFrame)
 {
 	Vector2 pos = _body->GetPosition();
 	float angle = _body->GetAngle();

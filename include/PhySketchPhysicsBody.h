@@ -20,7 +20,7 @@ namespace PhySketch
 	public:	
 		/// <summary> Updates . </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
-		virtual void update();
+		virtual void update(ulong timeSinceLastFrame);
 		
 		/// <summary> Gets the box2D body. </summary>
 		/// <returns> The box2D body. </returns>

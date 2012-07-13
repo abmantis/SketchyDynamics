@@ -131,11 +131,11 @@ namespace PhySketch
 		return true;		
 	}
 
-	void Renderer::render()
+	void Renderer::render(ulong timeSinceLastFrame)
 	{
 		_mainShaderProgram->useProgram();
 
-		renderPolygons();
+		renderPolygons(timeSinceLastFrame);
 
 		glUseProgram(NULL);
 		//glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE, Matrix3::IDENTITY[0]);
@@ -321,7 +321,7 @@ namespace PhySketch
 		return _sceneViewMax;
 	}
 	
-	void Renderer::renderPolygons()
+	void Renderer::renderPolygons(ulong timeSinceLastFrame)
 	{
 // 		// change the view to scene coordinates
 // 		glMatrixMode(GL_PROJECTION);						
@@ -341,7 +341,7 @@ namespace PhySketch
 			poly = it->polygon;
 			if(poly->_visible)
 			{
-				renderPolygon(poly);
+				renderPolygon(poly, timeSinceLastFrame);
 			}
 		}
 
@@ -352,7 +352,7 @@ namespace PhySketch
 			poly = it->polygon;
 			if(poly->_visible)
 			{
-				renderPolygon(poly);
+				renderPolygon(poly, timeSinceLastFrame);
 			}
 		}
 
@@ -363,15 +363,15 @@ namespace PhySketch
 			poly = it->polygon;
 			if(poly->_visible)
 			{
-				renderPolygon(poly);
+				renderPolygon(poly, timeSinceLastFrame);
 			}
 		}
 	}
 
-	void Renderer::renderPolygon( Polygon *poly ) 
+	void Renderer::renderPolygon( Polygon *poly, ulong timeSinceLastFrame ) 
 	{
 		// make sure the polygon is updated before being rendered
-		poly->update();
+		poly->update(timeSinceLastFrame);
 
 		glUniformMatrix3fv(_shaderVars.uniforms.transformation, 1, GL_TRUE,
 			poly->_transformMatrix[0]);		

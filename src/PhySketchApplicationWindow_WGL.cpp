@@ -238,7 +238,7 @@ namespace PhySketch
 		}
 	}
 	
-	bool ApplicationWindow_WGL::updateWindow()
+	bool ApplicationWindow_WGL::updateWindow(ulong timeSinceLastFrame)
 	{
 		MSG	msg;
 		if (PeekMessage(&msg,NULL,0,0,PM_REMOVE))	// Is There A Message Waiting?
@@ -255,7 +255,7 @@ namespace PhySketch
 			}
 		}
 
-		drawGLScene();		
+		drawGLScene(timeSinceLastFrame);		
 		SwapBuffers(_hDC);
 		
 	/*	if(drawGLScene())
@@ -669,12 +669,12 @@ namespace PhySketch
 		return 0;
 	}
 
-	void ApplicationWindow_WGL::drawGLScene()
+	void ApplicationWindow_WGL::drawGLScene(ulong timeSinceLastFrame)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);	// Since we're in 2D, only clear Screen Buffer and not the depth buffer
 		glLoadIdentity();									// Reset The Current Modelview Matrix
 			
-		_renderer->render();
+		_renderer->render(timeSinceLastFrame);
 	}
 
 	void ApplicationWindow_WGL::setVSync( bool on )

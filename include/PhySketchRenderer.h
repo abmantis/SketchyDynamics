@@ -136,7 +136,7 @@ namespace PhySketch
 		virtual void queryScene(const Vector2& pt, SceneQueryCallback *callback );
 	
 		/// <summary> Renders the polygons in the polygon list to screen. </summary>		
-		virtual void render();
+		virtual void render(ulong timeSinceLastFrame);
 
 		/// <summary> Gets the minimum limit for the current view of the scene. </summary>
 		/// <returns> The scene view axis minimum limit. </returns>
@@ -157,8 +157,8 @@ namespace PhySketch
 	protected:
 		virtual bool initGL();
 
-		virtual void renderPolygons();
-		virtual void renderPolygon(Polygon *poly);
+		virtual void renderPolygons(ulong timeSinceLastFrame);
+		virtual void renderPolygon(Polygon *poly, ulong timeSinceLastFrame);
 
 		virtual void updateOpenGLBuffers(SubPolygon *subpolygon, VertexVariance variance) const;
 

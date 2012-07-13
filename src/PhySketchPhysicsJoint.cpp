@@ -109,7 +109,7 @@ b2RevoluteJoint* PhysicsJointRevolute::getBox2DRevoluteJoint()
 	return static_cast<b2RevoluteJoint*>(_joint);
 }
 
-void PhysicsJointRevolute::update()
+void PhysicsJointRevolute::update(ulong timeSinceLastFrame)
 {
 	if(_selected)
 	{
@@ -163,7 +163,7 @@ b2WeldJoint* PhysicsJointWeld::getBox2DWeldJoint()
 	return static_cast<b2WeldJoint*>(_joint);
 }
 
-void PhysicsJointWeld::update()
+void PhysicsJointWeld::update(ulong timeSinceLastFrame)
 {
 	if(_selected)
 	{

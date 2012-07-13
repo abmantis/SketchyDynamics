@@ -152,7 +152,7 @@ bool Core::_doOneFrame( ulong timeSinceLastFrame )
 
 	_physicsMgr->update(timeSinceLastFrame);
 
-	return _window->updateWindow();	
+	return _window->updateWindow(timeSinceLastFrame);	
 }
 
 

@@ -236,7 +236,7 @@ namespace PhySketch
 
 		/// <summary> Updates the Polygon. </summary>
 		/// <remarks> This is normally not called by the "user". It is called automatically by PhySketch. </remarks>
-		virtual void update() {}
+		virtual void update(ulong timeSinceLastFrame) {}
 
 		const VertexVariance& GetVertexVariance() const;
 

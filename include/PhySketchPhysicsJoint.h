@@ -37,7 +37,7 @@ namespace PhySketch
 	public:				
 		virtual b2Joint* getBox2DJoint();
 
-		virtual void update() = 0;
+		virtual void update(ulong timeSinceLastFrame) = 0;
 
 		virtual void setAngle( float angle );
 
@@ -88,7 +88,7 @@ namespace PhySketch
 	public:				
 		virtual b2RevoluteJoint* getBox2DRevoluteJoint();
 
-		virtual void update();
+		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
 
@@ -105,7 +105,7 @@ namespace PhySketch
 	public:				
 		virtual b2WeldJoint* getBox2DWeldJoint();
 
-		virtual void update();
+		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
 

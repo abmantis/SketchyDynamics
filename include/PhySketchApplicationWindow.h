@@ -38,7 +38,7 @@ namespace PhySketch
 		 *
 		 * <returns> false if the window received a close message </returns>
 		 */
-		virtual bool updateWindow() = 0;
+		virtual bool updateWindow(ulong timeSinceLastFrame) = 0;
 
 		virtual bool isClosePending() { return _closePending; }
 
