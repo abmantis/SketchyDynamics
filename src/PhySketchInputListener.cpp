@@ -82,11 +82,14 @@ void MainInputListener::init()
 	_selectedBodiesAABBPoly->setVisible(false);
 	_renderer->addPolygon(_selectedBodiesAABBPoly, RQT_UI);
 
+	PhySketch::Material* destructAreaMat = MaterialManager::getSingletonPtr()->createMaterial("PS_destruction_area", "../../../textures/destruct_area.png");
+	//destructAreaMat->setColor(Color(1.0f, 1.0f, 1.0f, 0.2f));
 	_destructionArea = new Polygon(VV_Static, "PS_destruction_area");
 	_destructionArea->CreateSquareSubPolygon(DM_TRIANGLE_FAN);
 	_destructionArea->setScale(Vector2(14.0f, 0.7f));
 	_destructionArea->setPosition(Vector2(0.0f, 4.2f));
 	_destructionArea->setVisible(false);
+	_destructionArea->setMaterial(destructAreaMat);
 	_renderer->addPolygon(_destructionArea, RQT_UI);
 
 	_gestureMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_gesture_material", Color(0.0f, 0.0f, 8.0f, 1.0f));
