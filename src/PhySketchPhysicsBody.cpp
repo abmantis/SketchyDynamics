@@ -114,6 +114,16 @@ void PhysicsBody::reconstructPolygon()
 				linesubpoly->addVertex(prev_v - normal, Vector2(1.0f, 1.0f));
 				linesubpoly->addVertex(v + normal, Vector2(0.0f, 0.0f));
 				linesubpoly->addVertex(v - normal, Vector2(1.0f, 0.0f));
+
+
+				// Add extra lines in circle
+				v		= Vector2(circle->m_radius, 0.0f);
+				prev_v	= Vector2(-circle->m_radius, 0.0f);
+				normal	= Vector2::lineNormal(prev_v, v).normalised() * lineWidth;
+				linesubpoly->addVertex(prev_v + normal, Vector2(0.0f, 1.0f));
+				linesubpoly->addVertex(prev_v - normal, Vector2(1.0f, 1.0f));
+				linesubpoly->addVertex(v + normal, Vector2(0.0f, 0.0f));
+				linesubpoly->addVertex(v - normal, Vector2(1.0f, 0.0f));
 			}
 			break;
 
