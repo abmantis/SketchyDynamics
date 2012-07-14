@@ -223,6 +223,15 @@ namespace PhySketch
 			return acos(val);
 		}
 
+		/// <summary> Compute the angle between a line and the horizontal axis. </summary>
+		/// <param name="p1"> The first point that defines the line; </param>
+		/// <param name="p2"> The seccond point that defines the line; </param>
+		/// <returns> The angle </returns>
+		static float lineAngle(const Vector2& p1, const Vector2& p2)
+		{
+			return atan2(p2.y - p1.y, p2.x - p1.x);
+		}
+
 		static Vector2 Vector2::Rotate(Vector2 p, float angle)
 		{ 
 			float xold,yold;
