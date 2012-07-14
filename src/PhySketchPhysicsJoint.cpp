@@ -2,6 +2,7 @@
 #include <Box2D/Dynamics/Joints/b2Joint.h>
 #include <Box2D/Dynamics/Joints/b2RevoluteJoint.h>
 #include <Box2D/Dynamics/Joints/b2WeldJoint.h>
+#include <Box2D/Dynamics/Joints/b2DistanceJoint.h>
 #include <Box2D/Dynamics/b2Body.h>
 #include "PhySketchUtils.h"
 
@@ -100,7 +101,7 @@ bool PhysicsJoint::isSelected() const
 PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Revolute, material, selectedMaterial, id)
 {
-	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->setMaterial(_material);;
+	Polygon::CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->setMaterial(_material);
 	Polygon::setPosition(_joint->GetAnchorA());
 }
 
@@ -195,6 +196,73 @@ PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation() const
 		}
 	}
 
+	return JAS_NOT_MOVED;
+}
+
+//////////////////////////////////////////////////////////////////////////
+// PhysicsJointDistance class
+PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
+	PhysicsJoint(joint, PJT_Distance, material, selectedMaterial, id)
+{	
+	Vector2 anchorA = _joint->GetAnchorA();
+	Vector2 anchorB = _joint->GetAnchorB();
+	float distance = anchorA.distanceTo(anchorB);
+
+	SubPolygon *subpoly = createSubPolygon(DM_LINE_STRIP);
+
+	int nrSegments = 5*distance; 
+	float increment = 1.0f / nrSegments;
+	Vector2 p1(0.0f, 0.0f);
+	Vector2 p2 = Vector2(0.25f / (float)nrSegments, 0.20f);
+	Vector2 p3 = Vector2(0.75f / (float)nrSegments,-0.20f);
+	Vector2 p4 = Vector2(1.00f / (float)nrSegments, 0.0f);
+	subpoly->addVertex(p1);
+	for (int i = 0; i < nrSegments; ++i)
+	{
+		subpoly->addVertex(p2);
+		subpoly->addVertex(p3);
+		subpoly->addVertex(p4);
+
+		p2.x += increment;
+		p3.x += increment;
+		p4.x += increment;
+	}	
+// 	subpoly->addVertex(Vector2( 0.0f, 0.0f));
+// 	subpoly->addVertex(Vector2( 1.0f, 0.0f));
+	
+// 	// Create anchor point circles
+// 	Polygon::CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.10f, 80);
+// 	Polygon::CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::UNIT_X, 0.10f, 80);
+	
+	setMaterial(_material);
+		
+	Polygon::setPosition(anchorA);
+	Polygon::setAngle(Vector2::lineAngle(anchorA, anchorB));
+	Polygon::setScale(Vector2(distance, 1.0f));
+}
+
+b2DistanceJoint* PhysicsJointDistance::getBox2DDistanceJoint()
+{
+	return static_cast<b2DistanceJoint*>(_joint);
+}
+
+void PhysicsJointDistance::update( ulong timeSinceLastFrame )
+{
+	if(_selected)
+	{
+		// Do not sync the polygon with the b2d joint when it is selected
+		return;
+	}
+
+	Vector2 anchorA = _joint->GetAnchorA();
+	Vector2 anchorB = _joint->GetAnchorB();	
+	Polygon::setPosition(anchorA);
+	Polygon::setAngle(Vector2::lineAngle(anchorA, anchorB));
+	Polygon::setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
+}
+
+PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation() const
+{
 	return JAS_NOT_MOVED;
 }
 

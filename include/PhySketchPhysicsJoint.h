@@ -8,6 +8,7 @@
 class b2Joint;
 class b2RevoluteJoint;
 class b2WeldJoint;
+class b2DistanceJoint;
 
 namespace PhySketch
 {
@@ -104,6 +105,23 @@ namespace PhySketch
 
 	public:				
 		virtual b2WeldJoint* getBox2DWeldJoint();
+
+		virtual void update(ulong timeSinceLastFrame);
+
+		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
+	};
+
+	class PhysicsJointDistance : public PhysicsJoint
+	{	
+	protected:
+		friend class PhysicsManager;
+
+		PhysicsJointDistance(b2DistanceJoint *joint, Material* material, Material* selectedMaterial, ulong id);
+		virtual ~PhysicsJointDistance() {};
+
+	public:				
+		virtual b2DistanceJoint* getBox2DDistanceJoint();
 
 		virtual void update(ulong timeSinceLastFrame);
 

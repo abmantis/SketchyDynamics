@@ -2,18 +2,21 @@
 #include "PhySketchVector2.h"
 #include "PhySketchPolygon.h"
 #include "PhySketchRenderer.h"
-#include "CALI\CIRecognizer.h"
-#include "CALI\CIScribble.h"
 #include "PhySketchCore.h"
 #include "PhySketchPhysicsManager.h"
 #include "PhySketchPhysicsBody.h"
 #include "PhySketchPhysicsQueryCallback.h"
-#include "Box2D\Collision\b2Collision.h"
 #include "PhySketchUtils.h"
 #include "PhySketchLogger.h"
 #include "PhySketchPhysicsJoint.h"
-#include "Box2D\Dynamics\Joints\b2Joint.h"
 #include "PhySketchMaterialManager.h"
+
+#include "CALI\CIRecognizer.h"
+#include "CALI\CIScribble.h"
+
+#include <Box2D\Dynamics\Joints\b2Joint.h>
+#include <Box2D\Collision\b2Collision.h>
+
 
 namespace PhySketch
 {
@@ -599,7 +602,7 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			_physicsMgr->createBody(body);
 		}		
 	} 
-	else if (gestureName.compare("Circle") == 0)
+	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
 	{
 		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
@@ -633,45 +636,53 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			}
 		}
 
-	} 
-	else if(gestureName.compare("Ellipse") == 0)
-	{
-		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
-		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
-		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
-		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
-
-		Vector2 position = _gesturePolygon->getAABB().getCenter();
-		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-
-		if(size.x > FLT_MIN && size.y > FLT_MIN)
-		{
-			if(checkForCircleJoint(size, position) == false)
-			{
-				b2BodyDef bodyDef;
-				bodyDef.type = b2_dynamicBody;
-				bodyDef.position.Set(position.x, position.y);
-				bodyDef.angle = 0.0f;
-				b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-				b2CircleShape circleShape;	//TODO: ellipse and not circle
-				circleShape.m_p.Set(0.0f, 0.0f);
-				circleShape.m_radius = size.x * 0.5f;
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &circleShape;
-				fixtureDef.density = 1.0f;
-				fixtureDef.friction = 0.3f;
-				fixtureDef.restitution = 0.2f;	
-				body->CreateFixture(&fixtureDef);
-
-				_physicsMgr->createBody(body);
-			}
-		}
-		
-	} 
+	} 	
 	else if(gestureName.compare("WavyLine") == 0)
 	{
+		PhysicsBody *b1 = nullptr;
+		PhysicsBody *b2 = nullptr;
+
+		CIPoint p = *(*_caliStroke->getPoints())[0];
+		Vector2 firstPt((float)p.x, (float)p.y); 
+		p = *(*_caliStroke->getPoints())[_caliStroke->getNumPoints()-1];
+		Vector2 lastPt((float)p.x, (float)p.y);
+
+		// Query the b2d world on the zigzag starting poing
+		b2AABB aabb;
+		Vector2 d(0.00001f, 0.00001f);
+		aabb.lowerBound = (firstPt - d).tob2Vec2();
+		aabb.upperBound = (firstPt + d).tob2Vec2();
+		{
+			PhysicsQueryCallback callback(firstPt, true);
+			_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+			// do we intersect any body?
+			if(callback._bodies.size() > 0)
+			{
+				b1 = *(--callback._bodies.end());
+			}
+		}
+		// Query the b2d world on the zigzag ending poing		
+		aabb.lowerBound = (lastPt - d).tob2Vec2();
+		aabb.upperBound = (lastPt + d).tob2Vec2();
+		PhysicsQueryCallback callback(lastPt, true);
+		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+		// do we intersect any body?
+		if(callback._bodies.size() > 0)
+		{
+			b2 = *(--callback._bodies.end());
+		}
+
+		if ( b1 && b2 && (b1 != b2) )
+		{
+			b2DistanceJointDef jd;
+			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), firstPt.tob2Vec2(), lastPt.tob2Vec2());
+			jd.collideConnected = true;
+			jd.frequencyHz = 1.0f;
+			jd.dampingRatio = 0.0f;
+			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+
+			_physicsMgr->createJoint(j);
+		}		
 	} 
 	else if(gestureName.compare("Alpha") == 0)
 	{

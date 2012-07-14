@@ -186,6 +186,12 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 			j = new PhysicsJointWeld(weldj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
 			break;
 		}
+	case e_distanceJoint:
+		{
+			b2DistanceJoint* distj = static_cast<b2DistanceJoint*>(b2d_joint);
+			j = new PhysicsJointDistance(distj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			break;
+		}
 	default:
 		throw std::exception("Unsupported joint type");
 		return NULL;
