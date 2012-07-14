@@ -12,13 +12,16 @@
 #   define PHYSKETCH_ARCH_32
 #endif
 
-// Sombunall versions of math.h already define M_PI
-#ifndef M_PI
-// You can extend this approximation as far as you need to;
-// this version was copied from the MINGW GCC headers
-#define M_PI 3.14159265358979323846f  
-#endif
 
+#ifndef M_PI
+	#define M_PI	3.14159265358979323846f  
+#endif
+#ifndef M_PI_2
+	#define M_PI_2	1.57079632679489661923f
+#endif
+#ifndef M_PI_4
+	#define M_PI_4	0.785398163397448309616f
+#endif
 //////////////////////////////////////////////////////////////////////////
 // include files
 //
