@@ -199,7 +199,9 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 		{
 			b2DistanceJoint* distj = static_cast<b2DistanceJoint*>(b2d_joint);
 			PhysicsJointDistance* pjd = new PhysicsJointDistance(distj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
-			_renderer->addPolygon(pjd->_poly, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			_renderer->addPolygon(pjd->_zigZagPoly, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			_renderer->addPolygon(pjd->_circlePolyA, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			_renderer->addPolygon(pjd->_circlePolyB, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
 			j = pjd;
 			break;
 		}
@@ -235,7 +237,9 @@ void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*=
 	case PJT_Distance:
 		{
 			PhysicsJointDistance *pjd = dynamic_cast<PhysicsJointDistance*>(joint);
-			_renderer->removePolygon(pjd->_poly);
+			_renderer->removePolygon(pjd->_zigZagPoly);
+			_renderer->removePolygon(pjd->_circlePolyA);
+			_renderer->removePolygon(pjd->_circlePolyB);
 		}
 		break;
 // 	case PJT_Rope:
@@ -615,6 +619,18 @@ bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
 					jd.collideConnected	= weldj->GetCollideConnected();
 					jd.dampingRatio		= weldj->GetDampingRatio();
 					jd.frequencyHz		= weldj->GetFrequency();
+					newb2djoint			= _physicsWorld->CreateJoint(&jd);
+					break;
+				}
+				case e_distanceJoint:
+				{
+					b2DistanceJointDef jd;
+					b2DistanceJoint* distj = static_cast<b2DistanceJoint*>(oldb2djoint);
+					PhysicsJointDistance* pjd = dynamic_cast<PhysicsJointDistance*>(j);
+					jd.Initialize(distj->GetBodyA(), distj->GetBodyB(), pjd->getPositionA().tob2Vec2(), pjd->getPositionB().tob2Vec2());
+					jd.collideConnected	= distj->GetCollideConnected();
+					jd.dampingRatio		= distj->GetDampingRatio();
+					jd.frequencyHz		= distj->GetFrequency();
 					newb2djoint			= _physicsWorld->CreateJoint(&jd);
 					break;
 				}

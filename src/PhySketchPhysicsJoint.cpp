@@ -120,11 +120,6 @@ void PhysicsJointRevolute::rotateAroundPoint( float angle, const Vector2& rotati
 	_poly->rotateAroundPoint(angle, rotationPoint);
 }
 
-bool PhysicsJointRevolute::isPointInside( const Vector2& pt ) const
-{
-	return _poly->getTransformedAABB(true).isPointInside(pt);
-}
-
 void PhysicsJointRevolute::select()
 {
 	_selected = true;
@@ -231,11 +226,6 @@ void PhysicsJointWeld::rotateAroundPoint( float angle, const Vector2& rotationPo
 	_poly->rotateAroundPoint(angle, rotationPoint);
 }
 
-bool PhysicsJointWeld::isPointInside( const Vector2& pt ) const
-{
-	return _poly->getTransformedAABB(true).isPointInside(pt);
-}
-
 void PhysicsJointWeld::select()
 {
 	_selected = true;
@@ -262,11 +252,13 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 	Vector2 anchorB = _joint->GetAnchorB();
 	float distance = anchorA.distanceTo(anchorB);
 
-	_poly = new Polygon(VV_Static, "PS_Joint" + toString(ulong(id)));
+	std::string jointName = "PS_Joint" + toString(ulong(id));
 
-	SubPolygon *subpoly = _poly->createSubPolygon(DM_LINE_STRIP);
+	_zigZagPoly = new Polygon(VV_Static, jointName + "zigzag");
 
-	int nrSegments = 5*distance; 
+	SubPolygon *subpoly = _zigZagPoly->createSubPolygon(DM_LINE_STRIP);
+
+	int nrSegments = (int)5*distance; 
 	float increment = 1.0f / nrSegments;
 	Vector2 p1(0.0f, 0.0f);
 	Vector2 p2 = Vector2(0.25f / (float)nrSegments, 0.20f);
@@ -283,27 +275,40 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 		p3.x += increment;
 		p4.x += increment;
 	}	
-// 	subpoly->addVertex(Vector2( 0.0f, 0.0f));
-// 	subpoly->addVertex(Vector2( 1.0f, 0.0f));
-	
-// 	// Create anchor point circles
-// 	Polygon::CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.10f, 80);
-// 	Polygon::CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::UNIT_X, 0.10f, 80);
-	
-	_poly->setMaterial(_material);
 		
-	_poly->setPosition(anchorA);
-	_poly->setAngle(Vector2::lineAngle(anchorA, anchorB));
-	_poly->setScale(Vector2(distance, 1.0f));
+	_zigZagPoly->setMaterial(_material);
+		
+	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
+	_zigZagPoly->setScale(Vector2(distance, 1.0f));
 
-	_poly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
-	_poly->setUserData(this);
+	_zigZagPoly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
+	_zigZagPoly->setUserData(this);
+
+	// Create anchor point circles
+	_circlePolyA = new Polygon(VV_Static, jointName + "circleA");
+	_circlePolyB = new Polygon(VV_Static, jointName + "circleB");
+	_circlePolyA->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.045f, 20);
+	_circlePolyB->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.045f, 20);
+
+	_circlePolyA->setMaterial(_material);
+	_circlePolyB->setMaterial(_material);
+	_circlePolyA->setPosition(anchorA);
+	_circlePolyB->setPosition(anchorB);
+	_circlePolyA->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
+	_circlePolyA->setUserData(this);
+	_circlePolyB->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
+	_circlePolyB->setUserData(this);
 }
 
 PhysicsJointDistance::~PhysicsJointDistance()
 {
-	delete _poly;
-	_poly = nullptr;
+	delete _zigZagPoly;
+	_zigZagPoly = nullptr;
+	delete _circlePolyA;	
+	_circlePolyA = nullptr;
+	delete _circlePolyB;
+	_circlePolyB = nullptr;
 }
 
 b2DistanceJoint* PhysicsJointDistance::getBox2DDistanceJoint()
@@ -321,49 +326,86 @@ void PhysicsJointDistance::update( ulong timeSinceLastFrame )
 
 	Vector2 anchorA = _joint->GetAnchorA();
 	Vector2 anchorB = _joint->GetAnchorB();	
-	_poly->setPosition(anchorA);
-	_poly->setAngle(Vector2::lineAngle(anchorA, anchorB));
-	_poly->setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
+	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
+	_zigZagPoly->setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
+
+	_circlePolyA->setPosition(anchorA);
+	_circlePolyB->setPosition(anchorB);
 }
 
 PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation() const
 {
+	Vector2 anchorA = _circlePolyA->getPosition();
+	Vector2 anchorB = _circlePolyB->getPosition();
+	if(Vector2(_joint->GetAnchorA()) != anchorA || Vector2(_joint->GetAnchorB()) != anchorB)
+	{
+		// The joint polygon was manually moved. Check if the joint is still inside both bodies
+		Polygon* bA = static_cast<Polygon*>(_joint->GetBodyA()->GetUserData());
+		Polygon* bB = static_cast<Polygon*>(_joint->GetBodyB()->GetUserData());		
+		if(bA->isPointInside(anchorA) && bB->isPointInside(anchorB))
+		{
+			// the joint was only moved INSIDE the bodies
+			return JAS_MOVED;
+		}
+		else
+		{
+			// the joint is now outside one (or both) bodies
+			return JAS_MOVED_OUT;
+		}
+	}
+
 	return JAS_NOT_MOVED;
 }
 
 void PhysicsJointDistance::setPosition( const Vector2& position )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
-	_poly->setPosition(position);
+	_zigZagPoly->setPosition(position);
+	_circlePolyA->setPosition(position);
+	_circlePolyB->setPosition(position);
 }
 
 void PhysicsJointDistance::translate( const Vector2& amount )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot translate an unselected joint");
-	_poly->translate(amount);
+	_zigZagPoly->translate(amount);
+	_circlePolyA->translate(amount);
+	_circlePolyB->translate(amount);
 }
 
 void PhysicsJointDistance::rotateAroundPoint( float angle, const Vector2& rotationPoint )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot rotateAroundPoint an unselected joint");
-	_poly->rotateAroundPoint(angle, rotationPoint);
-}
-
-bool PhysicsJointDistance::isPointInside( const Vector2& pt ) const
-{
-	return _poly->getTransformedAABB(true).isPointInside(pt);
+	_zigZagPoly->rotateAroundPoint(angle, rotationPoint);
+	_circlePolyA->rotateAroundPoint(angle, rotationPoint);
+	_circlePolyB->rotateAroundPoint(angle, rotationPoint);
 }
 
 void PhysicsJointDistance::select()
 {
 	_selected = true;
-	_poly->setMaterial(_selectedMaterial);
+	_zigZagPoly->setMaterial(_selectedMaterial);
+	_circlePolyA->setMaterial(_selectedMaterial);
+	_circlePolyB->setMaterial(_selectedMaterial);
 }
 
 void PhysicsJointDistance::unselect()
 {
 	_selected = false;
-	_poly->setMaterial(_material);
+	_zigZagPoly->setMaterial(_material);
+	_circlePolyA->setMaterial(_material);
+	_circlePolyB->setMaterial(_material);
+}
+
+PhySketch::Vector2 PhysicsJointDistance::getPositionA() const
+{
+	return _circlePolyA->getPosition();
+}
+
+PhySketch::Vector2 PhysicsJointDistance::getPositionB() const
+{
+	return _circlePolyB->getPosition();
 }
 
 }

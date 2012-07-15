@@ -42,7 +42,6 @@ namespace PhySketch
 		virtual void setPosition( const Vector2& position ) = 0;
 		virtual void translate( const Vector2& amount ) = 0;
 		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint ) = 0;
-		virtual bool isPointInside( const Vector2& pt ) const = 0;
 
 		virtual bool isSelectable() const;
 		virtual bool isSelected() const;
@@ -80,9 +79,7 @@ namespace PhySketch
 		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
-
-		virtual bool isPointInside( const Vector2& pt ) const;
-
+		
 		virtual void setPosition( const Vector2& position );
 		virtual void translate( const Vector2& amount );
 		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
@@ -110,8 +107,6 @@ namespace PhySketch
 		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
-
-		virtual bool isPointInside( const Vector2& pt ) const;
 
 		virtual void setPosition( const Vector2& position );
 		virtual void translate( const Vector2& amount );
@@ -141,17 +136,19 @@ namespace PhySketch
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
 
-		virtual bool isPointInside( const Vector2& pt ) const;
-
 		virtual void setPosition( const Vector2& position );
 		virtual void translate( const Vector2& amount );
 		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
+		Vector2 getPositionA() const;
+		Vector2 getPositionB() const;
 
 		virtual void select();
 		virtual void unselect();
 
 	protected:
-		Polygon* _poly;
+		Polygon* _zigZagPoly;
+		Polygon* _circlePolyA;
+		Polygon* _circlePolyB;
 
 	};
 }
