@@ -303,8 +303,6 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 
 		_simulationPaused_internal = true;
 	}
-
-	createBody(_worldBoundsSensor->GetBody());
 }
 
 void PhysicsManager::unselectBody( PhysicsBody *b )
