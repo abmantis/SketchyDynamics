@@ -93,6 +93,14 @@ namespace PhySketch
 		/// <returns> The axis aligned bounding box. </returns>
 		virtual AABB getWorldAABB(bool bestFit, Matrix3 transformMatrix) const;		
 
+		/// <summary> Sets the visibility flag of this SubPolygon. </summary>
+		/// <param name="visible"> true to show, false to hide. </param>
+		virtual void setVisible(bool visible);
+
+		/// <summary> Query if this SubPolygon is visible. </summary>
+		/// <returns> true if visible, false if not. </returns>
+		virtual bool isVisible() const;
+
 		virtual void recomputeTexCoordsToFit();
 		virtual void recomputeTexCoordsAsVertices();
 	protected:
@@ -103,6 +111,7 @@ namespace PhySketch
 		DrawingMode _drawingMode;
 		bool _hasNewVertices;
 		AABB _aabb;
+		bool _visible;
 
 		UINT _vertexBuffer;	
 		UINT _elementBuffer;
@@ -129,7 +138,7 @@ namespace PhySketch
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <param name="dm"> The drawing mode. </param>
 		/// <returns> The new square subpolygon. </returns>
-		SubPolygon* CreateSquareSubPolygon(DrawingMode dm);
+		SubPolygon* CreateSquareSubPolygon(DrawingMode dm, Vector2 halfSize = Vector2(0.5f, 0.5f));
 
 		/// <summary> Creates a circle subpolygon. </summary>
 		/// <param name="dm"> The drawing mode. </param>

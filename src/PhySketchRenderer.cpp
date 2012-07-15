@@ -383,6 +383,10 @@ namespace PhySketch
 		for (uint i = 0; i < subpolycount; ++i)
 		{		
 			subpoly = poly->_subPolygons[i];
+			if(!subpoly->_visible)
+			{
+				continue;
+			}
 			if(subpoly->_hasNewVertices)		
 			{
 				updateOpenGLBuffers(subpoly, poly->_vertexVariance);

@@ -13,7 +13,8 @@ SubPolygon::SubPolygon( DrawingMode dm ) :
 	_hasNewVertices	(false), 
 	_vertexBuffer	(0), 
 	_elementBuffer	(0),
-	_texCoordBuffer(0)
+	_texCoordBuffer	(0),
+	_visible		(true)
 {
 	_material = MaterialManager::getSingletonPtr()->getDefaultMaterial();
 }
@@ -181,6 +182,16 @@ void SubPolygon::recomputeTexCoordsAsVertices()
 	_hasNewVertices = true;
 }
 
+void SubPolygon::setVisible( bool visible )
+{
+	_visible = visible;
+}
+
+bool SubPolygon::isVisible() const
+{
+	return _visible;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Polygon class
@@ -288,14 +299,17 @@ const CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm )
+SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm, Vector2 halfSize /*= Vector2(0.5f, 0.5f)*/ )
 {
 	SubPolygon *subpoly = createSubPolygon(dm);
 
-	subpoly->addVertex(Vector2(-0.5f, -0.5f), Vector2(0.0f, 0.0f));
-	subpoly->addVertex(Vector2(-0.5f,  0.5f), Vector2(0.0f, 1.0f));
-	subpoly->addVertex(Vector2( 0.5f,  0.5f), Vector2(1.0f, 1.0f));
-	subpoly->addVertex(Vector2( 0.5f, -0.5f), Vector2(1.0f, 0.0f));	
+	float half_x = halfSize.x;
+	float half_y = halfSize.y;
+
+	subpoly->addVertex(Vector2(-half_x, -half_y), Vector2(0.0f, 0.0f));
+	subpoly->addVertex(Vector2(-half_x,  half_y), Vector2(0.0f, 1.0f));
+	subpoly->addVertex(Vector2( half_x,  half_y), Vector2(1.0f, 1.0f));
+	subpoly->addVertex(Vector2( half_x, -half_y), Vector2(1.0f, 0.0f));	
 
 	return subpoly;
 }
