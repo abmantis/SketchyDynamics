@@ -172,24 +172,35 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 {
 	PhysicsJoint *j = nullptr;
 	b2JointType type = b2d_joint->GetType();
+	
+	// get the ID from the bodies
+	ulong bodyA_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
+	ulong bodyB_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyB()->GetUserData()))->_id;
+
 	switch (type)
 	{
 	case e_revoluteJoint:
 		{
 			b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(b2d_joint);
-			j = new PhysicsJointRevolute(revj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			PhysicsJointRevolute* pjr = new PhysicsJointRevolute(revj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			_renderer->addPolygon(pjr->_poly, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			j = pjr;
 			break;
 		}
 	case e_weldJoint:
 		{
 			b2WeldJoint* weldj = static_cast<b2WeldJoint*>(b2d_joint);
-			j = new PhysicsJointWeld(weldj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			PhysicsJointWeld* pjw = new PhysicsJointWeld(weldj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			_renderer->addPolygon(pjw->_poly, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			j = pjw;
 			break;
 		}
 	case e_distanceJoint:
 		{
 			b2DistanceJoint* distj = static_cast<b2DistanceJoint*>(b2d_joint);
-			j = new PhysicsJointDistance(distj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			PhysicsJointDistance* pjd = new PhysicsJointDistance(distj, _defaultJointMat, _defaultJointSelectedMat, ++_physicsJointsIDSeed);
+			_renderer->addPolygon(pjd->_poly, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+			j = pjd;
 			break;
 		}
 	default:
@@ -198,12 +209,7 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 	}
 
 	 
-	_physicsJoints.push_back(j);
-
-	// get the ID from the front body
-	ulong bodyA_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyA()->GetUserData()))->_id;
-	ulong bodyB_id = (static_cast<PhysicsBody*>(b2d_joint->GetBodyB()->GetUserData()))->_id;
-	_renderer->addPolygon(j, (bodyA_id > bodyB_id)? bodyA_id : bodyB_id, RQT_Scene);
+	_physicsJoints.push_back(j);	
 	return j;
 }
 
@@ -211,7 +217,33 @@ void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*=
 {
 	_physicsJoints.remove(joint);
 	_selectedJoints.remove(joint);
-	_renderer->removePolygon(joint);
+
+	switch(joint->_pjt)
+	{	
+	case PJT_Weld:
+		{
+			PhysicsJointWeld *pjw = dynamic_cast<PhysicsJointWeld*>(joint);
+			_renderer->removePolygon(pjw->_poly);
+		}
+		break;
+	case PJT_Revolute:
+		{
+			PhysicsJointRevolute *pjr = dynamic_cast<PhysicsJointRevolute*>(joint);
+			_renderer->removePolygon(pjr->_poly);
+		}
+		break;
+	case PJT_Distance:
+		{
+			PhysicsJointDistance *pjd = dynamic_cast<PhysicsJointDistance*>(joint);
+			_renderer->removePolygon(pjd->_poly);
+		}
+		break;
+// 	case PJT_Rope:
+// 		break;	
+	default:
+		throw std::exception("Unknown PhysicsJointType");
+		break;
+	}
 
 	if(destroyB2DJoint)
 	{
@@ -234,13 +266,25 @@ void PhysicsManager::update( ulong advanceTime )
 		stepPhysics(advanceTime);
 	}
 
-	PhysicsBodySet::iterator it = _bodiesToDestruct.begin();
-	PhysicsBodySet::iterator itEnd = _bodiesToDestruct.end();
-	for( ; it != itEnd; ++it)
 	{
-		destroyBody(*it);
+		// Destroy bodies
+		PhysicsBodySet::iterator it = _bodiesToDestruct.begin();
+		PhysicsBodySet::iterator itEnd = _bodiesToDestruct.end();
+		for( ; it != itEnd; ++it)
+		{
+			destroyBody(*it);
+		}
+		_bodiesToDestruct.clear();
 	}
-	_bodiesToDestruct.clear();
+	
+	{
+		// Update joints
+		PhysicsJointList::iterator itEnd = _physicsJoints.end();
+		for (PhysicsJointList::iterator it = _physicsJoints.begin(); it != itEnd; ++it)
+		{
+			(*it)->update(advanceTime);
+		}
+	}
 }
 
 void PhysicsManager::stepPhysics( ulong ellapsedMillisec )
@@ -550,7 +594,8 @@ bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
 				{
 					b2RevoluteJointDef jd;
 					b2RevoluteJoint* revj = static_cast<b2RevoluteJoint*>(oldb2djoint);
-					jd.Initialize(revj->GetBodyA(), revj->GetBodyB(), j->getPosition().tob2Vec2());
+					PhysicsJointRevolute* pjr = dynamic_cast<PhysicsJointRevolute*>(j);
+					jd.Initialize(revj->GetBodyA(), revj->GetBodyB(), pjr->getPosition().tob2Vec2());
 					jd.collideConnected	= revj->GetCollideConnected();
 					jd.enableLimit		= revj->IsLimitEnabled();
 					jd.enableMotor		= revj->IsMotorEnabled();
@@ -565,7 +610,8 @@ bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
 				{
 					b2WeldJointDef jd;
 					b2WeldJoint* weldj = static_cast<b2WeldJoint*>(oldb2djoint);
-					jd.Initialize(weldj->GetBodyA(), weldj->GetBodyB(), j->getPosition().tob2Vec2());
+					PhysicsJointWeld* pjw = dynamic_cast<PhysicsJointWeld*>(j);
+					jd.Initialize(weldj->GetBodyA(), weldj->GetBodyB(), pjw->getPosition().tob2Vec2());
 					jd.collideConnected	= weldj->GetCollideConnected();
 					jd.dampingRatio		= weldj->GetDampingRatio();
 					jd.frequencyHz		= weldj->GetFrequency();

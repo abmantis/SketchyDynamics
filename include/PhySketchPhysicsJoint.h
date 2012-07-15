@@ -27,7 +27,7 @@ namespace PhySketch
 		JAS_MOVED_OUT	// Joint was moved and is now outside both bodies
 	};
 
-	class PhysicsJoint : public Polygon
+	class PhysicsJoint
 	{	
 	protected:
 		friend class PhysicsManager;
@@ -39,22 +39,10 @@ namespace PhySketch
 		virtual b2Joint* getBox2DJoint();
 
 		virtual void update(ulong timeSinceLastFrame) = 0;
-
-		virtual void setAngle( float angle );
-
-		virtual void setPosition( const Vector2& position );
-
-		virtual void setScale( const Vector2& scale );
-
-		virtual void translate( const Vector2& amount );
-
-		virtual void rotate( const float& angle );
-
-		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
-
-		virtual void scale( const Vector2& factor );
-
-		virtual bool isPointInside( const Vector2& pt ) const;
+		virtual void setPosition( const Vector2& position ) = 0;
+		virtual void translate( const Vector2& amount ) = 0;
+		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint ) = 0;
+		virtual bool isPointInside( const Vector2& pt ) const = 0;
 
 		virtual bool isSelectable() const;
 		virtual bool isSelected() const;
@@ -62,8 +50,8 @@ namespace PhySketch
 		virtual JointAnchorsSituation checkAnchorsSituation() const = 0;
 		
 	protected:
-		virtual void select();
-		virtual void unselect();		
+		virtual void select() = 0;
+		virtual void unselect()  = 0;		
 
 	protected:
 		PhysicsJointType _pjt;
@@ -84,7 +72,7 @@ namespace PhySketch
 		friend class PhysicsManager;
 
 		PhysicsJointRevolute(b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id);
-		virtual ~PhysicsJointRevolute() {};
+		virtual ~PhysicsJointRevolute();;
 
 	public:				
 		virtual b2RevoluteJoint* getBox2DRevoluteJoint();
@@ -92,6 +80,19 @@ namespace PhySketch
 		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
+		virtual bool isPointInside( const Vector2& pt ) const;
+
+		virtual void setPosition( const Vector2& position );
+		virtual void translate( const Vector2& amount );
+		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
+		Vector2 getPosition() const;
+
+		virtual void select();
+		virtual void unselect();
+		
+	protected:
+		Polygon* _poly;
 
 	};
 
@@ -101,7 +102,7 @@ namespace PhySketch
 		friend class PhysicsManager;
 
 		PhysicsJointWeld(b2WeldJoint *joint, Material* material, Material* selectedMaterial, ulong id);
-		virtual ~PhysicsJointWeld() {};
+		virtual ~PhysicsJointWeld();;
 
 	public:				
 		virtual b2WeldJoint* getBox2DWeldJoint();
@@ -109,6 +110,19 @@ namespace PhySketch
 		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
+		virtual bool isPointInside( const Vector2& pt ) const;
+
+		virtual void setPosition( const Vector2& position );
+		virtual void translate( const Vector2& amount );
+		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );		
+		Vector2 getPosition() const;
+
+		virtual void select();
+		virtual void unselect();
+		
+	protected:
+		Polygon* _poly;
 
 	};
 
@@ -118,7 +132,7 @@ namespace PhySketch
 		friend class PhysicsManager;
 
 		PhysicsJointDistance(b2DistanceJoint *joint, Material* material, Material* selectedMaterial, ulong id);
-		virtual ~PhysicsJointDistance() {};
+		virtual ~PhysicsJointDistance();;
 
 	public:				
 		virtual b2DistanceJoint* getBox2DDistanceJoint();
@@ -126,6 +140,18 @@ namespace PhySketch
 		virtual void update(ulong timeSinceLastFrame);
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
+
+		virtual bool isPointInside( const Vector2& pt ) const;
+
+		virtual void setPosition( const Vector2& position );
+		virtual void translate( const Vector2& amount );
+		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
+
+		virtual void select();
+		virtual void unselect();
+
+	protected:
+		Polygon* _poly;
 
 	};
 }

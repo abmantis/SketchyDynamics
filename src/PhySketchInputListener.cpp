@@ -161,10 +161,10 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 						}
 						else 
 						{
-							// If it is not a body, is it a joint?
-							PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
-							if( pj != nullptr)
+							// If it is not a body, is it a joint?							
+							if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
 							{
+								PhysicsJoint *pj = static_cast<PhysicsJoint*>(callback._firstPolygon->getUserData());
 								if(pj->isSelectable())
 								{
 									_physicsMgr->selectJoint(pj);
@@ -224,9 +224,9 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 					_renderer->queryScene(sceneMousePos, &callback);
 					if(callback._firstPolygon != nullptr)
 					{
-						PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
-						if( pj != nullptr)
+						if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
 						{
+							PhysicsJoint *pj = static_cast<PhysicsJoint*>(callback._firstPolygon->getUserData());
 							if(pj->isSelectable())
 							{
 								onSelectableJoint = true;
@@ -402,9 +402,9 @@ void MainInputListener::mouseMoved( Vector2 position )
 			_renderer->queryScene(sceneMousePos, &callback);
 			if(callback._firstPolygon != nullptr)
 			{
-				PhysicsJoint *pj = dynamic_cast<PhysicsJoint*>(callback._firstPolygon);
-				if( pj != nullptr)
+				if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
 				{
+					PhysicsJoint *pj = static_cast<PhysicsJoint*>(callback._firstPolygon->getUserData());
 					// When in the IS_SELECTING_JOINT state and the left button 
 					// is pressed and the mouse is moved we need to check if it 
 					// was moved inside the selected joint
