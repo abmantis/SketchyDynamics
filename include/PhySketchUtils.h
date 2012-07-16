@@ -126,5 +126,15 @@ namespace PhySketch
 	{
 		return ((p2.y-p1.y)*(p3.x-p2.x)<(p3.y-p2.y)*(p2.x-p1.x));
 	}
+
+	static void rectangleArroundLine(const Vector2& line_p1, const Vector2& line_p2, 
+		float tickness, Vector2& rect_p1, Vector2& rect_p2, Vector2& rect_p3, Vector2& rect_p4)
+	{		
+		Vector2 normal = Vector2::lineNormal(line_p1, line_p2).normalised() * tickness;
+		rect_p1 = line_p1 + normal;
+		rect_p2 = line_p1 - normal;
+		rect_p3 = line_p2 + normal;
+		rect_p4 = line_p2 - normal;
+	}
 }
 #endif // PhySketchUtils_h__
