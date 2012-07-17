@@ -1,5 +1,6 @@
 #include "PhySketchMaterialManager.h"
 #include <FreeImage.h>
+#include "PhySketchLogger.h"
 
 namespace PhySketch
 {
@@ -72,7 +73,8 @@ namespace PhySketch
 
 		if(!dib) 
 		{
-			return nullptr; 
+			PHYSKETCH_LOG_ERROR("Texture not fount: " + texture);
+			return nullptr; 			
 		}
 
 		BYTE* bDataPointer = FreeImage_GetBits(dib); // Retrieve the image data
@@ -95,9 +97,11 @@ namespace PhySketch
 			_materials.insert(NamedMaterialMap::value_type(name, m));
 		PHYSKETCH_ASSERT(insresult.second && "A Material with the same name already exists.");
 
-
+		
 		int format = bpp == 32 ? GL_BGRA : bpp == 24 ? GL_BGR : bpp == 8 ? GL_LUMINANCE : 0; 
-		int internalFormat = bpp == 32 ? GL_RGBA : bpp == 24 ? GL_RGB : GL_DEPTH_COMPONENT;  
+		//int internalFormat = bpp == 32 ? GL_RGBA : bpp == 24 ? GL_RGB : GL_DEPTH_COMPONENT;  
+		int internalFormat = bpp == 32 ? GL_COMPRESSED_RGBA_S3TC_DXT5_EXT : bpp == 24 ? GL_COMPRESSED_RGB_S3TC_DXT1_EXT : GL_DEPTH_COMPONENT;  
+		// TODO: check if the DXT5 and DXT1 extensions are available 
 
 		glGenTextures(1, &m->_textureID);
 		glBindTexture(GL_TEXTURE_2D, m->_textureID);
