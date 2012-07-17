@@ -258,12 +258,14 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 
 	SubPolygon *subpoly = _zigZagPoly->createSubPolygon(DM_LINE_STRIP);
 
-	int nrSegments = (int)5*distance; 
+	int nrSegments = (int)(distance*5.0f);
 	float increment = 1.0f / nrSegments;
 	Vector2 p1(0.0f, 0.0f);
 	Vector2 p2 = Vector2(0.25f / (float)nrSegments, 0.20f);
 	Vector2 p3 = Vector2(0.75f / (float)nrSegments,-0.20f);
 	Vector2 p4 = Vector2(1.00f / (float)nrSegments, 0.0f);
+	Vector2 rect_p1, rect_p2, rect_p3, rect_p4;
+
 	subpoly->addVertex(p1);
 	for (int i = 0; i < nrSegments; ++i)
 	{
@@ -271,17 +273,20 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 		subpoly->addVertex(p3);
 		subpoly->addVertex(p4);
 
+		p1.x += increment;
 		p2.x += increment;
 		p3.x += increment;
 		p4.x += increment;
 	}	
+
+	_zigZagPoly->CreateSquareSubPolygon(DM_TRIANGLE_FAN, Vector2(0.5f, 0.2f), Vector2(0.5f, 0.0f))->setVisible(false);
 		
+	_material->setColor(Color(1.0f, 0,0, 0.5f));
 	_zigZagPoly->setMaterial(_material);
 		
 	_zigZagPoly->setPosition(anchorA);
 	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
 	_zigZagPoly->setScale(Vector2(distance, 1.0f));
-
 	_zigZagPoly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
 	_zigZagPoly->setUserData(this);
 
