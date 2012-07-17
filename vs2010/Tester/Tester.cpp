@@ -86,9 +86,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		_physicsMgr->setUnselectableBody(phyBody);
 	}
 	
-	//PhySketch::Material* polyFill = _matMgr->createMaterial("polyFill", "../../../textures/314199-green-chalkboard--.jpg");
-	//polyFill->setColor(PhySketch::Color(0.7f, 0.7f, 0.8f, 0.5f));
-	//_physicsMgr->setDefaultBodyFillMat(polyFill);
+	PhySketch::Material* polyFill = _matMgr->createMaterial("polyFill", "../../../textures/whiteSmoke.jpg");
+	polyFill->setColor(PhySketch::Color(0.7f, 0.7f, 0.8f, 0.6f));
+	_physicsMgr->setDefaultBodyFillMat(polyFill);
 	PhySketch::Material* polyLine = _matMgr->createMaterial("polyLine", "../../../textures/laser_w.png");
 	_physicsMgr->setDefaultBodyLineMat(polyLine);
 	
