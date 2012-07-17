@@ -299,17 +299,17 @@ const CoordinateSystem& Polygon::getCoordinateSystem() const
 	return _coordSystem;
 }
 
-SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm, Vector2 halfSize /*= Vector2(0.5f, 0.5f)*/ )
+SubPolygon* Polygon::CreateSquareSubPolygon( DrawingMode dm, Vector2 halfSize /*= Vector2(0.5f, 0.5f)*/, Vector2 center /*= Vector2(0.0f, 0.0f)*/ ) 
 {
 	SubPolygon *subpoly = createSubPolygon(dm);
 
 	float half_x = halfSize.x;
 	float half_y = halfSize.y;
 
-	subpoly->addVertex(Vector2(-half_x, -half_y), Vector2(0.0f, 0.0f));
-	subpoly->addVertex(Vector2(-half_x,  half_y), Vector2(0.0f, 1.0f));
-	subpoly->addVertex(Vector2( half_x,  half_y), Vector2(1.0f, 1.0f));
-	subpoly->addVertex(Vector2( half_x, -half_y), Vector2(1.0f, 0.0f));	
+	subpoly->addVertex(center + Vector2(-half_x, -half_y), Vector2(0.0f, 0.0f));
+	subpoly->addVertex(center + Vector2(-half_x,  half_y), Vector2(0.0f, 1.0f));
+	subpoly->addVertex(center + Vector2( half_x,  half_y), Vector2(1.0f, 1.0f));
+	subpoly->addVertex(center + Vector2( half_x, -half_y), Vector2(1.0f, 0.0f));	
 
 	return subpoly;
 }

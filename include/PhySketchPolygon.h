@@ -138,7 +138,7 @@ namespace PhySketch
 		/// <summary> Creates a unity sized square, in scene coordinate space. </summary>
 		/// <param name="dm"> The drawing mode. </param>
 		/// <returns> The new square subpolygon. </returns>
-		SubPolygon* CreateSquareSubPolygon(DrawingMode dm, Vector2 halfSize = Vector2(0.5f, 0.5f));
+		SubPolygon* CreateSquareSubPolygon(DrawingMode dm, Vector2 halfSize = Vector2(0.5f, 0.5f), Vector2 center = Vector2(0.0f, 0.0f));
 
 		/// <summary> Creates a circle subpolygon. </summary>
 		/// <param name="dm"> The drawing mode. </param>
