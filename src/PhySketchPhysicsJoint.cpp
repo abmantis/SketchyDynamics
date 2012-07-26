@@ -365,11 +365,26 @@ PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation() c
 
 void PhysicsJointDistance::setPosition( const Vector2& position )
 {
-	PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
+	/*PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
 	_zigZagPoly->setPosition(position);
 	_circlePolyA->setPosition(position);
-	_circlePolyB->setPosition(position);
+	_circlePolyB->setPosition(position);*/
+	throw std::exception("The method or operation is not implemented.");
 }
+
+
+void PhysicsJointDistance::setPositions( const Vector2& anchorA, const Vector2& anchorB )
+{
+	PHYSKETCH_ASSERT(_selected && "Cannot setPositions on an unselected joint");
+
+	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
+	_zigZagPoly->setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
+
+	_circlePolyA->setPosition(anchorA);
+	_circlePolyB->setPosition(anchorB);
+}
+
 
 void PhysicsJointDistance::translate( const Vector2& amount )
 {

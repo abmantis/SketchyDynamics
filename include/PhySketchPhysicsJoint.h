@@ -137,6 +137,7 @@ namespace PhySketch
 		virtual JointAnchorsSituation checkAnchorsSituation() const;
 
 		virtual void setPosition( const Vector2& position );
+		virtual void setPositions( const Vector2& anchorA, const Vector2& anchorB );
 		virtual void translate( const Vector2& amount );
 		virtual void rotateAroundPoint( float angle, const Vector2& rotationPoint );
 		Vector2 getPositionA() const;

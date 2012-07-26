@@ -477,12 +477,55 @@ void PhysicsManager::rotateSelectedBodies( float angle, Vector2 rotationCenter )
 	rotateSelectedJoints(angle, rotationCenter);
 }
 
-void PhysicsManager::scaleSelectedBodies( Vector2 factor )
+void PhysicsManager::scaleSelectedBodies( Vector2 factor, Vector2 scaleCenter )
 {
 	PhysicsBodyList::iterator itEnd = _selectedBodies.end();
 	for (PhysicsBodyList::iterator it = _selectedBodies.begin(); it != itEnd; ++it)
 	{
-		(*it)->scale(factor);
+		(*it)->scaleAroundPoint(factor, scaleCenter);
+	}
+
+	// translate joints so they match the new body scaled position
+	PhysicsJoint *pj = nullptr;
+	PhysicsJointList::iterator jointItEnd = _selectedJoints.end();
+	for (PhysicsJointList::iterator jointIt = _selectedJoints.begin(); jointIt != jointItEnd; ++jointIt)
+	{
+		pj = *jointIt;
+		switch(pj->_pjt)
+		{	
+		case PJT_Weld:
+			{
+				PhysicsJointWeld *pjw = dynamic_cast<PhysicsJointWeld*>(pj);
+				Vector2 pos = pjw->getPosition();
+				pos = scaleCenter + (pos - scaleCenter) * factor;
+				pjw->setPosition(pos);
+			}
+			break;
+		case PJT_Revolute:
+			{
+				PhysicsJointRevolute *pjr = dynamic_cast<PhysicsJointRevolute*>(pj);
+				Vector2 pos = pjr->getPosition();
+				pos = scaleCenter + (pos - scaleCenter) * factor;
+				pjr->setPosition(pos);
+			}
+			break;
+		case PJT_Distance:
+			{
+				// TODO: when one of the bodies is not selectable, the respective anchor should not move
+				PhysicsJointDistance *pjd = dynamic_cast<PhysicsJointDistance*>(pj);
+				Vector2 posA = pjd->getPositionA();
+				Vector2 posB = pjd->getPositionB();
+				posA = scaleCenter + (posA - scaleCenter) * factor;
+				posB = scaleCenter + (posB - scaleCenter) * factor;
+				pjd->setPositions(posA, posB);
+			}
+			break;
+			// 	case PJT_Rope:
+			// 		break;	
+		default:
+			throw std::exception("Unknown PhysicsJointType");
+			break;
+		}
 	}
 }
 

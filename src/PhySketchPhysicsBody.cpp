@@ -427,6 +427,16 @@ void PhysicsBody::scale( const Vector2& factor )
 	reconstructPolygon();
 }
 
+void PhysicsBody::scaleAroundPoint( const Vector2& factor, const Vector2& point  )
+{
+	Vector2 pos = _body->GetPosition();
+	pos = point + (pos - point) * factor;
+
+	_body->SetTransform(pos.tob2Vec2(), _body->GetAngle());
+	Polygon::setPosition(pos);
+	scale(factor);
+}
+
 void PhysicsBody::setAngle( float angle )
 {
 	_body->SetTransform(_body->GetPosition(), angle);

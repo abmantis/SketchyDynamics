@@ -43,6 +43,7 @@ namespace PhySketch
 		virtual void rotate( const float& angle );
 		virtual void rotateAroundPoint(float angle, const Vector2& rotationPoint);
 		virtual void scale(const Vector2& factor);
+		virtual void scaleAroundPoint(const Vector2& factor, const Vector2& point);
 
 		// Access the FillMaterial
 		Material* getFillMaterial(void) const;

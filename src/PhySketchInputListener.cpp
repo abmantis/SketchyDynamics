@@ -481,8 +481,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 				// if the mouse is moving closer to the AABB center then we need to scale down
 				scale = 1.0f - scale;
 			}
-			_physicsMgr->scaleSelectedBodies(Vector2(scale, scale));
-			//_selectedBodiesAABBPoly->setScale(dist);
+			_physicsMgr->scaleSelectedBodies(Vector2(scale, scale), selectedAABBCenter);
+			_selectedBodiesAABBPoly->scale(Vector2(scale, scale));
 
 			 _lastMousePositions.leftScene = sceneMousePos;
 
