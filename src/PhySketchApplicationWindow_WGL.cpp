@@ -92,7 +92,7 @@ namespace PhySketch
 		{
 			dwExStyle=WS_EX_APPWINDOW;								// Window Extended Style
 			dwStyle=WS_POPUP;										// Windows Style
-			ShowCursor(FALSE);										// Hide Mouse Pointer
+			//ShowCursor(FALSE);										// Hide Mouse Pointer
 		}		
 
 		RECT		WindowRect;				
