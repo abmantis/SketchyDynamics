@@ -353,7 +353,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 					break;
 				}
 				
-				startDrawingGesture(sceneMousePos);
+				startDrawingGesture(_lastMousePositions.leftScene);
 				_interactionState = IS_GESTURING;
 				
 				break;
@@ -387,7 +387,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 						_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
 						Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
 
-						_initialDistFromSelectedBodiesCenter = Vector2::distance(sceneMousePos, aabbCenter);
+						_initialDistFromSelectedBodiesCenter = Vector2::distance(_lastMousePositions.leftScene, aabbCenter);
 						_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
 
 						// Show AABB of the selected bodies and AABB center indicator
@@ -402,7 +402,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 						_transformLineIndicator->setPosition(aabbCenter);
 						_transformLineIndicator->setVisible(true);
 						_transformLineIndicator->setScale(Vector2(_initialDistFromSelectedBodiesCenter, 0.0f));
-						_transformLineIndicator->setAngle(Vector2::UNIT_X.angleTo(sceneMousePos - aabbCenter));
+						_transformLineIndicator->setAngle(Vector2::UNIT_X.angleTo(_lastMousePositions.leftScene - aabbCenter));
 
 						_interactionState = IS_TRANSFORMING_BODIES;
 					}
@@ -418,8 +418,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 				break;
 			}
 
-			FirstObjectSceneQueryCallback callback(sceneMousePos);
-			_renderer->queryScene(sceneMousePos, &callback);
+			FirstObjectSceneQueryCallback callback(_lastMousePositions.leftScene);
+			_renderer->queryScene(_lastMousePositions.leftScene, &callback);
 			if(callback._firstPolygon != nullptr)
 			{
 				if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
