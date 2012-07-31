@@ -351,8 +351,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 				break;
 			}
 
-			FirstObjectSceneQueryCallback callback(sceneMousePos);
-			_renderer->queryScene(sceneMousePos, &callback);
+			FirstObjectSceneQueryCallback callback(_lastMousePositions.leftScene);
+			_renderer->queryScene(_lastMousePositions.leftScene, &callback);
 			if(callback._firstPolygon != nullptr)
 			{
 				PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
