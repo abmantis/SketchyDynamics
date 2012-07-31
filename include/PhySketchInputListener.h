@@ -214,8 +214,10 @@ namespace PhySketch
 		Material* _gestureMaterial;
 		Polygon *_gesturePolygon;
 		SubPolygon *_gestureSubPolygon;
-		Polygon *_transformIndicator;
+		Polygon *_transformCenterIndicator;
+		Polygon *_transformLineIndicator;
 		Polygon *_selectedBodiesAABBPoly;
+		
 		AnimatedPolygon *_destructionArea;
 		AABB _selectedBodiesAABB;
 		float _initialDistFromSelectedBodiesCenter;

@@ -51,11 +51,18 @@ MainInputListener::~MainInputListener()
 		_gesturePolygon = nullptr;
 		_gestureSubPolygon = nullptr;
 	}
-	if(_transformIndicator)
+	if(_transformCenterIndicator)
 	{
-		_renderer->removePolygon(_transformIndicator);
-		delete _transformIndicator;
-		_transformIndicator = nullptr;
+		_renderer->removePolygon(_transformCenterIndicator);
+		delete _transformCenterIndicator;
+		_transformCenterIndicator = nullptr;
+	}
+	
+	if(_transformLineIndicator)
+	{
+		_renderer->removePolygon(_transformLineIndicator);
+		delete _transformLineIndicator;
+		_transformLineIndicator = nullptr;
 	}
 	if(_selectedBodiesAABBPoly)
 	{
@@ -76,10 +83,17 @@ void MainInputListener::init()
 	_renderer = Renderer::getSingletonPtr();
 	_physicsMgr = PhysicsManager::getSingletonPtr();
 
-	_transformIndicator = new Polygon(VV_Static, "PS_transform_indicator");
-	_transformIndicator->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80);
-	_transformIndicator->setVisible(false);
-	_renderer->addPolygon(_transformIndicator, RQT_UI);
+	_transformCenterIndicator = new Polygon(VV_Static, "PS_transform_center_indicator");
+	_transformCenterIndicator->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.05f, 80);
+	_transformCenterIndicator->setVisible(false);
+	_renderer->addPolygon(_transformCenterIndicator, RQT_UI);
+
+	_transformLineIndicator = new Polygon(VV_Static, "PS_transform_line_indicator");
+	_transformLineIndicator->setVisible(false);
+	SubPolygon *tranfLineIndicSubPoly = _transformLineIndicator->createSubPolygon(DM_LINES);
+	tranfLineIndicSubPoly->addVertex(Vector2::ZERO_XY);
+	tranfLineIndicSubPoly->addVertex(Vector2::UNIT_X);
+	_renderer->addPolygon(_transformLineIndicator, RQT_UI);
 
 	_selectedBodiesAABBPoly = new Polygon(VV_Static, "PS_selected_bodies_aabb");
 	_selectedBodiesAABBPoly->CreateSquareSubPolygon(DM_LINE_LOOP);
@@ -300,7 +314,8 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 				case IS_TRANSFORMING_BODIES:
 					// Hide AABB and center indicator polygons
 					_selectedBodiesAABBPoly->setVisible(false);
-					_transformIndicator->setVisible(false);
+					_transformCenterIndicator->setVisible(false);
+					_transformLineIndicator->setVisible(false);
 					_physicsMgr->validateSelectedJointsAnchors();
 					_interactionState = IS_SELECTING_BODIES;
 					break;
@@ -381,8 +396,13 @@ void MainInputListener::mouseMoved( Vector2 position )
 						_selectedBodiesAABBPoly->setAngle(0.0f);
 						_selectedBodiesAABBPoly->setVisible(true);
 					
-						_transformIndicator->setPosition(aabbCenter);
-						_transformIndicator->setVisible(true);
+						_transformCenterIndicator->setPosition(aabbCenter);
+						_transformCenterIndicator->setVisible(true);
+
+						_transformLineIndicator->setPosition(aabbCenter);
+						_transformLineIndicator->setVisible(true);
+						_transformLineIndicator->setScale(Vector2(_initialDistFromSelectedBodiesCenter, 0.0f));
+						_transformLineIndicator->setAngle(Vector2::UNIT_X.angleTo(sceneMousePos - aabbCenter));
 
 						_interactionState = IS_TRANSFORMING_BODIES;
 					}
@@ -467,6 +487,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 			float angle = prevMouseToCenterVec.angleTo(currMouseToCenterVec);
 			_physicsMgr->rotateSelectedBodies(angle, selectedAABBCenter);
 			_selectedBodiesAABBPoly->rotate(angle);
+			_transformLineIndicator->rotate(angle);
 			
 			float mouseMoveDist = Vector2::distance(_lastMousePositions.leftScene, sceneMousePos);
 			float scale = mouseMoveDist / _initialDistFromSelectedBodiesCenter;
@@ -483,6 +504,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 			}
 			_physicsMgr->scaleSelectedBodies(Vector2(scale, scale), selectedAABBCenter);
 			_selectedBodiesAABBPoly->scale(Vector2(scale, scale));
+			_transformLineIndicator->scale(Vector2(scale, scale));
 
 			 _lastMousePositions.leftScene = sceneMousePos;
 
