@@ -177,7 +177,7 @@ namespace PhySketch
 		/// 	this vector is ahead of the other or not. </remarks>
 		/// <param name="v"> The second  Vector2. </param>
 		/// <returns> The angle. </returns>
-		virtual float angleTo(const Vector2& v)
+		virtual float angleTo(const Vector2& v) const
 		{
 			float angle = atan2(v.y, v.x) - atan2(y, x);
 			if(angle < -M_PI)
