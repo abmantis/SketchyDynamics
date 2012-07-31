@@ -136,5 +136,22 @@ namespace PhySketch
 		rect_p3 = line_p2 + normal;
 		rect_p4 = line_p2 - normal;
 	}
+
+	static float getScaleFactor(float currentScale, float desiredScale)
+	{
+		if (currentScale == 0.0f)
+		{
+			currentScale = FLT_MIN;
+		}
+
+		if(currentScale < desiredScale)
+		{
+			return 1.0f + (desiredScale - currentScale) * (1.0f / currentScale);
+		}
+		else
+		{
+			return 1.0f - (currentScale - desiredScale) * (1.0f / currentScale);
+		}
+	}
 }
 #endif // PhySketchUtils_h__
