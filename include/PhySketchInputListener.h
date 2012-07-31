@@ -206,7 +206,7 @@ namespace PhySketch
 
 		
 
-	protected:
+	protected:		
 		bool _isLeftMouseDown;
 		CIStroke *_caliStroke;
 		CIScribble *_caliScribble;
@@ -217,6 +217,7 @@ namespace PhySketch
 		Polygon *_transformCenterIndicator;
 		Polygon *_transformLineIndicator;
 		Polygon *_selectedBodiesAABBPoly;
+		float _currScale;
 		
 		AnimatedPolygon *_destructionArea;
 		AABB _selectedBodiesAABB;

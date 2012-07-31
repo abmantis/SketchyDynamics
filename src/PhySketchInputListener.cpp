@@ -389,6 +389,7 @@ void MainInputListener::mouseMoved( Vector2 position )
 
 						_initialDistFromSelectedBodiesCenter = Vector2::distance(_lastMousePositions.leftScene, aabbCenter);
 						_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
+						_currScale = 1.0f;
 
 						// Show AABB of the selected bodies and AABB center indicator
 						_selectedBodiesAABBPoly->setPosition(aabbCenter);
@@ -489,19 +490,11 @@ void MainInputListener::mouseMoved( Vector2 position )
 			_selectedBodiesAABBPoly->rotate(angle);
 			_transformLineIndicator->rotate(angle);
 			
-			float mouseMoveDist = Vector2::distance(_lastMousePositions.leftScene, sceneMousePos);
-			float scale = mouseMoveDist / _initialDistFromSelectedBodiesCenter;
-			if(scale > 0.5f) scale = 0.5f;	// prevent supa-scaling
-			if(prevMouseToCenterVec.sqrdLength() < currMouseToCenterVec.sqrdLength())
-			{
-				// if the mouse is moving away from the AABB center then we need to scale up
-				scale += 1.0f;
-			}
-			else
-			{
-				// if the mouse is moving closer to the AABB center then we need to scale down
-				scale = 1.0f - scale;
-			}
+			float currentMouseDist = Vector2::distance(sceneMousePos, selectedAABBCenter);
+			float newScale = currentMouseDist / _initialDistFromSelectedBodiesCenter;
+			float scale = getScaleFactor(_currScale, newScale);
+			_currScale = newScale;
+
 			_physicsMgr->scaleSelectedBodies(Vector2(scale, scale), selectedAABBCenter);
 			_selectedBodiesAABBPoly->scale(Vector2(scale, scale));
 			_transformLineIndicator->scale(Vector2(scale, scale));
