@@ -45,7 +45,7 @@ CIRecognizer::CIRecognizer (bool rotated, double alfaCut)
 
 	_shapesList->insertTail(new CIAlpha());  
     _shapesList->insertTail(new CIWavyLine());  
-//	_shapesList->insertTail(new CILine(rotated));
+	_shapesList->insertTail(new CILine(rotated));
     _shapesList->insertTail(new CITriangle(rotated));
     _shapesList->insertTail(new CIRectangle(rotated));
     _shapesList->insertTail(new CICircle(rotated));
