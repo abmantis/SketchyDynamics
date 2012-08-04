@@ -35,6 +35,7 @@
 #include <map>
 #include <sstream>
 #include <unordered_map>
+#include <algorithm>
 #include <GL/glew.h>
 
 //////////////////////////////////////////////////////////////////////////
