@@ -535,6 +535,7 @@ void MainInputListener::stopDrawingGesture()
 	_caliScribble->addStroke(_caliStroke);
 	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
 	processGesture((*recGests)[0]);
+
 	delete recGests;
 	recGests = nullptr;
 
@@ -744,6 +745,85 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			_physicsMgr->createJoint(j);
 		}
 	} 
+	else	// Not recognized -> try free-from
+	{	
+		std::vector<Vector2> gestVertices, gestSimplifiedVertices;
+
+		_gestureSubPolygon->getOrderedVertices(gestVertices);
+		if(gestVertices.size() < 3)
+		{
+			return;
+		}
+				
+		DouglasPeuckerReduction(gestVertices, 0.07f, gestSimplifiedVertices);
+		if(gestSimplifiedVertices.size() < 3)
+		{
+			return;
+		}
+		
+		// Connect first and last vertices for intersection check
+		gestSimplifiedVertices.push_back(gestSimplifiedVertices[0]);
+		// We cannot have intersections!
+		if(checkSegmentSelfIntersection(gestSimplifiedVertices) == false)
+		{
+			// Re-disconnect first and last vertices
+			gestSimplifiedVertices.pop_back();
+
+			translateCentroidTo(gestSimplifiedVertices, Vector2(0.0f, 0.0f));
+
+			// Copy Vector2 array to a p2t::Point array
+			std::vector<p2t::Point*> verts;
+			int ptCnt = gestSimplifiedVertices.size();
+			verts.reserve(ptCnt);
+			Vector2 *vert_p;
+			for (uint i = 0; i < ptCnt; ++i)
+			{
+				vert_p = &gestSimplifiedVertices[i];
+				verts.push_back(new p2t::Point( vert_p->x, vert_p->y));
+			}			
+			/*
+			* STEP 1: Create CDT and add primary polyline
+			* NOTE: polyline must be a simple polygon. The polyline's points
+			* constitute constrained edges. No repeat points!!!
+			*/
+			p2t::CDT* cdt = new p2t::CDT(verts);
+			/*
+			* STEP 2: Add holes or Steiner points if necessary
+			*/
+			/*
+			* STEP 3: Triangulate!
+			*/
+			cdt->Triangulate();
+			std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
+
+			Vector2 position = _gesturePolygon->getAABB().getCenter();
+			b2BodyDef bodyDef;
+			bodyDef.type = b2_dynamicBody;
+			bodyDef.position.Set(position.x, position.y);
+			bodyDef.angle = 0;
+			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+			b2Vec2 triVertices[3];			
+			uint triCnt = triangles.size();
+			for (uint i = 0; i < triCnt; ++i)
+			{
+				p2t::Triangle& t = *triangles[i];
+				p2t::Point& a = *t.GetPoint(0);
+				p2t::Point& b = *t.GetPoint(1);
+				p2t::Point& c = *t.GetPoint(2);
+				
+				triVertices[0].Set(a.x, a.y);
+				triVertices[1].Set(b.x, b.y);
+				triVertices[2].Set(c.x, c.y);
+
+				b2PolygonShape triShape;
+				triShape.Set(triVertices, 3);
+
+				body->CreateFixture(&triShape, 1.0f);
+			}
+			_physicsMgr->createBody(body);		
+		}		
+	}
 
 }
 
