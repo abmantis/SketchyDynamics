@@ -192,6 +192,16 @@ bool SubPolygon::isVisible() const
 	return _visible;
 }
 
+void SubPolygon::getOrderedVertices( std::vector<Vector2> &vertices )
+{
+	vertices.clear();
+	uint vertIndexesCount = _vertexIndexes.size();
+	for (uint i = 0; i < vertIndexesCount; ++i)
+	{
+		vertices.push_back(_vertices[i]);
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // Polygon class

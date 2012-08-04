@@ -62,6 +62,13 @@ namespace PhySketch
 
 		virtual void addVertex(const Vector2& vertex, const Vector2& textureCoord);
 
+		/// <summary> Gets an vector with the ordered vertices for this
+		/// 	SubPolygon. </summary>
+		/// <remarks> This functions gives all the vertices (even repeated ones)
+		/// 	without the need for an element (vertex indexes) array. </remarks>
+		/// <param name="vertices"> The vector to old the vertices. </param>
+		virtual void getOrderedVertices(std::vector<Vector2> &vertices);
+
 		/// <summary> Gets this Polygon's material. </summary>
 		/// <returns> The material. </returns>
 		virtual Material* getMaterial(void) const;
