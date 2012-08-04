@@ -8,7 +8,9 @@ namespace PhySketch
 
 	MaterialManager::MaterialManager()
 	{
-		_defaultMaterial = createMaterial("blackMaterial", Color(0.0f, 0.0f, 0.0f, 1.0f));
+		_defaultMaterial = createMaterial("defaultMaterial", Color(0.0f, 0.0f, 0.0f, 1.0f));
+		_blackMaterial = createMaterial("blackMaterial", Color(0.0f, 0.0f, 0.0f, 1.0f));
+		_whiteMaterial = createMaterial("whiteMaterial", Color(1.0f, 1.0f, 1.0f, 1.0f));
 	}
 
 	MaterialManager::~MaterialManager()
@@ -124,6 +126,16 @@ namespace PhySketch
 	Material* MaterialManager::getDefaultMaterial() const
 	{
 		return _defaultMaterial;
+	}
+
+	Material* MaterialManager::getWhiteMaterial() const
+	{
+		return _whiteMaterial;
+	}
+
+	Material* MaterialManager::getBlackMaterial() const
+	{
+		return _blackMaterial;
 	}
 
 }

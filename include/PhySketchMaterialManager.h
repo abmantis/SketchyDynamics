@@ -21,11 +21,15 @@ namespace PhySketch
 		Material* createMaterial(std::string name, std::string texture, bool generateMipMaps = false);
 
 		virtual Material* getDefaultMaterial() const;
+		virtual Material* getWhiteMaterial() const;
+		virtual Material* getBlackMaterial() const;
 
 		static MaterialManager* getSingletonPtr(void);
 		static MaterialManager& getSingleton(void);
 	protected:
 		Material* _defaultMaterial;
+		Material* _whiteMaterial;
+		Material* _blackMaterial;
 		NamedMaterialMap _materials;
 		
 	};
