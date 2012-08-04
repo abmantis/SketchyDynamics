@@ -1,14 +1,14 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIPoint.cxx
+| Module: CIVector.cxx
 +-----------------------------------------------------------------------------+
-| Description: 
+| Description: Implements class CIVector
 | 
 | Notes:       
 |
-| Author: Manuel Joao Fonseca
-|	  e-mail: mjf@inesc-id.pt
+| Author: Manuel Joao da Fonseca
+|	      e-mail: mjf@inesc-id.pt
 |
-| Date: April 99
+| Date: June 99
 +-----------------------------------------------------------------------------+
 |
 | Copyright (C) 1998, 1999, 2000 Manuel João da Fonseca
@@ -29,17 +29,10 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIPoint.h"
+#include "../dependecies/CALI/CIFunction.h"
 
-#ifdef WIN32 	// For Windows
-CIPoint& CIPoint::operator= (CIPoint& point)
-#else 		// For Linux
-CIPoint& CIPoint::operator= (const CIPoint& point)
-#endif
-{
-    x=point.x; 
-    y=point.y; 
-    _time=point.getTime(); 
-
-    return *this; 
+double CIVector::length()
+{ 
+    return CIFunction::distance(startp, endp); 
 }
+

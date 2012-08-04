@@ -11,11 +11,13 @@
 #include "PhySketchPhysicsJoint.h"
 #include "PhySketchMaterialManager.h"
 
-#include "CALI\CIRecognizer.h"
-#include "CALI\CIScribble.h"
+#include "../dependecies/CALI/CIRecognizer.h"
+#include "../dependecies/CALI/CIScribble.h"
 
 #include <Box2D\Dynamics\Joints\b2Joint.h>
 #include <Box2D\Collision\b2Collision.h>
+
+#include "../dependecies/poly2tri/poly2tri.h"
 
 
 namespace PhySketch

@@ -1,9 +1,11 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIRectangle.cxx
+| Module: CICircle.cxx
 +-----------------------------------------------------------------------------+
 | Description: 
 | 
 | Notes:       
+|
+| $Log$
 |
 | Author: Manuel Joao Fonseca
 |	  e-mail: mjf@inesc-id.pt
@@ -29,35 +31,26 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIRectangle.h"
+
+#include "../dependecies/CALI/CICircle.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 
-|              to identify rectangles. The set of features are different for 
-|              rotated and non ratated rectangles.
+|              to identify circles. 
 | Input: rotated - tells if the shapes are rotated or not.
 +----------------------------------------------------------------------------*/
-CIRectangle::CIRectangle (bool rotated) : CIShape(rotated)
+CICircle::CICircle (bool rotated) : CIShape(rotated)
 {
-    if (rotated)
-        _features = new CIFeatures (&CIEvaluate::Ach_Aer, 0.75, 0.85, 1, 1, // separate from diamonds
-                                    &CIEvaluate::Alq_Aer, 0.72, 0.78, 1, 1,
-                                    &CIEvaluate::Hollowness, 0, 0, 1, 1);
-    else
-        _features = new CIFeatures (&CIEvaluate::Ach_Abb, 0.8, 0.83, 1, 1,
-                                    &CIEvaluate::Pch_Pbb, 0.87, 0.9, 1, 1,
-                                    &CIEvaluate::Alt_Abb, 0.45, 0.47, 0.5, 0.52//,
-                                    //&CIEvaluate::scLen_Pch, 0, 0, 1.5, 1.7
-                                    );
+    _features = new CIFeatures (&CIEvaluate::Pch2_Ach, 12.5, 12.5, 13.2, 13.5,
+                                &CIEvaluate::Hollowness, 0, 0, 0, 0);
 }
 
-CIRectangle::CIRectangle (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoint d, double dom, bool dash, bool bold)
+
+CICircle::CICircle (CIScribble* sc, double dom, bool dash, bool bold)
 { 
     _sc=sc;
-    _points[0] = a; 
-    _points[1] = b; 
-    _points[2] = c; 
-    _points[3] = d;
+    if(sc)
+        setUp(sc);
     _dashed = dash; 
     _bold = bold;
     _open = false;
@@ -67,24 +60,30 @@ CIRectangle::CIRectangle (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoi
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Makes a clone of the current rectangle.
+| Description: Computes the center and the radius of the recognized circle
 +----------------------------------------------------------------------------*/
-CIGesture* CIRectangle::clone()
-{
-    return new CIRectangle(_sc, _points[0], _points[1], _points[2], _points[3], _dom, _dashed, _bold);
-}
-
-/*----------------------------------------------------------------------------+
-| Description: Computes the points of the recognized rectangle
-+----------------------------------------------------------------------------*/
-void CIRectangle::setUp(CIScribble* sc)
+void CICircle::setUp(CIScribble* sc)
 {
     CIList<CIPoint> *points;
+    double d1, d2;
     
     _sc = sc;
-    points = sc->enclosingRect()->getPoints();
+    points = sc->boundingBox()->getPoints();
     _points[0] = (*points)[0];
     _points[1] = (*points)[1];
     _points[2] = (*points)[2];
     _points[3] = (*points)[3];
+    d1 = sqrt(std::pow(_points[0].x-_points[1].x,2) + std::pow(_points[0].y-_points[1].y,2));
+    d2 = sqrt(std::pow(_points[2].x-_points[1].x,2) + std::pow(_points[2].y-_points[1].y,2));
+    _radius = (d1+d2)/2/2;
+    _center.x = _points[0].x + d2/2;
+    _center.y = _points[0].y + d1/2;
+}
+
+/*----------------------------------------------------------------------------+
+| Description: Makes a clone of the current circle.
++----------------------------------------------------------------------------*/
+CIGesture* CICircle::clone()
+{
+    return new CICircle(_sc, _dom, _dashed, _bold);
 }

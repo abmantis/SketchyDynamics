@@ -29,7 +29,7 @@
 
 #include <stdlib.h>
 #include <iostream>
-#include "CALI/CIFuzzySet.h"
+#include "../dependecies/CALI/CIFuzzySet.h"
 
 /*----------------------------------------------------------------------+
 | Description: Evaluate the degree of membership for a specific value

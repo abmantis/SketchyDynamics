@@ -1,11 +1,9 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CICircle.cxx
+| Module: CITriangle.cxx
 +-----------------------------------------------------------------------------+
 | Description: 
 | 
 | Notes:       
-|
-| $Log$
 |
 | Author: Manuel Joao Fonseca
 |	  e-mail: mjf@inesc-id.pt
@@ -31,59 +29,57 @@
 | 
 +----------------------------------------------------------------------------*/
 
-
-#include "CALI/CICircle.h"
+#include "../dependecies/CALI/CITriangle.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 
-|              to identify circles. 
-| Input: rotated - tells if the shapes are rotated or not.
+|              to identify triangles. The set of features are different for 
+|              rotated and non ratated triangles.
+| Input: rotated - tells if the shapes are ratated or not.
 +----------------------------------------------------------------------------*/
-CICircle::CICircle (bool rotated) : CIShape(rotated)
+CITriangle::CITriangle (bool rotated) : CIShape(rotated)
 {
-    _features = new CIFeatures (&CIEvaluate::Pch2_Ach, 12.5, 12.5, 13.2, 13.5,
-                                &CIEvaluate::Hollowness, 0, 0, 0, 0);
+    _features = new CIFeatures (&CIEvaluate::Alt_Ach, 0.67, 0.77, 1, 1
+                                ,&CIEvaluate::Plt_Pch, 0.95, 0.98, 1, 1
+                                ,&CIEvaluate::Hollowness, 0, 0, 1, 1
+								,&CIEvaluate::Pch_Per, 0.78, 0.8, 0.89, 0.945 // Not Lines Dashed
+                               // ,&CIEvaluate::Alt_Alq, 0.81, 0.87, 1, 1       // Not Copy
+                                ); 
 }
 
 
-CICircle::CICircle (CIScribble* sc, double dom, bool dash, bool bold)
+CITriangle::CITriangle (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, double dom, bool dash, bool bold)
 { 
     _sc=sc;
-    if(sc)
-        setUp(sc);
+    _points[0] = a; 
+    _points[1] = b; 
+    _points[2] = c; 
     _dashed = dash; 
     _bold = bold;
-    _open = false;
     _dom = dom;
     _features = NULL;
     _dashFeature = NULL;
 }
 
+
 /*----------------------------------------------------------------------------+
-| Description: Computes the center and the radius of the recognized circle
+| Description: Computes the points of the recognized triangle
 +----------------------------------------------------------------------------*/
-void CICircle::setUp(CIScribble* sc)
+void CITriangle::setUp(CIScribble* sc)
 {
     CIList<CIPoint> *points;
-    double d1, d2;
     
     _sc = sc;
-    points = sc->boundingBox()->getPoints();
+    points = sc->largestTriangle()->getPoints();
     _points[0] = (*points)[0];
     _points[1] = (*points)[1];
     _points[2] = (*points)[2];
-    _points[3] = (*points)[3];
-    d1 = sqrt(std::pow(_points[0].x-_points[1].x,2) + std::pow(_points[0].y-_points[1].y,2));
-    d2 = sqrt(std::pow(_points[2].x-_points[1].x,2) + std::pow(_points[2].y-_points[1].y,2));
-    _radius = (d1+d2)/2/2;
-    _center.x = _points[0].x + d2/2;
-    _center.y = _points[0].y + d1/2;
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Makes a clone of the current circle.
+| Description: Makes a clone of the current triangle.
 +----------------------------------------------------------------------------*/
-CIGesture* CICircle::clone()
+CIGesture* CITriangle::clone()
 {
-    return new CICircle(_sc, _dom, _dashed, _bold);
+    return new CITriangle(_sc, _points[0], _points[1], _points[2], _dom, _dashed);
 }

@@ -31,9 +31,9 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIAlpha.h"
-#include "CALI/CIVector.h"
-#include "CALI/CIFunction.h"
+#include "../dependecies/CALI/CIAlpha.h"
+#include "../dependecies/CALI/CIVector.h"
+#include "../dependecies/CALI/CIFunction.h"
 
 CIAlpha::CIAlpha ()
 {

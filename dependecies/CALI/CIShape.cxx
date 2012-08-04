@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIShape.h"
+#include "../dependecies/CALI/CIShape.h"
 
 CIShape::CIShape (bool rotated)
 {

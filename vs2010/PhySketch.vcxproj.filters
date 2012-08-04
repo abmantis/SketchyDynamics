@@ -13,11 +13,20 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\CALI">
-      <UniqueIdentifier>{0abb3cd3-38dd-47b4-9f66-7dfea211b4c4}</UniqueIdentifier>
+    <Filter Include="Dependencies">
+      <UniqueIdentifier>{9992bcd4-d04b-4105-925d-79a62434f6de}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\CALI">
-      <UniqueIdentifier>{4d0eb510-f2ce-4cdb-a339-c28f5eb5dc60}</UniqueIdentifier>
+    <Filter Include="Dependencies\CALI">
+      <UniqueIdentifier>{19689f70-0832-4105-b1f1-cfbd41f09745}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\poly2tri">
+      <UniqueIdentifier>{dc3b8b70-826a-4333-aa08-872e5d4a1099}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\poly2tri\sweep">
+      <UniqueIdentifier>{0a3bbbb3-09d2-4f13-af38-80eac3142eb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Dependencies\poly2tri\common">
+      <UniqueIdentifier>{f6d6876e-b82f-4579-9fa9-28591f6a066b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -54,90 +63,6 @@
     <ClInclude Include="..\include\PhySketchAABB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\CALI\CIAlpha.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CICircle.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CICommand.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIDiamond.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIEllipse.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIEvaluate.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIFeatures.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIFunction.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIFuzzyNode.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIFuzzySet.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIGesture.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CILine.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIList.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIListNode.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIPoint.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIPolygon.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIRecognizer.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIRectangle.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIScribble.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIShape.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIStroke.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CITriangle.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIUnknown.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIVector.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\CIWavyLine.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\Commands.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\myValues.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\CALI\Shapes.h">
-      <Filter>Header Files\CALI</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\PhySketchRenderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,6 +93,111 @@
     <ClInclude Include="..\include\PhySketchMaterialManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\myValues.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIAlpha.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CICircle.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CICommand.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIDiamond.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIEllipse.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIEvaluate.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIFeatures.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIFunction.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIFuzzyNode.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIFuzzySet.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIGesture.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CILine.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIList.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIListNode.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIPoint.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIPolygon.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIRecognizer.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIRectangle.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIScribble.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIShape.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIStroke.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CITriangle.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIUnknown.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIVector.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\CIWavyLine.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\Commands.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\CALI\Shapes.h">
+      <Filter>Dependencies\CALI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\poly2tri.h">
+      <Filter>Dependencies\poly2tri</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\sweep\advancing_front.h">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\sweep\cdt.h">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\sweep\sweep.h">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\sweep\sweep_context.h">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\common\utils.h">
+      <Filter>Dependencies\poly2tri\common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dependecies\poly2tri\common\shapes.h">
+      <Filter>Dependencies\poly2tri\common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -181,72 +211,6 @@
     </ClCompile>
     <ClCompile Include="..\src\PhySketchApplicationWindow_WGL.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIAlpha.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CICircle.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CICommand.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIDiamond.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIEllipse.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIEvaluate.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIFeatures.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIFunction.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIFuzzyNode.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIFuzzySet.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CILine.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIPoint.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIPolygon.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIRecognizer.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIRectangle.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIScribble.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIShape.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIStroke.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CITriangle.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIUnknown.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIVector.cxx">
-      <Filter>Source Files\CALI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\CALI\CIWavyLine.cxx">
-      <Filter>Source Files\CALI</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchInputListener.cpp">
       <Filter>Source Files</Filter>
@@ -277,6 +241,87 @@
     </ClCompile>
     <ClCompile Include="..\src\PhySketchMaterialManager.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIAlpha.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CICircle.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CICommand.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIDiamond.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIEllipse.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIEvaluate.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIFeatures.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIFunction.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIFuzzyNode.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIFuzzySet.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CILine.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIPoint.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIPolygon.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIRecognizer.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIRectangle.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIScribble.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIShape.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIStroke.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CITriangle.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIUnknown.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIVector.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\CALI\CIWavyLine.cxx">
+      <Filter>Dependencies\CALI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\poly2tri\sweep\advancing_front.cc">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\poly2tri\sweep\cdt.cc">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\poly2tri\sweep\sweep.cc">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\poly2tri\sweep\sweep_context.cc">
+      <Filter>Dependencies\poly2tri\sweep</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\poly2tri\common\shapes.cc">
+      <Filter>Dependencies\poly2tri\common</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

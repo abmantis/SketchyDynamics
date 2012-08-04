@@ -29,13 +29,13 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIWavyLine.h"
-#include "CALI/CIVector.h"
-#include "CALI/CIFunction.h"
+#include "../dependecies/CALI/CIWavyLine.h"
+#include "../dependecies/CALI/CIVector.h"
+#include "../dependecies/CALI/CIFunction.h"
 
 CIWavyLine::CIWavyLine ()
 {
-    _features = new CIFeatures (//&CIEvaluate::Her_Wer, 0.06, 0.08, 0.4, 0.45 // separate from lines
+    _features = new CIFeatures (&CIEvaluate::Her_Wer, 0.06, 0.08, 0.4, 0.45, // separate from lines
                                //,&CIEvaluate::Hm_Wbb, 0.9, 0.98, 1.1, 1.1,   // separate from Arrows
                                &CIEvaluate::Tl_Pch, 0.5, 0.55, 1.5, 1.9,
                                &CIEvaluate::Hollowness, 0, 3, BIG, BIG

@@ -1,7 +1,7 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIPolygon
+| Module: CIFuzzyNode.cxx
 +-----------------------------------------------------------------------------+
-| Description: Implementation of the class CIPolygon
+| Description: 
 | 
 | Notes:       
 |
@@ -29,58 +29,38 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIPolygon.h"
-#include "CALI/CIFunction.h"
-#include "CALI/myValues.h"
-#include <math.h>
+#include "../dependecies/CALI/CIFuzzyNode.h"
 
-CIPolygon::CIPolygon ()
+CIFuzzyNode::CIFuzzyNode (CIFuzzySet *fuzzy, double (CIEvaluate::* ptrF) (CIScribble*))
 {
-    _points = new CIList<CIPoint>(); 
-    _area = 0;
-    _perim = 0;
+    _ptrFunc = ptrF;
+    _fuzzySet = fuzzy;
+}
+
+CIFuzzyNode::~CIFuzzyNode ()
+{
+    delete _fuzzySet;
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Computes the area of the polygon, using a general algorithm.
-| Output: the area
+| Description: Computes the degree of membership for the current scribble, 
+|              using the fuzzyset and the function feature of the FuzzyNode.
+| Input: a scribble
+| Output: the value of the degree of membership
+| Notes:
 +----------------------------------------------------------------------------*/
-double CIPolygon::area()
+double CIFuzzyNode::dom(CIScribble *sc)
 {
-    if (_area == 0) {
-	int numPoints = _points->getNumItems();
-    if (numPoints < 3) {
-        _area = ZERO;
-        return _area;
+    if (_ptrFunc) {
+	CIEvaluate *ev = new CIEvaluate();
+	double tmp = (ev->*_ptrFunc) (sc);
+
+	delete ev;
+	if (_fuzzySet)
+            return _fuzzySet->degOfMember(tmp);
+        else
+            return 0;
     }
-
-	for (int i = 0; i < numPoints - 1; i++) {
-	    _area += (*_points)[i].x * (*_points)[i+1].y - (*_points)[i+1].x * (*_points)[i].y;
-	}
-	_area /= 2;
-	if (_area == 0)
-	    _area = ZERO;
-    }
-    return fabs(_area);
-}
-
-/*----------------------------------------------------------------------------+
-| Description: Computes the perimeter of the polygon, using a general algorithm.
-| Output: the perimeter
-+----------------------------------------------------------------------------*/
-double CIPolygon::perimeter()
-{
-    if (_perim == 0) {
-	int numPoints = _points->getNumItems();
-
-	for (int i = 0; i < numPoints - 1; i++) {
-        _perim += CIFunction::distance((*_points)[i], (*_points)[i+1]);
-	}
-	if (_perim == 0)
-	    _perim = ZERO;
-
-        if (numPoints < 3)
-            _perim *= 2;
-   }
-    return _perim;
+    else
+	    return 0;
 }

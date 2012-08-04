@@ -1,5 +1,5 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CITriangle.cxx
+| Module: CIDiamond.cxx
 +-----------------------------------------------------------------------------+
 | Description: 
 | 
@@ -29,57 +29,67 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CITriangle.h"
+#include "../dependecies/CALI/CIDiamond.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 
-|              to identify triangles. The set of features are different for 
-|              rotated and non ratated triangles.
-| Input: rotated - tells if the shapes are ratated or not.
+|              to identify diamonds. The set of features are different for 
+|              rotated and non ratated diamonds.
+| Input: rotated - tells if the shapes are rotated or not.
 +----------------------------------------------------------------------------*/
-CITriangle::CITriangle (bool rotated) : CIShape(rotated)
+CIDiamond::CIDiamond (bool rotated) : CIShape (rotated)
 {
-    _features = new CIFeatures (&CIEvaluate::Alt_Ach, 0.67, 0.77, 1, 1
-                                ,&CIEvaluate::Plt_Pch, 0.95, 0.98, 1, 1
-                                ,&CIEvaluate::Hollowness, 0, 0, 1, 1
-								,&CIEvaluate::Pch_Per, 0.78, 0.8, 0.89, 0.945 // Not Lines Dashed
-                               // ,&CIEvaluate::Alt_Alq, 0.81, 0.87, 1, 1       // Not Copy
-                                ); 
+    if (rotated)
+        _features = new CIFeatures (&CIEvaluate::Alq_Ach, 0.78, 0.85, 1, 1, // separate from ellipses
+                                    &CIEvaluate::Pch2_Ach, 14.5, 15.5, 21.5, 26, // Separate from bold lines
+                                    &CIEvaluate::Alq_Aer, 0.52, 0.56, 0.72, 0.78, // Separate from rectangles
+                                    &CIEvaluate::Alt_Alq, 0.5, 0.53, 0.62, 0.7,
+                                    &CIEvaluate::Hollowness, 0, 0, 1, 1);
+    else
+        _features = new CIFeatures (&CIEvaluate::Alt_Abb, 0, 0, 0.4, 0.45);
 }
 
-
-CITriangle::CITriangle (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, double dom, bool dash, bool bold)
+CIDiamond::CIDiamond (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoint d, double dom, bool dash, bool bold)
 { 
     _sc=sc;
     _points[0] = a; 
     _points[1] = b; 
     _points[2] = c; 
+    _points[3] = d;
     _dashed = dash; 
     _bold = bold;
+    _open = false;
     _dom = dom;
     _features = NULL;
     _dashFeature = NULL;
 }
 
+/*----------------------------------------------------------------------------+
+| Description: Makes a clone of the current diamond.
++----------------------------------------------------------------------------*/
+CIGesture* CIDiamond::clone()
+{
+    return new CIDiamond(_sc, _points[0], _points[1], _points[2], _points[3], _dom, _dashed, _bold);
+}
 
 /*----------------------------------------------------------------------------+
-| Description: Computes the points of the recognized triangle
+| Description: Computes the points of the recognized diamond
 +----------------------------------------------------------------------------*/
-void CITriangle::setUp(CIScribble* sc)
+void CIDiamond::setUp(CIScribble* sc)
 {
     CIList<CIPoint> *points;
     
     _sc = sc;
-    points = sc->largestTriangle()->getPoints();
+    if (_rotated)
+        points = sc->enclosingRect()->getPoints();
+    else
+        points = sc->boundingBox()->getPoints();
+
     _points[0] = (*points)[0];
     _points[1] = (*points)[1];
     _points[2] = (*points)[2];
+    _points[3] = (*points)[3];
+
+// This is not the correct code to compute the points of the diamond.
 }
 
-/*----------------------------------------------------------------------------+
-| Description: Makes a clone of the current triangle.
-+----------------------------------------------------------------------------*/
-CIGesture* CITriangle::clone()
-{
-    return new CITriangle(_sc, _points[0], _points[1], _points[2], _dom, _dashed);
-}

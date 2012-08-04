@@ -27,10 +27,10 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIList.h"
-#include "CALI/CIPoint.h"
-#include "CALI/CIStroke.h"
-#include "CALI/myValues.h"
+#include "../dependecies/CALI/CIList.h"
+#include "../dependecies/CALI/CIPoint.h"
+#include "../dependecies/CALI/CIStroke.h"
+#include "../dependecies/CALI/myValues.h"
 
 CIStroke::CIStroke ()
 {

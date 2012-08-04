@@ -1,5 +1,5 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIFuzzyNode.cxx
+| Module: CIPoint.cxx
 +-----------------------------------------------------------------------------+
 | Description: 
 | 
@@ -8,7 +8,7 @@
 | Author: Manuel Joao Fonseca
 |	  e-mail: mjf@inesc-id.pt
 |
-| Date: May 98
+| Date: April 99
 +-----------------------------------------------------------------------------+
 |
 | Copyright (C) 1998, 1999, 2000 Manuel João da Fonseca
@@ -29,38 +29,17 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIFuzzyNode.h"
+#include "../dependecies/CALI/CIPoint.h"
 
-CIFuzzyNode::CIFuzzyNode (CIFuzzySet *fuzzy, double (CIEvaluate::* ptrF) (CIScribble*))
+#ifdef WIN32 	// For Windows
+CIPoint& CIPoint::operator= (CIPoint& point)
+#else 		// For Linux
+CIPoint& CIPoint::operator= (const CIPoint& point)
+#endif
 {
-    _ptrFunc = ptrF;
-    _fuzzySet = fuzzy;
-}
+    x=point.x; 
+    y=point.y; 
+    _time=point.getTime(); 
 
-CIFuzzyNode::~CIFuzzyNode ()
-{
-    delete _fuzzySet;
-}
-
-/*----------------------------------------------------------------------------+
-| Description: Computes the degree of membership for the current scribble, 
-|              using the fuzzyset and the function feature of the FuzzyNode.
-| Input: a scribble
-| Output: the value of the degree of membership
-| Notes:
-+----------------------------------------------------------------------------*/
-double CIFuzzyNode::dom(CIScribble *sc)
-{
-    if (_ptrFunc) {
-	CIEvaluate *ev = new CIEvaluate();
-	double tmp = (ev->*_ptrFunc) (sc);
-
-	delete ev;
-	if (_fuzzySet)
-            return _fuzzySet->degOfMember(tmp);
-        else
-            return 0;
-    }
-    else
-	    return 0;
+    return *this; 
 }

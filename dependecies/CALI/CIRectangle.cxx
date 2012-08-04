@@ -1,5 +1,5 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIDiamond.cxx
+| Module: CIRectangle.cxx
 +-----------------------------------------------------------------------------+
 | Description: 
 | 
@@ -29,27 +29,29 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIDiamond.h"
+#include "../dependecies/CALI/CIRectangle.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 
-|              to identify diamonds. The set of features are different for 
-|              rotated and non ratated diamonds.
+|              to identify rectangles. The set of features are different for 
+|              rotated and non ratated rectangles.
 | Input: rotated - tells if the shapes are rotated or not.
 +----------------------------------------------------------------------------*/
-CIDiamond::CIDiamond (bool rotated) : CIShape (rotated)
+CIRectangle::CIRectangle (bool rotated) : CIShape(rotated)
 {
     if (rotated)
-        _features = new CIFeatures (&CIEvaluate::Alq_Ach, 0.78, 0.85, 1, 1, // separate from ellipses
-                                    &CIEvaluate::Pch2_Ach, 14.5, 15.5, 21.5, 26, // Separate from bold lines
-                                    &CIEvaluate::Alq_Aer, 0.52, 0.56, 0.72, 0.78, // Separate from rectangles
-                                    &CIEvaluate::Alt_Alq, 0.5, 0.53, 0.62, 0.7,
+        _features = new CIFeatures (&CIEvaluate::Ach_Aer, 0.75, 0.85, 1, 1, // separate from diamonds
+                                    &CIEvaluate::Alq_Aer, 0.72, 0.78, 1, 1,
                                     &CIEvaluate::Hollowness, 0, 0, 1, 1);
     else
-        _features = new CIFeatures (&CIEvaluate::Alt_Abb, 0, 0, 0.4, 0.45);
+        _features = new CIFeatures (&CIEvaluate::Ach_Abb, 0.8, 0.83, 1, 1,
+                                    &CIEvaluate::Pch_Pbb, 0.87, 0.9, 1, 1,
+                                    &CIEvaluate::Alt_Abb, 0.45, 0.47, 0.5, 0.52//,
+                                    //&CIEvaluate::scLen_Pch, 0, 0, 1.5, 1.7
+                                    );
 }
 
-CIDiamond::CIDiamond (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoint d, double dom, bool dash, bool bold)
+CIRectangle::CIRectangle (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoint d, double dom, bool dash, bool bold)
 { 
     _sc=sc;
     _points[0] = a; 
@@ -65,31 +67,24 @@ CIDiamond::CIDiamond (CIScribble* sc, CIPoint a, CIPoint b, CIPoint c, CIPoint d
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Makes a clone of the current diamond.
+| Description: Makes a clone of the current rectangle.
 +----------------------------------------------------------------------------*/
-CIGesture* CIDiamond::clone()
+CIGesture* CIRectangle::clone()
 {
-    return new CIDiamond(_sc, _points[0], _points[1], _points[2], _points[3], _dom, _dashed, _bold);
+    return new CIRectangle(_sc, _points[0], _points[1], _points[2], _points[3], _dom, _dashed, _bold);
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Computes the points of the recognized diamond
+| Description: Computes the points of the recognized rectangle
 +----------------------------------------------------------------------------*/
-void CIDiamond::setUp(CIScribble* sc)
+void CIRectangle::setUp(CIScribble* sc)
 {
     CIList<CIPoint> *points;
     
     _sc = sc;
-    if (_rotated)
-        points = sc->enclosingRect()->getPoints();
-    else
-        points = sc->boundingBox()->getPoints();
-
+    points = sc->enclosingRect()->getPoints();
     _points[0] = (*points)[0];
     _points[1] = (*points)[1];
     _points[2] = (*points)[2];
     _points[3] = (*points)[3];
-
-// This is not the correct code to compute the points of the diamond.
 }
-

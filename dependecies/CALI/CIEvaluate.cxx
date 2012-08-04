@@ -29,8 +29,8 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIEvaluate.h"
-#include "CALI/CIFunction.h"
+#include "../dependecies/CALI/CIEvaluate.h"
+#include "../dependecies/CALI/CIFunction.h"
 #include <math.h>
 
 // Special ratios

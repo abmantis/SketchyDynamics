@@ -1,15 +1,15 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIVector.cxx
+| Module: CIUnknown.cxx
 +-----------------------------------------------------------------------------+
-| Description: Implements class CIVector
+| Description: Implements class CIUnknown
 | 
 | Notes:       
 |
 | Author: Manuel Joao da Fonseca
 |	      e-mail: mjf@inesc-id.pt
 |
-| Date: June 99
-+-----------------------------------------------------------------------------+
+| Date: August 99
++----------------------------------------------------------------------------
 |
 | Copyright (C) 1998, 1999, 2000 Manuel João da Fonseca
 |
@@ -29,10 +29,34 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIFunction.h"
+#include "../dependecies/CALI/CIUnknown.h"
 
-double CIVector::length()
+CIUnknown::CIUnknown() : CIShape()
 { 
-    return CIFunction::distance(startp, endp); 
+    _features = NULL; 
+}
+
+/*----------------------------------------------------------------------------+
+| Description: Computes some features of the unknown gesture, like if it is 
+|              solid, dashed or bold.
+| Input: A scribble.
++----------------------------------------------------------------------------*/
+void CIUnknown::setUp(CIScribble *sc)
+{
+    _sc = sc;
+    _dashed = false;
+    _bold = false;
+    _open = false;
+    _dom = 1;
+
+    if (_dashFeature->evaluate(sc))
+        _dashed = true;
+    else if (_openFeature)
+        if (_openFeature->evaluate(sc))
+            _open = true;
+        else
+            if (_boldFeature->evaluate(sc))
+                _bold = true;
+
 }
 

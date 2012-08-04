@@ -1,15 +1,15 @@
 /*--------------------------------------------------------- -*- Mode: C++ -*- +
-| Module: CIUnknown.cxx
+| Module: CICommand.cxx
 +-----------------------------------------------------------------------------+
-| Description: Implements class CIUnknown
+| Description: 
 | 
 | Notes:       
 |
-| Author: Manuel Joao da Fonseca
-|	      e-mail: mjf@inesc-id.pt
+| Author: Manuel Joao Fonseca
+|	  e-mail: mjf@inesc-id.pt
 |
-| Date: August 99
-+----------------------------------------------------------------------------
+| Date: May 99
++-----------------------------------------------------------------------------+
 |
 | Copyright (C) 1998, 1999, 2000 Manuel João da Fonseca
 |
@@ -29,34 +29,36 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIUnknown.h"
+#include "../dependecies/CALI/CICommand.h"
 
-CIUnknown::CIUnknown() : CIShape()
-{ 
-    _features = NULL; 
+/*----------------------------------------------------------------------------+
+| Description: Computes the degree of membership for the scribble, taking
+|              into account the fuzzysets for the current command.
+|              This evaluation is made based on global features.
+| Input: A scribble
+| Output: degree of membership
+| Notes: This method is the same for all commands.
++----------------------------------------------------------------------------*/
+double CICommand::evalGlobalFeatures(CIScribble* sc)
+{
+        _dom = _features->evaluate(sc);
+        if (_dom > 0)
+            _sc = sc;
+        else 
+            _sc = NULL;
+        return _dom;
 }
 
 /*----------------------------------------------------------------------------+
-| Description: Computes some features of the unknown gesture, like if it is 
-|              solid, dashed or bold.
-| Input: A scribble.
+| Description: Recovers the previous atributes of the command
 +----------------------------------------------------------------------------*/
-void CIUnknown::setUp(CIScribble *sc)
+void CICommand::popAttribs()
 {
-    _sc = sc;
-    _dashed = false;
-    _bold = false;
-    _open = false;
-    _dom = 1;
-
-    if (_dashFeature->evaluate(sc))
-        _dashed = true;
-    else if (_openFeature)
-        if (_openFeature->evaluate(sc))
-            _open = true;
-        else
-            if (_boldFeature->evaluate(sc))
-                _bold = true;
-
+    if (_prevGesture) {
+        _sc = _prevGesture->getScribble();
+        _dom = _prevGesture->getDom();
+        delete _prevGesture;
+        _prevGesture = NULL;
+    }
 }
 

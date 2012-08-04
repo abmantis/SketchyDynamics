@@ -29,8 +29,8 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "CALI/CIEllipse.h"
-#include "CALI/CIFunction.h"
+#include "../dependecies/CALI/CIEllipse.h"
+#include "../dependecies/CALI/CIFunction.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 
