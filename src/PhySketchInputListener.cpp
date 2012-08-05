@@ -25,7 +25,6 @@ namespace PhySketch
 MainInputListener::MainInputListener() : 
 	InputListener		(),
 	_isLeftMouseDown	(false),
-	_caliStroke			(nullptr),
 	_caliScribble		(nullptr),
 	_gesturePolygon		(nullptr),
 	_gestureSubPolygon	(nullptr),
@@ -39,9 +38,7 @@ MainInputListener::MainInputListener() :
 MainInputListener::~MainInputListener()
 {
 	delete _caliScribble;	
-	_caliScribble = nullptr;
-	//delete _caliStroke; //the scribble already deletes this
-	_caliStroke = nullptr;
+	_caliScribble = nullptr;	
 
 	delete _caliRecognizer;
 	_caliRecognizer = nullptr;
@@ -442,7 +439,6 @@ void MainInputListener::mouseMoved( Vector2 position )
 		}
 		case IS_GESTURING:
 		{
-			_caliStroke->addPoint(sceneMousePos.x, sceneMousePos.y);
 			_gestureSubPolygon->addVertex(sceneMousePos);
 			break;
 		}
@@ -512,10 +508,8 @@ void MainInputListener::mouseMoved( Vector2 position )
 void MainInputListener::startDrawingGesture( Vector2 startPoint )
 {
 	delete _caliScribble;
-	_caliScribble = new CIScribble();
-	_caliStroke = new CIStroke();
-	_caliStroke->addPoint(startPoint.x, startPoint.y);
-
+	_caliScribble = new CIScribble();	
+	
 	if(_gesturePolygon !=nullptr)
 	{
 		_renderer->removePolygon(_gesturePolygon);
@@ -532,7 +526,19 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 
 void MainInputListener::stopDrawingGesture()
 {	
-	_caliScribble->addStroke(_caliStroke);
+	std::vector<Vector2> gestVertices, gestSimplifiedVertices;
+	_gestureSubPolygon->getOrderedVertices(gestVertices);	
+	DouglasPeuckerReduction(gestVertices, 0.005f, gestSimplifiedVertices);
+	uint nrVertices = gestSimplifiedVertices.size();
+	CIStroke *caliStroke = new CIStroke();
+	Vector2 *vert;
+	for (uint i = 0; i < nrVertices; ++i)
+	{
+		vert = &gestSimplifiedVertices[i];
+		caliStroke->addPoint(vert->x, vert->y);
+	}
+
+	_caliScribble->addStroke(caliStroke);
 	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
 	processGesture((*recGests)[0]);
 
@@ -901,10 +907,10 @@ bool MainInputListener::createSpringJoint()
 {
 	PhysicsBody *b1 = nullptr;
 	PhysicsBody *b2 = nullptr;
-
-	CIPoint p = *(*_caliStroke->getPoints())[0];
+	CIStroke *calistroke = (*_caliScribble->getStrokes())[0];
+	CIPoint p = *(*calistroke->getPoints())[0];
 	Vector2 firstPt((float)p.x, (float)p.y); 
-	p = *(*_caliStroke->getPoints())[_caliStroke->getNumPoints()-1];
+	p = *(*calistroke->getPoints())[calistroke->getNumPoints()-1];
 	Vector2 lastPt((float)p.x, (float)p.y);
 
 	// Query the b2d world on the zigzag starting poing

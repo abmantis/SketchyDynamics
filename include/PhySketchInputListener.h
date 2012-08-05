@@ -7,7 +7,6 @@
 #include "PhySketchAABB.h"
 
 class CIScribble;
-class CIStroke;
 class CIRecognizer;
 class CIGesture;
 
@@ -208,7 +207,6 @@ namespace PhySketch
 
 	protected:		
 		bool _isLeftMouseDown;
-		CIStroke *_caliStroke;
 		CIScribble *_caliScribble;
 		CIRecognizer *_caliRecognizer;
 		Material* _gestureMaterial;
