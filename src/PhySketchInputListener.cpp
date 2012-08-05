@@ -736,6 +736,11 @@ bool MainInputListener::createFreeform()
 	{
 		return false;
 	}
+
+	if(gestVertices[0].distanceTo(gestVertices[gestVertices.size()-1]) > 0.5f)
+	{
+		return false;
+	}
 				
 	DouglasPeuckerReduction(gestVertices, 0.07f, gestSimplifiedVertices);
 	if(gestSimplifiedVertices.size() < 3)
