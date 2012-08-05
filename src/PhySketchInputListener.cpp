@@ -547,160 +547,28 @@ void MainInputListener::stopDrawingGesture()
 
 void MainInputListener::processGesture( CIGesture *gesture )
 {
+	bool validGesture = false;
 	std::string gestureName = gesture->getName();	
 
 	if (gestureName.compare("Triangle") == 0)
 	{
-		CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
-		Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
-		Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
-		Vector2 rectP3(static_cast<float>((*tri)[2].x), static_cast<float>((*tri)[2].y));
-
-		// get "centroid" of the triangle and translate it to origin
-		Vector2 position = (rectP1 + rectP2 + rectP3) / 3.0;
-		rectP1 -= position;
-		rectP2 -= position;
-		rectP3 -= position;
-		
-		b2BodyDef bodyDef;
-		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(position.x, position.y);
-		bodyDef.angle = 0;
-		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-		b2Vec2 vertices[3];
-		vertices[0].Set(rectP1.x, rectP1.y);
-		vertices[1].Set(rectP2.x, rectP2.y);
-		vertices[2].Set(rectP3.x, rectP3.y);
-
-		b2PolygonShape triShape;
-		triShape.Set(vertices, 3);
-		b2FixtureDef fixtureDef;
-		fixtureDef.shape = &triShape;
-		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
-		body->CreateFixture(&fixtureDef);
-
-		_physicsMgr->createBody(body);		
+		validGesture = createTriangle();
 	} 
 	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
-		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
-		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
-		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
-		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
-						
-		Vector2 position =  _gesturePolygon->getAABB().getCenter();
-		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		if(size.x > FLT_MIN && size.y > FLT_MIN)
-		{
-			Vector2 vectToOrient = rectP2 - rectP1;
-			float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
-			if(vectToOrient.y < 0)
-			{
-				angle = M_PI - angle;
-			}
-
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(position.x, position.y);
-			bodyDef.angle = angle;
-			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-			b2PolygonShape dynamicBox;
-			dynamicBox.SetAsBox(size.x*0.5f, size.y*0.5f);
-			b2FixtureDef fixtureDef;
-			fixtureDef.shape = &dynamicBox;
-			fixtureDef.density = 1.0f;
-			fixtureDef.friction = 0.3f;
-			fixtureDef.restitution = 0.2f;	
-			body->CreateFixture(&fixtureDef);
-
-			_physicsMgr->createBody(body);
-		}		
+		validGesture = createRectangle();
 	} 
 	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
 	{
-		CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
-		Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
-		Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
-		Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
-
-		Vector2 position = _gesturePolygon->getAABB().getCenter();
-		Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
-		if(size.x > FLT_MIN && size.y > FLT_MIN)
+		validGesture = createRevoluteJoint();
+		if(!validGesture)
 		{
-			if(checkForCircleJoint(size, position) == false)
-			{
-				b2BodyDef bodyDef;
-				bodyDef.type = b2_dynamicBody;
-				bodyDef.position.Set(position.x, position.y);
-				bodyDef.angle = 0.0f;
-				b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-				b2CircleShape circleShape;
-				circleShape.m_p.Set(0.0f, 0.0f);
-				circleShape.m_radius = size.x * 0.5f;
-
-				b2FixtureDef fixtureDef;
-				fixtureDef.shape = &circleShape;
-				fixtureDef.density = 1.0f;
-				fixtureDef.friction = 0.3f;
-				fixtureDef.restitution = 0.2f;	
-				body->CreateFixture(&fixtureDef);
-
-				_physicsMgr->createBody(body);
-			}
+			validGesture = createCircle();
 		}
-
 	} 	
 	else if(gestureName.compare("WavyLine") == 0)
 	{
-		PhysicsBody *b1 = nullptr;
-		PhysicsBody *b2 = nullptr;
-
-		CIPoint p = *(*_caliStroke->getPoints())[0];
-		Vector2 firstPt((float)p.x, (float)p.y); 
-		p = *(*_caliStroke->getPoints())[_caliStroke->getNumPoints()-1];
-		Vector2 lastPt((float)p.x, (float)p.y);
-
-		// Query the b2d world on the zigzag starting poing
-		b2AABB aabb;
-		Vector2 d(0.00001f, 0.00001f);
-		aabb.lowerBound = (firstPt - d).tob2Vec2();
-		aabb.upperBound = (firstPt + d).tob2Vec2();
-		{
-			PhysicsQueryCallback callback(firstPt, true);
-			_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-			// do we intersect any body?
-			if(callback._bodies.size() > 0)
-			{
-				b1 = *(--callback._bodies.end());
-			}
-		}
-		// Query the b2d world on the zigzag ending poing		
-		aabb.lowerBound = (lastPt - d).tob2Vec2();
-		aabb.upperBound = (lastPt + d).tob2Vec2();
-		PhysicsQueryCallback callback(lastPt, true);
-		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-		// do we intersect any body?
-		if(callback._bodies.size() > 0)
-		{
-			b2 = *(--callback._bodies.end());
-		}
-
-		if ( b1 && b2 && (b1 != b2) )
-		{
-			b2DistanceJointDef jd;
-			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), firstPt.tob2Vec2(), lastPt.tob2Vec2());
-			jd.collideConnected = true;
-			jd.frequencyHz = 1.0f;
-			jd.dampingRatio = 0.0f;
-			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
-
-			_physicsMgr->createJoint(j);
-		}		
+		validGesture = createSpringJoint();
 	} 
 	else if(gestureName.compare("Alpha") == 0)
 	{
@@ -715,121 +583,243 @@ void MainInputListener::processGesture( CIGesture *gesture )
 		if(!lineLineIntersection(v1, v2, v3, v4, intersectPt))
 		{
 			PHYSKETCH_LOG_WARNING("Can't find alpha intersection?!");
-			return;
+			// Use gesture geometric center instead of intersection point
+			intersectPt = _gesturePolygon->getAABB().getCenter();
 		}
-
-		// Make a small box.
-		b2AABB aabb;
-		Vector2 d(0.00001f, 0.00001f);
-		aabb.lowerBound = (intersectPt - d).tob2Vec2();
-		aabb.upperBound = (intersectPt + d).tob2Vec2();
-
-		// Query the world for overlapping shapes.
-		PhysicsQueryCallback callback(intersectPt, true);
-		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
-
-		// do we intersect at least two bodies?
-		if(callback._bodies.size() > 1)
-		{
-			PhysicsBody *b1, *b2;
-			std::list<PhysicsBody*>::iterator it = callback._bodies.end();
-			--it;
-			b1 = *it;
-			--it;
-			b2 = *it;
-
-			b2WeldJointDef jd;
-			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), intersectPt.tob2Vec2());
-			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
-
-			_physicsMgr->createJoint(j);
-		}
+		validGesture = createWeldJoint(intersectPt);
 	} 
-	else	// Not recognized -> try free-from
+	if(!validGesture)	// Not recognized -> try free-from
 	{	
-		std::vector<Vector2> gestVertices, gestSimplifiedVertices;
-
-		_gestureSubPolygon->getOrderedVertices(gestVertices);
-		if(gestVertices.size() < 3)
-		{
-			return;
-		}
-				
-		DouglasPeuckerReduction(gestVertices, 0.07f, gestSimplifiedVertices);
-		if(gestSimplifiedVertices.size() < 3)
-		{
-			return;
-		}
-		
-		// Connect first and last vertices for intersection check
-		gestSimplifiedVertices.push_back(gestSimplifiedVertices[0]);
-		// We cannot have intersections!
-		if(checkSegmentSelfIntersection(gestSimplifiedVertices) == false)
-		{
-			// Re-disconnect first and last vertices
-			gestSimplifiedVertices.pop_back();
-
-			translateCentroidTo(gestSimplifiedVertices, Vector2(0.0f, 0.0f));
-
-			// Copy Vector2 array to a p2t::Point array
-			std::vector<p2t::Point*> verts;
-			int ptCnt = gestSimplifiedVertices.size();
-			verts.reserve(ptCnt);
-			Vector2 *vert_p;
-			for (uint i = 0; i < ptCnt; ++i)
-			{
-				vert_p = &gestSimplifiedVertices[i];
-				verts.push_back(new p2t::Point( vert_p->x, vert_p->y));
-			}			
-			/*
-			* STEP 1: Create CDT and add primary polyline
-			* NOTE: polyline must be a simple polygon. The polyline's points
-			* constitute constrained edges. No repeat points!!!
-			*/
-			p2t::CDT* cdt = new p2t::CDT(verts);
-			/*
-			* STEP 2: Add holes or Steiner points if necessary
-			*/
-			/*
-			* STEP 3: Triangulate!
-			*/
-			cdt->Triangulate();
-			std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
-
-			Vector2 position = _gesturePolygon->getAABB().getCenter();
-			b2BodyDef bodyDef;
-			bodyDef.type = b2_dynamicBody;
-			bodyDef.position.Set(position.x, position.y);
-			bodyDef.angle = 0;
-			b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-			b2Vec2 triVertices[3];			
-			uint triCnt = triangles.size();
-			for (uint i = 0; i < triCnt; ++i)
-			{
-				p2t::Triangle& t = *triangles[i];
-				p2t::Point& a = *t.GetPoint(0);
-				p2t::Point& b = *t.GetPoint(1);
-				p2t::Point& c = *t.GetPoint(2);
-				
-				triVertices[0].Set(a.x, a.y);
-				triVertices[1].Set(b.x, b.y);
-				triVertices[2].Set(c.x, c.y);
-
-				b2PolygonShape triShape;
-				triShape.Set(triVertices, 3);
-
-				body->CreateFixture(&triShape, 1.0f);
-			}
-			_physicsMgr->createBody(body);		
-		}		
+		createFreeform();		
 	}
 
 }
 
-bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
+void MainInputListener::highlightDestructionArea(bool flag)
 {
-	if(size < Vector2(0.45f, 0.45f))
+	if(flag)
+		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
+	else
+		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
+}
+
+void MainInputListener::showDestructionArea()
+{
+	_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
+}
+
+void MainInputListener::hideDestructionArea()
+{
+	_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
+}
+
+bool MainInputListener::createTriangle()
+{
+	CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
+	Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
+	Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
+	Vector2 rectP3(static_cast<float>((*tri)[2].x), static_cast<float>((*tri)[2].y));
+
+	// get "centroid" of the triangle and translate it to origin
+	Vector2 position = (rectP1 + rectP2 + rectP3) / 3.0;
+	rectP1 -= position;
+	rectP2 -= position;
+	rectP3 -= position;
+
+	b2BodyDef bodyDef;
+	bodyDef.type = b2_dynamicBody;
+	bodyDef.position.Set(position.x, position.y);
+	bodyDef.angle = 0;
+	b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+	b2Vec2 vertices[3];
+	vertices[0].Set(rectP1.x, rectP1.y);
+	vertices[1].Set(rectP2.x, rectP2.y);
+	vertices[2].Set(rectP3.x, rectP3.y);
+
+	b2PolygonShape triShape;
+	triShape.Set(vertices, 3);
+	b2FixtureDef fixtureDef;
+	fixtureDef.shape = &triShape;
+	fixtureDef.density = 1.0f;
+	fixtureDef.friction = 0.3f;
+	fixtureDef.restitution = 0.2f;	
+	body->CreateFixture(&fixtureDef);
+
+	_physicsMgr->createBody(body);
+
+	return true;
+}
+
+bool MainInputListener::createRectangle()
+{
+	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+	Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+	Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
+
+	Vector2 position =  _gesturePolygon->getAABB().getCenter();
+	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+	if(size.x > FLT_MIN && size.y > FLT_MIN)
+	{
+		Vector2 vectToOrient = rectP2 - rectP1;
+		float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
+		if(vectToOrient.y < 0)
+		{
+			angle = M_PI - angle;
+		}
+
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = angle;
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2PolygonShape dynamicBox;
+		dynamicBox.SetAsBox(size.x*0.5f, size.y*0.5f);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &dynamicBox;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		_physicsMgr->createBody(body);
+		return true;
+	}
+
+	return false;
+}
+
+bool MainInputListener::createCircle()
+{
+	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+	Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+	Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
+
+	Vector2 position = _gesturePolygon->getAABB().getCenter();
+	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+	if(size.x > FLT_MIN && size.y > FLT_MIN)
+	{		
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = 0.0f;
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2CircleShape circleShape;
+		circleShape.m_p.Set(0.0f, 0.0f);
+		circleShape.m_radius = size.x * 0.5f;
+
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &circleShape;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		_physicsMgr->createBody(body);
+
+		return true;
+	}
+
+	return false;
+}
+
+bool MainInputListener::createFreeform()
+{
+	std::vector<Vector2> gestVertices, gestSimplifiedVertices;
+
+	_gestureSubPolygon->getOrderedVertices(gestVertices);
+	if(gestVertices.size() < 3)
+	{
+		return false;
+	}
+				
+	DouglasPeuckerReduction(gestVertices, 0.07f, gestSimplifiedVertices);
+	if(gestSimplifiedVertices.size() < 3)
+	{
+		return false;
+	}
+		
+	// Connect first and last vertices for intersection check
+	gestSimplifiedVertices.push_back(gestSimplifiedVertices[0]);
+	// We cannot have intersections!
+	if(checkSegmentSelfIntersection(gestSimplifiedVertices) == false)
+	{
+		// Re-disconnect first and last vertices
+		gestSimplifiedVertices.pop_back();
+
+		translateCentroidTo(gestSimplifiedVertices, Vector2(0.0f, 0.0f));
+
+		// Copy Vector2 array to a p2t::Point array
+		std::vector<p2t::Point*> verts;
+		uint ptCnt = gestSimplifiedVertices.size();
+		verts.reserve(ptCnt);
+		Vector2 *vert_p;
+		for (uint i = 0; i < ptCnt; ++i)
+		{
+			vert_p = &gestSimplifiedVertices[i];
+			verts.push_back(new p2t::Point( vert_p->x, vert_p->y));
+		}			
+		/*
+		* STEP 1: Create CDT and add primary polyline
+		* NOTE: polyline must be a simple polygon. The polyline's points
+		* constitute constrained edges. No repeat points!!!
+		*/
+		p2t::CDT* cdt = new p2t::CDT(verts);
+		/*
+		* STEP 2: Add holes or Steiner points if necessary
+		*/
+		/*
+		* STEP 3: Triangulate!
+		*/
+		cdt->Triangulate();
+		std::vector<p2t::Triangle*> triangles = cdt->GetTriangles();
+
+		Vector2 position = _gesturePolygon->getAABB().getCenter();
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = 0;
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2Vec2 triVertices[3];			
+		uint triCnt = triangles.size();
+		for (uint i = 0; i < triCnt; ++i)
+		{
+			p2t::Triangle& t = *triangles[i];
+			p2t::Point& a = *t.GetPoint(0);
+			p2t::Point& b = *t.GetPoint(1);
+			p2t::Point& c = *t.GetPoint(2);
+				
+			triVertices[0].Set((float)a.x, (float)a.y);
+			triVertices[1].Set((float)b.x, (float)b.y);
+			triVertices[2].Set((float)c.x, (float)c.y);
+
+			b2PolygonShape triShape;
+			triShape.Set(triVertices, 3);
+
+			body->CreateFixture(&triShape, 1.0f);
+		}
+		_physicsMgr->createBody(body);	
+		return true;
+	}
+
+	return false;
+}
+
+bool MainInputListener::createRevoluteJoint()
+{
+	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+	Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+	Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
+
+	Vector2 position = _gesturePolygon->getAABB().getCenter();
+	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+	if(size.x > FLT_MIN && size.y > FLT_MIN && size < Vector2(0.45f, 0.45f))
 	{
 		//////////////////////////////////////////////////////////////////////////
 		// Since this is a small circle/ellipse, let's check if it intersects two bodies
@@ -863,25 +853,94 @@ bool MainInputListener::checkForCircleJoint( Vector2 size, Vector2 position )
 		}
 	}
 
+	return false;	
+}
+
+bool MainInputListener::createWeldJoint( Vector2 anchorPoint )
+{
+	
+
+	// Make a small box.
+	b2AABB aabb;
+	Vector2 d(0.00001f, 0.00001f);
+	aabb.lowerBound = (anchorPoint - d).tob2Vec2();
+	aabb.upperBound = (anchorPoint + d).tob2Vec2();
+
+	// Query the world for overlapping shapes.
+	PhysicsQueryCallback callback(anchorPoint, true);
+	_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+
+	// do we intersect at least two bodies?
+	if(callback._bodies.size() > 1)
+	{
+		PhysicsBody *b1, *b2;
+		std::list<PhysicsBody*>::iterator it = callback._bodies.end();
+		--it;
+		b1 = *it;
+		--it;
+		b2 = *it;
+
+		b2WeldJointDef jd;
+		jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), anchorPoint.tob2Vec2());
+		b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+
+		_physicsMgr->createJoint(j);
+
+		return true;
+	}
+
 	return false;
 }
 
-void MainInputListener::highlightDestructionArea(bool flag)
+bool MainInputListener::createSpringJoint()
 {
-	if(flag)
-		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 0.0f, 0.0f, 1.0f));
-	else
-		_destructionArea->getSubPolygon(0)->getMaterial()->setColor(Color(1.0f, 1.0f, 1.0f, 1.0f));
-}
+	PhysicsBody *b1 = nullptr;
+	PhysicsBody *b2 = nullptr;
 
-void MainInputListener::showDestructionArea()
-{
-	_destructionArea->setPosition(Vector2(0.0f, 4.20f), 3.0f);
-}
+	CIPoint p = *(*_caliStroke->getPoints())[0];
+	Vector2 firstPt((float)p.x, (float)p.y); 
+	p = *(*_caliStroke->getPoints())[_caliStroke->getNumPoints()-1];
+	Vector2 lastPt((float)p.x, (float)p.y);
 
-void MainInputListener::hideDestructionArea()
-{
-	_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
+	// Query the b2d world on the zigzag starting poing
+	b2AABB aabb;
+	Vector2 d(0.00001f, 0.00001f);
+	aabb.lowerBound = (firstPt - d).tob2Vec2();
+	aabb.upperBound = (firstPt + d).tob2Vec2();
+	{
+		PhysicsQueryCallback callback(firstPt, true);
+		_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+		// do we intersect any body?
+		if(callback._bodies.size() > 0)
+		{
+			b1 = *(--callback._bodies.end());
+		}
+	}
+	// Query the b2d world on the zigzag ending poing		
+	aabb.lowerBound = (lastPt - d).tob2Vec2();
+	aabb.upperBound = (lastPt + d).tob2Vec2();
+	PhysicsQueryCallback callback(lastPt, true);
+	_physicsMgr->getPhysicsWorld()->QueryAABB(&callback, aabb);
+	// do we intersect any body?
+	if(callback._bodies.size() > 0)
+	{
+		b2 = *(--callback._bodies.end());
+	}
+
+	if ( b1 && b2 && (b1 != b2) )
+	{
+		b2DistanceJointDef jd;
+		jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), firstPt.tob2Vec2(), lastPt.tob2Vec2());
+		jd.collideConnected = true;
+		jd.frequencyHz = 1.0f;
+		jd.dampingRatio = 0.0f;
+		b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
+
+		_physicsMgr->createJoint(j);
+
+		return true;
+	}
+	return false;
 }
 
 

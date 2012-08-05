@@ -192,18 +192,18 @@ namespace PhySketch
 		virtual void stopDrawingGesture();
 		virtual void processGesture(CIGesture *gesture);
 
-		/// <summary> Check if a circle/ellipse represents a joint, and create the
-		/// 	joint if it does. </summary>
-		/// <remarks> This is called only for circle and ellipses gestures. </remarks>
-		/// <param name="size"> The size of the gesture. </param>
-		/// <param name="position"> The center of the gesture. </param>
-		/// <returns> true if the joint was created. </returns>
-		virtual bool checkForCircleJoint(Vector2 size, Vector2 position);
-
 		virtual void highlightDestructionArea(bool flag);
 		virtual void showDestructionArea();
 		virtual void hideDestructionArea();
 
+		virtual bool createTriangle();
+		virtual bool createRectangle();
+		virtual bool createCircle();
+		virtual bool createFreeform();
+		virtual bool createRevoluteJoint();
+		virtual bool createWeldJoint(Vector2 anchorPoint);
+		virtual bool createSpringJoint();
+		
 		
 
 	protected:		
