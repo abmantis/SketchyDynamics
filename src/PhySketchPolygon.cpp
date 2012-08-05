@@ -568,7 +568,7 @@ void AnimatedPolygon::update( ulong timeSinceLastFrame )
 			_translationMsToComplete = 0;
 		}
 
-		Polygon::translate(_translationDirection * _translationUnitsPerMs * timeSinceLastFrame);
+		Polygon::translate(_translationDirection * _translationUnitsPerMs * (float)timeSinceLastFrame);
 	}
 }
 
