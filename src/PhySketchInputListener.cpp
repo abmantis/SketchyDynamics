@@ -558,23 +558,23 @@ void MainInputListener::processGesture( CIGesture *gesture )
 
 	if (gestureName.compare("Triangle") == 0)
 	{
-		validGesture = createTriangle();
+		validGesture = createTriangle(false);
 	} 
 	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
-		validGesture = createRectangle();
+		validGesture = createRectangle(false);
 	} 
 	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
 	{
-		validGesture = createRevoluteJoint();
+		validGesture = createRevoluteJoint(false);
 		if(!validGesture)
 		{
-			validGesture = createCircle();
+			validGesture = createCircle(false);
 		}
 	} 	
 	else if(gestureName.compare("WavyLine") == 0)
 	{
-		validGesture = createSpringJoint();
+		validGesture = createSpringJoint(false);
 	} 
 	else if(gestureName.compare("Alpha") == 0)
 	{
@@ -592,11 +592,11 @@ void MainInputListener::processGesture( CIGesture *gesture )
 			// Use gesture geometric center instead of intersection point
 			intersectPt = _gesturePolygon->getAABB().getCenter();
 		}
-		validGesture = createWeldJoint(intersectPt);
+		validGesture = createWeldJoint(intersectPt, false);
 	} 
 	if(!validGesture)	// Not recognized -> try free-from
 	{	
-		createFreeform();		
+		createFreeform(false);		
 	}
 
 }
@@ -619,8 +619,13 @@ void MainInputListener::hideDestructionArea()
 	_destructionArea->setPosition(Vector2(0.0f, 4.85f), 2.0f);
 }
 
-bool MainInputListener::createTriangle()
+bool MainInputListener::createTriangle(bool testOnly)
 {
+	if(testOnly)
+	{
+		return true;
+	}
+
 	CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
 	Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
 	Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
@@ -657,7 +662,7 @@ bool MainInputListener::createTriangle()
 	return true;
 }
 
-bool MainInputListener::createRectangle()
+bool MainInputListener::createRectangle(bool testOnly)
 {
 	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
@@ -668,6 +673,11 @@ bool MainInputListener::createRectangle()
 	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 	if(size.x > FLT_MIN && size.y > FLT_MIN)
 	{
+		if(testOnly)
+		{
+			return true;
+		}
+
 		Vector2 vectToOrient = rectP2 - rectP1;
 		float angle = Vector2::angleBetween(vectToOrient, Vector2::UNIT_X);
 		if(vectToOrient.y < 0)
@@ -697,7 +707,7 @@ bool MainInputListener::createRectangle()
 	return false;
 }
 
-bool MainInputListener::createCircle()
+bool MainInputListener::createCircle(bool testOnly)
 {
 	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
@@ -708,6 +718,11 @@ bool MainInputListener::createCircle()
 	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
 	if(size.x > FLT_MIN && size.y > FLT_MIN)
 	{		
+		if(testOnly)
+		{
+			return true;
+		}
+
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
 		bodyDef.position.Set(position.x, position.y);
@@ -733,7 +748,7 @@ bool MainInputListener::createCircle()
 	return false;
 }
 
-bool MainInputListener::createFreeform()
+bool MainInputListener::createFreeform(bool testOnly)
 {
 	std::vector<Vector2> gestVertices, gestSimplifiedVertices;
 
@@ -759,6 +774,11 @@ bool MainInputListener::createFreeform()
 	// We cannot have intersections!
 	if(checkSegmentSelfIntersection(gestSimplifiedVertices) == false)
 	{
+		if(testOnly)
+		{
+			return true;
+		}
+
 		// Re-disconnect first and last vertices
 		gestSimplifiedVertices.pop_back();
 
@@ -821,7 +841,7 @@ bool MainInputListener::createFreeform()
 	return false;
 }
 
-bool MainInputListener::createRevoluteJoint()
+bool MainInputListener::createRevoluteJoint(bool testOnly)
 {
 	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
 	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
@@ -848,6 +868,11 @@ bool MainInputListener::createRevoluteJoint()
 		// do we intersect at least two bodies?
 		if(callback._bodies.size() > 1)
 		{
+			if(testOnly)
+			{
+				return true;
+			}
+
 			// Create a joint on the two latest/closest bodies
 			PhysicsBody *b1, *b2;
 			std::list<PhysicsBody*>::iterator it = callback._bodies.end();
@@ -867,10 +892,8 @@ bool MainInputListener::createRevoluteJoint()
 	return false;	
 }
 
-bool MainInputListener::createWeldJoint( Vector2 anchorPoint )
+bool MainInputListener::createWeldJoint( Vector2 anchorPoint, bool testOnly )
 {
-	
-
 	// Make a small box.
 	b2AABB aabb;
 	Vector2 d(0.00001f, 0.00001f);
@@ -884,6 +907,11 @@ bool MainInputListener::createWeldJoint( Vector2 anchorPoint )
 	// do we intersect at least two bodies?
 	if(callback._bodies.size() > 1)
 	{
+		if(testOnly)
+		{
+			return true;
+		}
+
 		PhysicsBody *b1, *b2;
 		std::list<PhysicsBody*>::iterator it = callback._bodies.end();
 		--it;
@@ -903,7 +931,7 @@ bool MainInputListener::createWeldJoint( Vector2 anchorPoint )
 	return false;
 }
 
-bool MainInputListener::createSpringJoint()
+bool MainInputListener::createSpringJoint(bool testOnly)
 {
 	PhysicsBody *b1 = nullptr;
 	PhysicsBody *b2 = nullptr;
@@ -940,6 +968,11 @@ bool MainInputListener::createSpringJoint()
 
 	if ( b1 && b2 && (b1 != b2) )
 	{
+		if(testOnly)
+		{
+			return true;
+		}
+
 		b2DistanceJointDef jd;
 		jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), firstPt.tob2Vec2(), lastPt.tob2Vec2());
 		jd.collideConnected = true;

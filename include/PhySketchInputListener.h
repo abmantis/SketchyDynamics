@@ -195,13 +195,13 @@ namespace PhySketch
 		virtual void showDestructionArea();
 		virtual void hideDestructionArea();
 
-		virtual bool createTriangle();
-		virtual bool createRectangle();
-		virtual bool createCircle();
-		virtual bool createFreeform();
-		virtual bool createRevoluteJoint();
-		virtual bool createWeldJoint(Vector2 anchorPoint);
-		virtual bool createSpringJoint();
+		virtual bool createTriangle(bool testOnly);
+		virtual bool createRectangle(bool testOnly);
+		virtual bool createCircle(bool testOnly);
+		virtual bool createFreeform(bool testOnly);
+		virtual bool createRevoluteJoint(bool testOnly);
+		virtual bool createWeldJoint(Vector2 anchorPoint, bool testOnly);
+		virtual bool createSpringJoint(bool testOnly);
 		
 		
 
