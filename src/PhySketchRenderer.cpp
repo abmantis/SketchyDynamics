@@ -528,8 +528,8 @@ namespace PhySketch
 		{
 			if(i == 0)
 			{
-				it_begin = _backgroundRenderQueue.begin();
-				it = _backgroundRenderQueue.end();
+				it_begin = _uiRenderQueue.begin();
+				it = _uiRenderQueue.end();	
 			}
 			else if (i == 1)
 			{
@@ -537,9 +537,9 @@ namespace PhySketch
 				it = _sceneRenderQueue.end();
 			} 
 			else if (i == 2)
-			{
-				it_begin = _uiRenderQueue.begin();
-				it = _uiRenderQueue.end();
+			{				
+				it_begin = _backgroundRenderQueue.begin();
+				it = _backgroundRenderQueue.end();
 			}
 			else
 			{
