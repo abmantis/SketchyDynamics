@@ -51,7 +51,7 @@ namespace PhySketch
 		return m;
 	}
 
-	Material* MaterialManager::createMaterial( std::string name, std::string texture, bool generateMipMaps /*= false*/ )
+	Material* MaterialManager::createMaterial( std::string name, std::string texture, bool generateMipMaps /*= false*/, bool repeat /*= true*/ )
 	{
 		FREE_IMAGE_FORMAT fif = FIF_UNKNOWN; 
 		FIBITMAP* dib(0); 
@@ -109,8 +109,8 @@ namespace PhySketch
 		glBindTexture(GL_TEXTURE_2D, m->_textureID);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,     (repeat)? GL_REPEAT : GL_CLAMP_TO_EDGE);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,     (repeat)? GL_REPEAT : GL_CLAMP_TO_EDGE);
 		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, bDataPointer);
 		
 		if(generateMipMaps)
