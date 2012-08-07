@@ -9,6 +9,15 @@ class b2Body;
 
 namespace PhySketch
 {
+	enum PhysicsBodyType
+	{
+		PBT_Rectangle,
+		PBT_Triangle,
+		PBT_Circle,
+		PBT_Freeform,
+		PBT_Unknown
+	};
+
 	class PhysicsBody : public Polygon
 	{	
 	protected:
@@ -59,11 +68,17 @@ namespace PhySketch
 
 		virtual void reconstructPolygon();
 
+		// Access the Type
+		virtual const PhysicsBodyType getType(void) const;
+		virtual void setType(PhysicsBodyType type);
+
+
 	protected:
 		b2Body* _body;
 		ulong _id;
 		bool _selectable;
 		bool _selected;
+		PhysicsBodyType _type;
 	
 		Material* _fillMaterial;
 		Material* _lineMaterial;

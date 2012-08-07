@@ -19,7 +19,8 @@ PhysicsBody::PhysicsBody( b2Body *body, uint id, Material* fillMaterial, Materia
 	_id					(id),
 	_fillMaterial		(fillMaterial),
 	_lineMaterial		(lineMaterial),
-	_selectedMaterial	(selectedMaterial)
+	_selectedMaterial	(selectedMaterial),
+	_type				(PBT_Unknown)
 {
 	_body->SetUserData(this);
 	reconstructPolygon();
@@ -452,6 +453,16 @@ void PhysicsBody::setPosition( const Vector2& position )
 void PhysicsBody::setScale( const Vector2& scale )
 {
 	throw std::exception("The method or operation is not implemented.");
+}
+
+const PhysicsBodyType PhysicsBody::getType( void ) const
+{
+	return(_type);
+}
+
+void PhysicsBody::setType( PhysicsBodyType type )
+{
+	_type = type;
 }
 
 
