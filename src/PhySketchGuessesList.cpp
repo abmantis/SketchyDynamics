@@ -89,7 +89,7 @@ namespace PhySketch
 	GuessesList::~GuessesList()
 	{
 		Renderer *renderer = Renderer::getSingletonPtr();
-		renderer->removePolygon(_rectangleGuess, RQT_UI);
+		renderer->removePolygon(_rectangleGuess , RQT_UI);
 		renderer->removePolygon(_triangleGuess	, RQT_UI);
 		renderer->removePolygon(_circleGuess	, RQT_UI);
 		renderer->removePolygon(_weldGuess		, RQT_UI);

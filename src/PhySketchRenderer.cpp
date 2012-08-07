@@ -284,9 +284,11 @@ namespace PhySketch
 		{
 			subpoly = polygon->_subPolygons[i];
 			glDeleteBuffers(1, &subpoly->_vertexBuffer);
+			glDeleteBuffers(1, &subpoly->_texCoordBuffer);
 			glDeleteBuffers(1, &subpoly->_elementBuffer);
 
 			subpoly->_vertexBuffer	= 0;
+			subpoly->_texCoordBuffer = 0;
 			subpoly->_elementBuffer	= 0;
 		}
 
