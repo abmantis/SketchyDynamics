@@ -309,6 +309,7 @@ namespace PhySketch
 		virtual void update( ulong timeSinceLastFrame );		
 
 	protected:
+		Vector2 _desiredPosition;
 		Vector2 _translationDirection;
 		float _translationUnitsPerMs;
 		ulong _translationMsToComplete;
