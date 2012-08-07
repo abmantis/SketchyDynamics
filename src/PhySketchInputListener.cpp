@@ -20,6 +20,14 @@
 #include "../dependecies/poly2tri/poly2tri.h"
 #include "PhySketchGuessesList.h"
 
+// Memory leak debug
+#ifndef NDEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#define DEBUG_CLIENTBLOCK   new( _CLIENT_BLOCK, __FILE__, __LINE__)
+#define new DEBUG_CLIENTBLOCK
+#endif
 
 namespace PhySketch
 {
@@ -1013,6 +1021,15 @@ bool MainInputListener::createFreeform(bool testOnly)
 		
 		_lastPhysicsBody = _physicsMgr->createBody(body);	
 		_lastPhysicsBody->setType(PBT_Freeform);
+
+		// clean up
+		delete cdt; 
+		cdt = nullptr;
+
+		for (uint i = 0; i < ptCnt; ++i)
+		{
+			delete verts[i];
+		}		
 
 		return true;
 	}

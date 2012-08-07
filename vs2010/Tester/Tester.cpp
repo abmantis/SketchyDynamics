@@ -97,6 +97,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	_core.startLoop();
 
+	delete backPoly; backPoly = nullptr;
 	delete _inputListener; _inputListener = 0;
 
 	return 0;

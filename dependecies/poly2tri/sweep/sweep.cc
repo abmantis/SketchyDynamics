@@ -756,6 +756,8 @@ Triangle& Sweep::NextFlipTriangle(SweepContext& tcx, int o, Triangle& t, Triangl
   return ot;
 }
 
+#pragma warning( push )
+#pragma warning( disable : 4715 )
 Point& Sweep::NextFlipPoint(Point& ep, Point& eq, Triangle& ot, Point& op)
 {
   Orientation o2d = Orient2d(eq, op, ep);
@@ -770,6 +772,7 @@ Point& Sweep::NextFlipPoint(Point& ep, Point& eq, Triangle& ot, Point& op)
     assert(0);
   }
 }
+#pragma warning( pop ) 
 
 void Sweep::FlipScanEdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle& flip_triangle,
                               Triangle& t, Point& p)
@@ -803,7 +806,7 @@ void Sweep::FlipScanEdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle&
 Sweep::~Sweep() {
 
     // Clean up memory
-    for(int i = 0; i < nodes_.size(); i++) {
+    for(unsigned int i = 0; i < nodes_.size(); i++) {
         delete nodes_[i];
     }
 
