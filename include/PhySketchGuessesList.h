@@ -29,12 +29,17 @@ namespace PhySketch
 
 		virtual void showGuess(GuessesListGuesses guess, bool highlight);
 		virtual void hideGuessesList();
-		virtual GuessesListGuesses getGuessType(Polygon *guessesListPoly);
+		virtual GuessesListGuesses getGuessType(Polygon *guessPoly);
+		virtual void mouseHoverGuess(Polygon *guessPoly);
+		virtual inline void stopMouseHover();
 
 	protected:
 		virtual SubPolygon* setupGuessPolygon(Polygon *guessPoly, int textureOrder);
 
 	protected:
+		Material *_mainMaterial;
+		Material *_hoverMaterial;
+
 		AnimatedPolygon *_rectangleGuess;
 		AnimatedPolygon *_triangleGuess;
 		AnimatedPolygon *_circleGuess;
@@ -57,6 +62,8 @@ namespace PhySketch
 		Vector2 _basePosition;
 		float _initialTranslation;
 		float _lastGuessPosition;
+
+		Polygon *_hoveredGuess;
 
 	};
 }

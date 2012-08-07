@@ -10,7 +10,9 @@ namespace PhySketch
 		_basePosition = Vector2(-9.6f, 4.0f);
 
 		Renderer *renderer = Renderer::getSingletonPtr();
-		Material *mainMat = MaterialManager::getSingletonPtr()->createMaterial("PS_guesseslist", "../../../textures/GuessesList.png", false, false);
+		_mainMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_guesseslist", "../../../textures/GuessesList.png", false, false);
+		_hoverMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_guesseslist_hover", "../../../textures/GuessesList_hover.png", false, false);
+
 		_initialTranslation = 2.0f;
 		_lastGuessPosition = _initialTranslation;
 
@@ -34,15 +36,15 @@ namespace PhySketch
 		setupGuessPolygon(_freeformGuess,	7);
 		setupGuessPolygon(_cancelGuess,		8);
 
-		_rectangleGuess	->setMaterial(mainMat);
-		_triangleGuess	->setMaterial(mainMat);
-		_circleGuess	->setMaterial(mainMat);
-		_weldGuess		->setMaterial(mainMat);
-		_revoluteGuess	->setMaterial(mainMat);
-		_ropeGuess		->setMaterial(mainMat);
-		_springGuess	->setMaterial(mainMat);
-		_freeformGuess	->setMaterial(mainMat);
-		_cancelGuess	->setMaterial(mainMat);
+		_rectangleGuess	->setMaterial(_mainMaterial);
+		_triangleGuess	->setMaterial(_mainMaterial);
+		_circleGuess	->setMaterial(_mainMaterial);
+		_weldGuess		->setMaterial(_mainMaterial);
+		_revoluteGuess	->setMaterial(_mainMaterial);
+		_ropeGuess		->setMaterial(_mainMaterial);
+		_springGuess	->setMaterial(_mainMaterial);
+		_freeformGuess	->setMaterial(_mainMaterial);
+		_cancelGuess	->setMaterial(_mainMaterial);
 
 		_rectangleGuess	->setUserType(PHYSKETCH_POLYGON_UTYPE_GUESSESLIST);
 		_triangleGuess	->setUserType(PHYSKETCH_POLYGON_UTYPE_GUESSESLIST);
@@ -83,6 +85,8 @@ namespace PhySketch
 		_ropeGuessVisible		= false;
 		_springGuessVisible		= false;
 		_cancelGuessVisible		= false;
+
+		_hoveredGuess = nullptr;
 				
 	}
 
@@ -118,6 +122,8 @@ namespace PhySketch
 		_springGuess	= nullptr;
 		_freeformGuess	= nullptr;
 		_cancelGuess	= nullptr;
+
+		_hoveredGuess = nullptr;
 
 	}
 
@@ -246,41 +252,41 @@ namespace PhySketch
 		_cancelGuessVisible		= false;
 	}
 
-	PhySketch::GuessesListGuesses GuessesList::getGuessType( Polygon *guessesListPoly )
+	PhySketch::GuessesListGuesses GuessesList::getGuessType( Polygon *guessPoly )
 	{
-		if(guessesListPoly == _rectangleGuess)
+		if(guessPoly == _rectangleGuess)
 		{
 			return GLG_RECTANGLE ;
 		}
-		else if(guessesListPoly == _triangleGuess)
+		else if(guessPoly == _triangleGuess)
 		{
 			return GLG_TRIANGLE ;
 		}
-		else if(guessesListPoly == _circleGuess)
+		else if(guessPoly == _circleGuess)
 		{
 			return GLG_CIRCLE ;
 		}
-		else if(guessesListPoly == _freeformGuess)
+		else if(guessPoly == _freeformGuess)
 		{
 			return GLG_FREEFORM ;
 		}
-		else if(guessesListPoly == _weldGuess)
+		else if(guessPoly == _weldGuess)
 		{
 			return GLG_WELD ;
 		}
-		else if(guessesListPoly == _revoluteGuess)
+		else if(guessPoly == _revoluteGuess)
 		{
 			return GLG_REVOLUTE ;
 		}
-		else if(guessesListPoly == _ropeGuess)
+		else if(guessPoly == _ropeGuess)
 		{
 			return GLG_ROPE ;
 		}
-		else if(guessesListPoly == _springGuess)
+		else if(guessPoly == _springGuess)
 		{
 			return GLG_SPRING ;
 		}
-		else if(guessesListPoly == _cancelGuess)
+		else if(guessPoly == _cancelGuess)
 		{
 			return GLG_CANCEL ;
 		}
@@ -288,6 +294,73 @@ namespace PhySketch
 		return GLG_INVALID;
 	}
 
-	
+	void GuessesList::mouseHoverGuess( Polygon *guessPoly )
+	{
+		Polygon *previousHoveredGuess = _hoveredGuess;
+
+		if(guessPoly == _rectangleGuess)
+		{
+			_hoveredGuess = _rectangleGuess;
+		}
+		else if(guessPoly == _triangleGuess)
+		{
+			_hoveredGuess = _triangleGuess;
+		}
+		else if(guessPoly == _circleGuess)
+		{
+			_hoveredGuess = _circleGuess;
+		}
+		else if(guessPoly == _freeformGuess)
+		{
+			_hoveredGuess = _freeformGuess;
+		}
+		else if(guessPoly == _weldGuess)
+		{
+			_hoveredGuess = _weldGuess;
+		}
+		else if(guessPoly == _revoluteGuess)
+		{
+			_hoveredGuess = _revoluteGuess;
+		}
+		else if(guessPoly == _ropeGuess)
+		{
+			_hoveredGuess = _ropeGuess;
+		}
+		else if(guessPoly == _springGuess)
+		{
+			_hoveredGuess = _springGuess;
+		}
+		else if(guessPoly == _cancelGuess)
+		{
+			_hoveredGuess = _cancelGuess;
+		}
+		else
+		{
+			_hoveredGuess->setMaterial(_mainMaterial);
+			_hoveredGuess = nullptr;
+			return;
+		}
+
+		if(previousHoveredGuess != _hoveredGuess)
+		{
+			if(previousHoveredGuess)
+			{
+				previousHoveredGuess->setMaterial(_mainMaterial);
+			}
+			_hoveredGuess->setMaterial(_hoverMaterial);
+		}
+		
+	}
+
+	void GuessesList::stopMouseHover()
+	{
+		if(_hoveredGuess)
+		{
+			_hoveredGuess->setMaterial(_mainMaterial);
+			_hoveredGuess = nullptr;
+		}
+	}
+
+		
 
 } // namespace PhySketch

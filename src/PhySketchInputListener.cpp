@@ -382,6 +382,22 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 void MainInputListener::mouseMoved( Vector2 position )
 {	
 	Vector2 sceneMousePos = _renderer->windowToScene(position);
+
+	if(_guessesListVisible)
+	{		
+		// If the guesses list is visible, we need to check if the mouse is hovering
+		FirstObjectSceneQueryCallback callback(sceneMousePos);
+		_renderer->queryScene(sceneMousePos, &callback);
+		if(callback._firstPolygon != nullptr && callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_GUESSESLIST)
+		{
+			_guessesList->mouseHoverGuess(callback._firstPolygon);
+		}
+		else
+		{
+			_guessesList->stopMouseHover();
+		}
+	}
+
 	if(_isLeftMouseDown)
 	{
 		switch(_interactionState)
