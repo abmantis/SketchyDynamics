@@ -198,6 +198,9 @@
     <ClInclude Include="..\dependecies\poly2tri\common\shapes.h">
       <Filter>Dependencies\poly2tri\common</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchGuessesList.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -322,6 +325,9 @@
     </ClCompile>
     <ClCompile Include="..\dependecies\poly2tri\common\shapes.cc">
       <Filter>Dependencies\poly2tri\common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchGuessesList.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

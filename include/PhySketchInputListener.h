@@ -5,6 +5,7 @@
 #include "PhySketchDefinitions.h"
 #include "PhySketchVector2.h"
 #include "PhySketchAABB.h"
+#include "PhySketchSingleton.h"
 
 class CIScribble;
 class CIRecognizer;
@@ -160,7 +161,7 @@ namespace PhySketch
 
 	
 	/// <summary> Main input listener to deal with internal input responses (like gesture drawing). </summary>
-	class MainInputListener : public InputListener
+	class MainInputListener : public InputListener, public Singleton<MainInputListener>
 	{
 	public:
 		enum InteractionStates
@@ -186,6 +187,11 @@ namespace PhySketch
 		virtual void mouseUp(MouseButton button, Vector2 position);
 		virtual void mouseMoved(Vector2 position);
 
+		virtual void enableGuessesList(bool enable);
+
+		static MainInputListener* getSingletonPtr(void);
+		static MainInputListener& getSingleton(void);
+
 	protected:
 		virtual void startDrawingGesture(Vector2 startPoint);
 		virtual void stopDrawingGesture();
@@ -202,6 +208,10 @@ namespace PhySketch
 		virtual bool createRevoluteJoint(bool testOnly);
 		virtual bool createWeldJoint(Vector2 anchorPoint, bool testOnly);
 		virtual bool createSpringJoint(bool testOnly);
+
+		virtual void processGuessesListClick(Polygon *clickedPolygon);
+
+		virtual void hideGuessesList();
 		
 		
 
@@ -216,13 +226,18 @@ namespace PhySketch
 		Polygon *_transformLineIndicator;
 		Polygon *_selectedBodiesAABBPoly;
 		float _currScale;
+		bool _guessesListEnabled;
+		bool _guessesListVisible;
+		PhysicsBody *_lastPhysicsBody;
+		PhysicsJoint *_lastPhysicsJoint;
 		
 		AnimatedPolygon *_destructionArea;
 		AABB _selectedBodiesAABB;
 		float _initialDistFromSelectedBodiesCenter;
 		Renderer *_renderer;
 		PhysicsManager *_physicsMgr;
-		InteractionStates _interactionState;
+		GuessesList *_guessesList;
+		InteractionStates _interactionState;		
 		bool _insideDestructionArea;
 
 		// struct to store mouse positions. the positions are updated when 

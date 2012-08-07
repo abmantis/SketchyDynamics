@@ -11,6 +11,7 @@ namespace PhySketch
 {
 	class PhysicsManager : public Singleton<PhysicsManager>, public b2DestructionListener, private b2ContactListener
 	{	
+		friend class MainInputListener;
 	public:
 		typedef std::list<PhysicsBody*> PhysicsBodyList;
 		typedef std::set<PhysicsBody*> PhysicsBodySet;

@@ -45,6 +45,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	_inputListener->_physicsMgr = _physicsMgr;
 	_window->addInputListener(_inputListener);
 
+	PhySketch::MainInputListener::getSingletonPtr()->enableGuessesList(true);
+
 	//PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
 	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/CLP_blackboardSmooth_.jpg");
 

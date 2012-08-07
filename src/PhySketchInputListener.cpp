@@ -18,10 +18,15 @@
 #include <Box2D\Collision\b2Collision.h>
 
 #include "../dependecies/poly2tri/poly2tri.h"
+#include "PhySketchGuessesList.h"
 
 
 namespace PhySketch
 {
+
+template<> MainInputListener* Singleton<MainInputListener>::ms_Singleton = 0;
+
+
 MainInputListener::MainInputListener() : 
 	InputListener		(),
 	_isLeftMouseDown	(false),
@@ -31,7 +36,12 @@ MainInputListener::MainInputListener() :
 	_caliRecognizer		(new CIRecognizer()),
 	_interactionState	(IS_NONE),
 	_gestureMaterial	(nullptr),
-	_insideDestructionArea(false)
+	_insideDestructionArea(false),
+	_guessesList		(nullptr),
+	_guessesListEnabled	(false),
+	_guessesListVisible	(false),
+	_lastPhysicsBody	(nullptr),
+	_lastPhysicsJoint	(nullptr)
 {
 }
 
@@ -75,6 +85,24 @@ MainInputListener::~MainInputListener()
 		delete _destructionArea;
 		_destructionArea = nullptr;
 	}
+	if(_guessesList)
+	{
+		delete _guessesList;
+		_guessesList = nullptr;
+	}
+}
+
+
+MainInputListener* MainInputListener::getSingletonPtr(void)
+{
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
+	return ms_Singleton;
+}
+
+MainInputListener& MainInputListener::getSingleton(void)
+{
+	PHYSKETCH_ASSERT(ms_Singleton != NULL);
+	return *ms_Singleton;
 }
 
 void MainInputListener::init()
@@ -109,6 +137,8 @@ void MainInputListener::init()
 	_renderer->addPolygon(_destructionArea, RQT_UI);
 
 	_gestureMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_gesture_material", Color(0.0f, 0.0f, 8.0f, 1.0f));
+
+	_guessesList = new GuessesList();
 }
 
 void MainInputListener::keyDown( Key key )
@@ -127,8 +157,7 @@ void MainInputListener::mouseDown( MouseButton button, Vector2 position )
 		{
 			_isLeftMouseDown = true;
 			_lastMousePositions.left		= position;
-			_lastMousePositions.leftScene	= _renderer->windowToScene(position);
-			
+			_lastMousePositions.leftScene	= _renderer->windowToScene(position);			
 			break;
 		}
 	case MB_Middle:
@@ -173,8 +202,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 							}
 						}
 						else 
-						{
-							// If it is not a body, is it a joint?							
+						{							
 							if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
 							{
 								PhysicsJoint *pj = static_cast<PhysicsJoint*>(callback._firstPolygon->getUserData());
@@ -184,7 +212,13 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 									_interactionState = IS_SELECTING_JOINTS;
 								}
 							}
+							else if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_GUESSESLIST)
+							{
+								processGuessesListClick(callback._firstPolygon);
+							}
 						}
+
+						hideGuessesList();
 					}
 					break;
 				}
@@ -330,7 +364,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 			break;
 		}
 	case MB_Right:
-		{
+		{			
 			break;
 		}
 	}
@@ -509,6 +543,8 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 {
 	delete _caliScribble;
 	_caliScribble = new CIScribble();	
+
+	hideGuessesList();
 	
 	if(_gesturePolygon !=nullptr)
 	{
@@ -517,6 +553,7 @@ void MainInputListener::startDrawingGesture( Vector2 startPoint )
 		_gesturePolygon = nullptr;
 		_gestureSubPolygon = nullptr;
 	}
+
 	_gesturePolygon = new Polygon(VV_Stream, "PS_gesture");
 	_gestureSubPolygon = _gesturePolygon->createSubPolygon(DM_LINE_STRIP);
 	_gestureSubPolygon->setMaterial(_gestureMaterial);
@@ -540,15 +577,135 @@ void MainInputListener::stopDrawingGesture()
 
 	_caliScribble->addStroke(caliStroke);
 	CIList<CIGesture *>* recGests = _caliRecognizer->recognize(_caliScribble);
-	processGesture((*recGests)[0]);
+
+	if(_guessesListEnabled)
+	{
+		_physicsMgr->_simulationPaused_internal = true;
+		_guessesListVisible = true;
+		
+		//////////////////////////////////////////////////////////////////////////
+		/// Show recognized gestures first and highlighted
+		bool validGesture = false;
+		int recGestCount = recGests->getNumItems();
+		for (int i = 0; i < recGestCount; ++i)
+		{
+			std::string gestureName = (*recGests)[i]->getName();
+			if (gestureName.compare("Triangle") == 0)
+			{
+				if(createTriangle(true))
+				{
+					_guessesList->showGuess(GLG_TRIANGLE, true);
+					validGesture = true;
+				}
+			} 
+			else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
+			{
+				if(createRevoluteJoint(true))
+				{
+					_guessesList->showGuess(GLG_REVOLUTE, true);
+					validGesture = true;
+				}
+				if(createRectangle(true))
+				{
+					_guessesList->showGuess(GLG_RECTANGLE, true);
+					validGesture = true;
+				}				
+			} 
+			else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
+			{
+				if(createRevoluteJoint(true))
+				{
+					_guessesList->showGuess(GLG_REVOLUTE, true);
+					validGesture = true;
+				}
+				if(createCircle(true))
+				{
+					_guessesList->showGuess(GLG_CIRCLE, true);
+					validGesture = true;
+				}				
+			} 	
+			else if(gestureName.compare("WavyLine") == 0)
+			{
+				if(createSpringJoint(true))
+				{
+					_guessesList->showGuess(GLG_SPRING, true);
+					validGesture = true;
+				}
+			} 
+			else if(gestureName.compare("Alpha") == 0)
+			{
+				Vector2 intersectPt;
+				CIPoint p1, p2, p3, p4;
+				static_cast<CIAlpha*>((*recGests)[i])->getIntersectionLines(p1,p2,p3,p4);
+
+				Vector2 v1((float)p1.x, (float)p1.y);
+				Vector2 v2((float)p2.x, (float)p2.y);
+				Vector2 v3((float)p3.x, (float)p3.y);
+				Vector2 v4((float)p4.x, (float)p4.y);		
+				if(!lineLineIntersection(v1, v2, v3, v4, intersectPt))
+				{
+					PHYSKETCH_LOG_WARNING("Can't find alpha intersection?!");
+					// Use gesture geometric center instead of intersection point
+					intersectPt = _gesturePolygon->getAABB().getCenter();
+				}
+				if(createWeldJoint(intersectPt, true))
+				{
+					_guessesList->showGuess(GLG_WELD, true);
+					validGesture = true;
+				}
+			}
+		}
+		if ( !validGesture )
+		{
+			if(createFreeform(true))
+			{
+				_guessesList->showGuess(GLG_FREEFORM, true);
+			}
+		}
+
+		//////////////////////////////////////////////////////////////////////////
+		// Show all remaining gestures
+		if (createRectangle(true))
+		{
+			_guessesList->showGuess(GLG_RECTANGLE, false);
+		}
+		if (createTriangle(true))
+		{
+			_guessesList->showGuess(GLG_TRIANGLE, false);
+		}
+		if (createCircle(true))
+		{
+			_guessesList->showGuess(GLG_CIRCLE, false);
+		}
+		if (createWeldJoint(_gesturePolygon->getAABB().getCenter(), true))
+		{
+			_guessesList->showGuess(GLG_WELD, false);
+		}
+		if (createRevoluteJoint(true))
+		{
+			_guessesList->showGuess(GLG_REVOLUTE, false);
+		}
+		if (createSpringJoint(true))
+		{
+			_guessesList->showGuess(GLG_SPRING, false);
+		}
+		if (createFreeform(true))
+		{
+			_guessesList->showGuess(GLG_FREEFORM, false);		
+		}
+		_guessesList->showGuess(GLG_CANCEL, false);
+	}
+
+	_lastPhysicsBody = nullptr;
+	_lastPhysicsJoint = nullptr;
+
+	// Process the recognized gesture
+	processGesture((*recGests)[0]); // TODO: if no gesture was recognized, or the recognized gesture is not context-valid, try with remaining rec. gestures (instead of assuming a freeform after checking the first recognized gesture)
 
 	delete recGests;
 	recGests = nullptr;
 
 	_renderer->removePolygon(_gesturePolygon);
-	delete _gesturePolygon;
-	_gesturePolygon = nullptr;
-	_gestureSubPolygon = nullptr;
 }
 
 void MainInputListener::processGesture( CIGesture *gesture )
@@ -562,7 +719,11 @@ void MainInputListener::processGesture( CIGesture *gesture )
 	} 
 	else if (gestureName.compare("Rectangle") == 0 || gestureName.compare("Diamond") == 0)
 	{
-		validGesture = createRectangle(false);
+		validGesture = createRevoluteJoint(false);
+		if(!validGesture)
+		{
+			validGesture = createRectangle(false);
+		}
 	} 
 	else if (gestureName.compare("Circle") == 0 || gestureName.compare("Ellipse") == 0)
 	{
@@ -621,45 +782,57 @@ void MainInputListener::hideDestructionArea()
 
 bool MainInputListener::createTriangle(bool testOnly)
 {
-	if(testOnly)
+	CIList<CIPoint> *enclosingRect = _caliScribble->enclosingRect()->getPoints();
+	Vector2 rectP1(static_cast<float>((*enclosingRect)[0].x), static_cast<float>((*enclosingRect)[0].y));
+	Vector2 rectP2(static_cast<float>((*enclosingRect)[1].x), static_cast<float>((*enclosingRect)[1].y));
+	Vector2 rectP3(static_cast<float>((*enclosingRect)[2].x), static_cast<float>((*enclosingRect)[2].y));
+
+	Vector2 size(rectP1.distanceTo(rectP2), rectP2.distanceTo(rectP3));
+	if(size.x > FLT_MIN && size.y > FLT_MIN)
 	{
+		if(testOnly)
+		{
+			return true;
+		}
+
+		CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
+		Vector2 triP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
+		Vector2 triP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
+		Vector2 triP3(static_cast<float>((*tri)[2].x), static_cast<float>((*tri)[2].y));
+
+		// get "centroid" of the triangle and translate it to origin
+		Vector2 position = (triP1 + triP2 + triP3) / 3.0;
+		triP1 -= position;
+		triP2 -= position;
+		triP3 -= position;
+
+		b2BodyDef bodyDef;
+		bodyDef.type = b2_dynamicBody;
+		bodyDef.position.Set(position.x, position.y);
+		bodyDef.angle = 0;
+		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
+
+		b2Vec2 vertices[3];
+		vertices[0].Set(triP1.x, triP1.y);
+		vertices[1].Set(triP2.x, triP2.y);
+		vertices[2].Set(triP3.x, triP3.y);
+
+		b2PolygonShape triShape;
+		triShape.Set(vertices, 3);
+		b2FixtureDef fixtureDef;
+		fixtureDef.shape = &triShape;
+		fixtureDef.density = 1.0f;
+		fixtureDef.friction = 0.3f;
+		fixtureDef.restitution = 0.2f;	
+		body->CreateFixture(&fixtureDef);
+
+		_lastPhysicsBody = _physicsMgr->createBody(body);
+		_lastPhysicsBody->setType(PBT_Triangle);
+
 		return true;
 	}
 
-	CIList<CIPoint> *tri = _caliScribble->largestTriangle()->getPoints();
-	Vector2 rectP1(static_cast<float>((*tri)[0].x), static_cast<float>((*tri)[0].y));
-	Vector2 rectP2(static_cast<float>((*tri)[1].x), static_cast<float>((*tri)[1].y));
-	Vector2 rectP3(static_cast<float>((*tri)[2].x), static_cast<float>((*tri)[2].y));
-
-	// get "centroid" of the triangle and translate it to origin
-	Vector2 position = (rectP1 + rectP2 + rectP3) / 3.0;
-	rectP1 -= position;
-	rectP2 -= position;
-	rectP3 -= position;
-
-	b2BodyDef bodyDef;
-	bodyDef.type = b2_dynamicBody;
-	bodyDef.position.Set(position.x, position.y);
-	bodyDef.angle = 0;
-	b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
-
-	b2Vec2 vertices[3];
-	vertices[0].Set(rectP1.x, rectP1.y);
-	vertices[1].Set(rectP2.x, rectP2.y);
-	vertices[2].Set(rectP3.x, rectP3.y);
-
-	b2PolygonShape triShape;
-	triShape.Set(vertices, 3);
-	b2FixtureDef fixtureDef;
-	fixtureDef.shape = &triShape;
-	fixtureDef.density = 1.0f;
-	fixtureDef.friction = 0.3f;
-	fixtureDef.restitution = 0.2f;	
-	body->CreateFixture(&fixtureDef);
-
-	_physicsMgr->createBody(body);
-
-	return true;
+	return false;
 }
 
 bool MainInputListener::createRectangle(bool testOnly)
@@ -700,7 +873,9 @@ bool MainInputListener::createRectangle(bool testOnly)
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		_physicsMgr->createBody(body);
+		_lastPhysicsBody = _physicsMgr->createBody(body);
+		_lastPhysicsBody->setType(PBT_Rectangle);
+
 		return true;
 	}
 
@@ -740,7 +915,8 @@ bool MainInputListener::createCircle(bool testOnly)
 		fixtureDef.restitution = 0.2f;	
 		body->CreateFixture(&fixtureDef);
 
-		_physicsMgr->createBody(body);
+		_lastPhysicsBody = _physicsMgr->createBody(body);
+		_lastPhysicsBody->setType(PBT_Circle);
 
 		return true;
 	}
@@ -834,7 +1010,10 @@ bool MainInputListener::createFreeform(bool testOnly)
 
 			body->CreateFixture(&triShape, 1.0f);
 		}
-		_physicsMgr->createBody(body);	
+		
+		_lastPhysicsBody = _physicsMgr->createBody(body);	
+		_lastPhysicsBody->setType(PBT_Freeform);
+
 		return true;
 	}
 
@@ -884,7 +1063,9 @@ bool MainInputListener::createRevoluteJoint(bool testOnly)
 			b2RevoluteJointDef jd;
 			jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), position.tob2Vec2());
 			b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
-			_physicsMgr->createJoint(j);
+			
+			_lastPhysicsJoint = _physicsMgr->createJoint(j);
+
 			return true;
 		}
 	}
@@ -923,7 +1104,7 @@ bool MainInputListener::createWeldJoint( Vector2 anchorPoint, bool testOnly )
 		jd.Initialize(b1->getBox2DBody(), b2->getBox2DBody(), anchorPoint.tob2Vec2());
 		b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
 
-		_physicsMgr->createJoint(j);
+		_lastPhysicsJoint = _physicsMgr->createJoint(j);
 
 		return true;
 	}
@@ -980,14 +1161,195 @@ bool MainInputListener::createSpringJoint(bool testOnly)
 		jd.dampingRatio = 0.0f;
 		b2Joint* j = _physicsMgr->getPhysicsWorld()->CreateJoint(&jd);
 
-		_physicsMgr->createJoint(j);
+		_lastPhysicsJoint = _physicsMgr->createJoint(j);
 
 		return true;
 	}
 	return false;
 }
 
+void MainInputListener::enableGuessesList( bool enable )
+{
+	_guessesListEnabled = enable;
+}
 
+void MainInputListener::processGuessesListClick( Polygon *clickedPolygon )
+{
+	if(!_guessesListVisible)
+	{
+		return;
+	}
+
+	GuessesListGuesses selectedGuess = _guessesList->getGuessType(clickedPolygon);
+
+	switch(selectedGuess)
+	{
+	case GLG_RECTANGLE:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				if (_lastPhysicsBody->getType() == PBT_Rectangle)
+				{
+					break;
+				}
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createRectangle(false);
+			break;
+		}
+	case GLG_TRIANGLE:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				if (_lastPhysicsBody->getType() == PBT_Triangle)
+				{
+					break;
+				}
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createTriangle(false);
+			break;
+		}
+	case GLG_CIRCLE:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				if (_lastPhysicsBody->getType() == PBT_Circle)
+				{
+					break;
+				}
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createCircle(false);
+			break;
+		}
+	case GLG_FREEFORM:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				if (_lastPhysicsBody->getType() == PBT_Freeform)
+				{
+					break;
+				}
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createFreeform(false);
+			break;
+		}
+	case GLG_WELD:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				if(_lastPhysicsJoint->getType() == PJT_Weld)
+				{
+					break;
+				}
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createWeldJoint(_gesturePolygon->getAABB().getCenter(), false);
+			break;
+		}
+	case GLG_REVOLUTE:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				if(_lastPhysicsJoint->getType() == PJT_Revolute)
+				{
+					break;
+				}
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createRevoluteJoint(false);
+			break;
+		}
+	case GLG_ROPE:
+		{
+			// TODO
+			break;
+		}
+	case GLG_SPRING:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				if(_lastPhysicsJoint->getType() == PJT_Distance)
+				{
+					break;
+				}
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			createSpringJoint(false);
+			break;
+		}
+	case GLG_CANCEL:
+		{
+			if(_lastPhysicsJoint != nullptr)
+			{
+				_physicsMgr->destroyJoint(_lastPhysicsJoint);
+				_lastPhysicsJoint = nullptr;
+			}
+			else if(_lastPhysicsBody != nullptr)
+			{
+				_physicsMgr->destroyBody(_lastPhysicsBody);
+				_lastPhysicsBody = nullptr;
+			}
+			break;
+		}
+	}
+
+	hideGuessesList();
+}
+
+void MainInputListener::hideGuessesList()
+{
+	if(_guessesListVisible)
+	{				
+		_guessesList->hideGuessesList();
+		_guessesListVisible = false;
+		_physicsMgr->_simulationPaused_internal = false;
+	}
+}
 
 
 }

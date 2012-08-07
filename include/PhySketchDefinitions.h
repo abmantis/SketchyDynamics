@@ -95,6 +95,7 @@ namespace PhySketch
 	class PhysicsJoint;
 	class PhysicsManager;
 	class InputListener;
+	class GuessesList;
 	class Logger;
 	class MainInputListener;
 	class Material;
