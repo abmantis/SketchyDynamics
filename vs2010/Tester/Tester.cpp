@@ -48,7 +48,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	PhySketch::MainInputListener::getSingletonPtr()->enableGuessesList(true);
 
 	//PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
-	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/CLP_blackboardSmooth_.jpg");
+	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/fzm-notebook.texture-03.jpg");
 
 	PhySketch::Polygon* backPoly = new PhySketch::Polygon(PhySketch::VV_Static, "background");
 	backPoly->CreateSquareSubPolygon(PhySketch::DM_TRIANGLE_FAN);
@@ -96,7 +96,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 	_core.startLoop();
-
+	_renderer->removePolygon(backPoly);
 	delete backPoly; backPoly = nullptr;
 	delete _inputListener; _inputListener = 0;
 
