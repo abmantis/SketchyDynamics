@@ -47,6 +47,8 @@ namespace PhySketch
 		virtual bool isSelected() const;
 
 		virtual JointAnchorsSituation checkAnchorsSituation() const = 0;
+
+		virtual PhysicsJointType getType() const;
 		
 	protected:
 		virtual void select() = 0;

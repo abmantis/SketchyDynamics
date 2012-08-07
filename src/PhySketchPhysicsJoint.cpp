@@ -39,6 +39,11 @@ bool PhysicsJoint::isSelected() const
 	return _selected;
 }
 
+PhySketch::PhysicsJointType PhysicsJoint::getType() const
+{
+	return _pjt;
+}
+
 
 //////////////////////////////////////////////////////////////////////////
 // PhysicsJointRevolute class
