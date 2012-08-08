@@ -113,7 +113,7 @@ MainInputListener& MainInputListener::getSingleton(void)
 	return *ms_Singleton;
 }
 
-void MainInputListener::init()
+void MainInputListener::initInputListener()
 {
 	_renderer = Renderer::getSingletonPtr();
 	_physicsMgr = PhysicsManager::getSingletonPtr();
@@ -224,8 +224,11 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 							{
 								processGuessesListClick(callback._firstPolygon);
 							}
-						}
+						}						
+					}
 
+					if(_guessesListVisible)
+					{
 						hideGuessesList();
 					}
 					break;
@@ -604,7 +607,7 @@ void MainInputListener::stopDrawingGesture()
 
 	if(_guessesListEnabled)
 	{
-		_physicsMgr->_simulationPaused_internal = true;
+		_physicsMgr->_simulationPaused_physketch = true;
 		_guessesListVisible = true;
 		
 		//////////////////////////////////////////////////////////////////////////
@@ -1380,7 +1383,7 @@ void MainInputListener::hideGuessesList()
 	{				
 		_guessesList->hideGuessesList();
 		_guessesListVisible = false;
-		_physicsMgr->_simulationPaused_internal = false;
+		_physicsMgr->_simulationPaused_physketch = false;
 	}
 }
 

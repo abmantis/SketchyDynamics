@@ -4,7 +4,7 @@
 #include "PhySketchDefinitions.h"
 #include "PhySketchSingleton.h"
 #include "Box2D/Box2D.h"
-#include "PhySketchPhysicsJoint.h"
+#include "PhySketchVector2.h"
 
 
 namespace PhySketch
@@ -115,20 +115,28 @@ namespace PhySketch
 		virtual b2World* getPhysicsWorld() const;
 
 		// Access the DefaultBodyFillMat
-		Material* getDefaultBodyFillMat(void) 								{ return(_defaultBodyFillMat);				}
-		void setDefaultBodyFillMat(Material* defaultBodyFillMat)			{ _defaultBodyFillMat = defaultBodyFillMat;	}
+		virtual Material* getDefaultBodyFillMat(void) 								{ return(_defaultBodyFillMat);				}
+		virtual void setDefaultBodyFillMat(Material* defaultBodyFillMat)			{ _defaultBodyFillMat = defaultBodyFillMat;	}
 		// Access the DefaultBodyLineMat
-		Material* getDefaultBodyLineMat(void) 								{ return(_defaultBodyLineMat);				}
-		void setDefaultBodyLineMat(Material* defaultBodyLineMat)			{ _defaultBodyLineMat = defaultBodyLineMat;	}
+		virtual Material* getDefaultBodyLineMat(void) 								{ return(_defaultBodyLineMat);				}
+		virtual void setDefaultBodyLineMat(Material* defaultBodyLineMat)			{ _defaultBodyLineMat = defaultBodyLineMat;	}
 		// Access the DefaultBodySelectedMat
-		Material* getDefaultBodySelectedMat(void) 							{ return(_defaultBodySelectedMat);					}
-		void setDefaultBodySelectedMat(Material* defaultBodySelectedMat)	{ _defaultBodySelectedMat = defaultBodySelectedMat;	}
+		virtual Material* getDefaultBodySelectedMat(void) 							{ return(_defaultBodySelectedMat);					}
+		virtual void setDefaultBodySelectedMat(Material* defaultBodySelectedMat)	{ _defaultBodySelectedMat = defaultBodySelectedMat;	}
 		// Access the DefaultJointMat
-		Material* getDefaultJointMat(void) 									{ return(_defaultJointMat);				}
-		void setDefaultJointMat(Material* defaultJointMat)					{ _defaultJointMat = defaultJointMat;	}
+		virtual Material* getDefaultJointMat(void) 									{ return(_defaultJointMat);				}
+		virtual void setDefaultJointMat(Material* defaultJointMat)					{ _defaultJointMat = defaultJointMat;	}
 		// Access the DefaultJointSelectedMat
-		Material* getDefaultJointSelectedMat(void) const					{ return(_defaultJointSelectedMat);						}
-		void setDefaultJointSelectedMat(Material* defaultJointSelectedMat)	{ _defaultJointSelectedMat = defaultJointSelectedMat;	}
+		virtual Material* getDefaultJointSelectedMat(void) const					{ return(_defaultJointSelectedMat);						}
+		virtual void setDefaultJointSelectedMat(Material* defaultJointSelectedMat)	{ _defaultJointSelectedMat = defaultJointSelectedMat;	}
+
+		/// <summary> Adds an event listener. The listener will start receiving events </summary>
+		/// <param name="listener"> The PhysicsEventsListener. </param>
+		virtual void addEventListener(PhysicsEventsListener *listener);
+
+		/// <summary> Removes the event listener. The listener will stop receiving events</summary>
+		/// <param name="listener"> The PhysicsEventsListener. </param>
+		virtual void removeEventListener(PhysicsEventsListener *listener);
 		
 
 		static PhysicsManager* getSingletonPtr(void);
@@ -147,9 +155,19 @@ namespace PhySketch
 		/// <summary> b2ContactListener method. </summary>
 		virtual void BeginContact( b2Contact* contact );
 
-
+		/// <summary> Notify listeners that the simulation state changed. </summary>		
+		/// <param name="paused"> true if paused. </param>
+		virtual void invokeListenersSimulationStateChanged(bool paused);		
+		/// <summary> Notify listeners that the simulation state changed for internal reasons. </summary>		
+		/// <param name="paused"> true if paused. </param>
+		virtual void invokeListenersSimulationInternalStateChanged(bool paused);
+		/// <summary> Notify listeners body creation. </summary>
+		/// <param name="body"> The new body. </param>
+		virtual void invokeListenersBodyCreated(PhysicsBody *body);
+		/// <summary> Notify listeners joint creation. </summary>
+		/// <param name="body"> The new joint. </param>
+		virtual void invokeListenersJointCreated(PhysicsJoint *joint);
 		
-
 
 	protected:
 		PhysicsBodyList _physicsBodies;
@@ -163,14 +181,19 @@ namespace PhySketch
 		b2World *_physicsWorld;
 		Vector2 _worldSize;
 		b2Fixture* _worldBoundsSensor;
-		bool _simulationPaused;
-		bool _simulationPaused_internal;
+		bool _simulationPaused_user;			// Simulation paused by the user (calling pauseSimulation())
+		bool _simulationPaused_selectedObjects;	// Simulation paused because therer are objects selected
+		bool _simulationPaused_physketch;		// Simulation paused by PhySketch (excluding selected objects)
+		bool _simulationPaused_prev;
+		bool _simulationPaused_internal_prev;
 
 		Material* _defaultBodyFillMat;
 		Material* _defaultBodyLineMat;
 		Material* _defaultBodySelectedMat;
 		Material* _defaultJointMat;
 		Material* _defaultJointSelectedMat;
+
+		std::set<PhysicsEventsListener*> _eventListeners;
 		
 	};
 }

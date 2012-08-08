@@ -23,7 +23,7 @@ namespace PhySketch
 		InputListener() {};
 		virtual ~InputListener() {};
 
-		virtual void init() = 0;
+		virtual void initInputListener() = 0;
 
 		virtual void keyDown(Key key) = 0;
 		virtual void keyUp(Key key) = 0;
@@ -178,7 +178,7 @@ namespace PhySketch
 		MainInputListener();
 		virtual ~MainInputListener();
 
-		virtual void init();
+		virtual void initInputListener();
 
 		virtual void keyDown(Key key);
 		virtual void keyUp(Key key);

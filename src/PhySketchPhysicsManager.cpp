@@ -1,9 +1,12 @@
 
 #include "PhySketchPhysicsManager.h"
+#include "PhySketchPhysicsEventsListener.h"
 #include "PhySketchRenderer.h"
 #include "PhySketchPhysicsBody.h"
+#include "PhySketchPhysicsJoint.h"
 #include "PhySketchPolygon.h"
 #include "PhySketchMaterialManager.h"
+
 
 namespace PhySketch
 {
@@ -11,11 +14,14 @@ namespace PhySketch
 template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 
 PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
-	_physicsBodiesIDSeed		(0),
-	_physicsJointsIDSeed		(0),
-	_simulationPaused			(false),
-	_simulationPaused_internal	(false),
-	_worldSize					(worldsize)
+	_physicsBodiesIDSeed				(0),
+	_physicsJointsIDSeed				(0),
+	_simulationPaused_user					(false),
+	_simulationPaused_physketch			(false),
+	_simulationPaused_selectedObjects	(false),
+	_simulationPaused_prev				(false),
+	_simulationPaused_internal_prev		(false),
+	_worldSize							(worldsize)
 {
 	_renderer = Renderer::getSingletonPtr();
 
@@ -135,6 +141,8 @@ PhysicsBody* PhysicsManager::createBody( b2Body *b2d_body )
 
 	_renderer->addPolygon(b, b->_id);
 
+	invokeListenersBodyCreated(b);
+
 	return b;
 }
 
@@ -164,7 +172,7 @@ void PhysicsManager::destroyBody( PhysicsBody *b, bool destroyB2DBody /*= true*/
 
 	if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 	{
-		_simulationPaused_internal = false;
+		_simulationPaused_selectedObjects = false;
 	}
 }
 
@@ -211,7 +219,9 @@ PhysicsJoint* PhysicsManager::createJoint( b2Joint *b2d_joint )
 	}
 
 	 
-	_physicsJoints.push_back(j);	
+	_physicsJoints.push_back(j);
+	invokeListenersJointCreated(j);
+
 	return j;
 }
 
@@ -259,13 +269,15 @@ void PhysicsManager::destroyJoint( PhysicsJoint* joint, bool destroyB2DJoint /*=
 
 	if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 	{
-		_simulationPaused_internal = false;
+		_simulationPaused_selectedObjects = false;
 	}
 }
 
 void PhysicsManager::update( ulong advanceTime )
 {	
-	if(!_simulationPaused && !_simulationPaused_internal)
+	bool simPausedInternal = (_simulationPaused_selectedObjects || _simulationPaused_physketch);
+
+	if(!_simulationPaused_user && !simPausedInternal)
 	{
 		stepPhysics(advanceTime);
 	}
@@ -288,6 +300,18 @@ void PhysicsManager::update( ulong advanceTime )
 		{
 			(*it)->update(advanceTime);
 		}
+	}
+
+	if(_simulationPaused_user != _simulationPaused_prev)
+	{
+		_simulationPaused_prev = _simulationPaused_user;
+		invokeListenersSimulationStateChanged(_simulationPaused_user);
+	}
+	
+	if( simPausedInternal != _simulationPaused_internal_prev)
+	{
+		_simulationPaused_internal_prev = simPausedInternal;
+		invokeListenersSimulationInternalStateChanged(simPausedInternal);
 	}
 }
 
@@ -314,22 +338,22 @@ b2World* PhysicsManager::getPhysicsWorld() const
 
 void PhysicsManager::pauseSimulation()
 {
-	_simulationPaused = true;
+	_simulationPaused_user = true;
 }
 
 void PhysicsManager::playSimulation()
 {
-	_simulationPaused = false;
+	_simulationPaused_user = false;
 }
 
 void PhysicsManager::toggleSimulation()
 {
-	_simulationPaused = !_simulationPaused;
+	_simulationPaused_user = !_simulationPaused_user;
 }
 
 bool PhysicsManager::isSimulationPaused() const
 {
-	return _simulationPaused || _simulationPaused_internal;
+	return _simulationPaused_user || _simulationPaused_physketch || _simulationPaused_selectedObjects;
 }
 
 void PhysicsManager::selectBody( PhysicsBody *b )
@@ -349,7 +373,7 @@ void PhysicsManager::selectBody( PhysicsBody *b )
 		b->_body->SetAwake(false);
 		selectConnectedBodiesRecurse(b);
 
-		_simulationPaused_internal = true;
+		_simulationPaused_selectedObjects = true;
 	}
 }
 
@@ -372,7 +396,7 @@ void PhysicsManager::unselectBody( PhysicsBody *b )
 		
 		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 		{
-			_simulationPaused_internal = false;
+			_simulationPaused_selectedObjects = false;
 		}
 	}
 }
@@ -573,7 +597,7 @@ void PhysicsManager::selectJoint( PhysicsJoint *j )
 	{
 		j->select();
 		_selectedJoints.push_back(j);
-		_simulationPaused_internal = true;
+		_simulationPaused_selectedObjects = true;
 	}
 }
 
@@ -586,7 +610,7 @@ void PhysicsManager::unselectJoint( PhysicsJoint *j )
 				
 		if(_selectedBodies.size() == 0 && _selectedJoints.size() == 0)
 		{
-			_simulationPaused_internal = false;
+			_simulationPaused_selectedObjects = false;
 		}
 	}
 }
@@ -734,12 +758,51 @@ void PhysicsManager::destroySelectedJoints()
 	}
 }
 
+void PhysicsManager::addEventListener( PhysicsEventsListener *listener )
+{
+	_eventListeners.insert(listener);
+}
 
+void PhysicsManager::removeEventListener( PhysicsEventsListener *listener )
+{
+	_eventListeners.erase(listener);
+}
 
+void PhysicsManager::invokeListenersSimulationStateChanged( bool paused )
+{
+	for(std::set<PhysicsEventsListener*>::iterator iter = _eventListeners.begin(); 
+		iter != _eventListeners.end(); iter++)
+	{
+		(*iter)->simulationStateChanged(paused);
+	}
+}
 
+void PhysicsManager::invokeListenersSimulationInternalStateChanged( bool paused )
+{
+	for(std::set<PhysicsEventsListener*>::iterator iter = _eventListeners.begin(); 
+		iter != _eventListeners.end(); iter++)
+	{
+		(*iter)->simulationInternalStateChanged(paused);
+	}
+}
 
+void PhysicsManager::invokeListenersBodyCreated( PhysicsBody *body )
+{
+	for(std::set<PhysicsEventsListener*>::iterator iter = _eventListeners.begin(); 
+		iter != _eventListeners.end(); iter++)
+	{
+		(*iter)->bodyCreated(body);
+	}
+}
 
-
+void PhysicsManager::invokeListenersJointCreated( PhysicsJoint *joint )
+{
+	for(std::set<PhysicsEventsListener*>::iterator iter = _eventListeners.begin(); 
+		iter != _eventListeners.end(); iter++)
+	{
+		(*iter)->jointCreated(joint);
+	}
+}
 
 
 } // namespace PhySketch

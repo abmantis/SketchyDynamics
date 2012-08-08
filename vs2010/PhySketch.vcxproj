@@ -134,6 +134,7 @@
     <ClInclude Include="..\include\PhySketchMaterialManager.h" />
     <ClInclude Include="..\include\PhySketchMatrix3.h" />
     <ClInclude Include="..\include\PhySketchPhysicsBody.h" />
+    <ClInclude Include="..\include\PhySketchPhysicsEventsListener.h" />
     <ClInclude Include="..\include\PhySketchPhysicsJoint.h" />
     <ClInclude Include="..\include\PhySketchPhysicsManager.h" />
     <ClInclude Include="..\include\PhySketchPhysicsQueryCallback.h" />
