@@ -256,7 +256,7 @@ void MainInputListener::mouseUp( MouseButton button, Vector2 position )
 									_physicsMgr->selectBody(pb);	
 								}
 							}
-						}						
+						}
 							
 					}
 
@@ -420,53 +420,73 @@ void MainInputListener::mouseMoved( Vector2 position )
 			}		
 		case IS_SELECTING_BODIES:
 		{
-			if(position.distanceTo(_lastMousePositions.left) < 3)
 			{
-				// Make sure the mouse moved more than 3 pixels to remove jitter
-				break;
-			}
-
-			FirstObjectSceneQueryCallback callback(_lastMousePositions.leftScene);
-			_renderer->queryScene(_lastMousePositions.leftScene, &callback);
-			if(callback._firstPolygon != nullptr)
-			{
-				PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
-				if( pb != nullptr)
+				if(position.distanceTo(_lastMousePositions.left) < 3)
 				{
-					// When in the IS_SELECTING state and the left button 
-					// is pressed and the mouse is moved we need to check if it 
-					// was moved inside or outside a selected object and change
-					// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
-					if(pb->isSelected())
-					{	
-						showDestructionArea();
-						_interactionState = IS_MOVING_BODIES;					
+					// Make sure the mouse moved more than 3 pixels to remove jitter
+					break;
+				}
+
+				bool move = false;
+
+				FirstObjectSceneQueryCallback callback(_lastMousePositions.leftScene);
+				_renderer->queryScene(_lastMousePositions.leftScene, &callback);
+				if(callback._firstPolygon != nullptr)
+				{
+					PhysicsBody *pb = dynamic_cast<PhysicsBody*>(callback._firstPolygon);
+					if( pb != nullptr)
+					{
+						// When in the IS_SELECTING state and the left button 
+						// is pressed and the mouse is moved we need to check if it 
+						// was moved inside or outside a selected object and change
+						// to the IS_MOVING_BODIES or IS_TRANSFORMING_BODIES states accordingly				
+						if(pb->isSelected())
+						{	
+							move = true;
+						}						
 					}
-					else
-					{					
-						_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
-						Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
-
-						_initialDistFromSelectedBodiesCenter = Vector2::distance(_lastMousePositions.leftScene, aabbCenter);
-						_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
-						_currScale = 1.0f;
-
-						// Show AABB of the selected bodies and AABB center indicator
-						_selectedBodiesAABBPoly->setPosition(aabbCenter);
-						_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
-						_selectedBodiesAABBPoly->setAngle(0.0f);
-						_selectedBodiesAABBPoly->setVisible(true);
-					
-						_transformCenterIndicator->setPosition(aabbCenter);
-						_transformCenterIndicator->setVisible(true);
-
-						_transformLineIndicator->setPosition(aabbCenter);
-						_transformLineIndicator->setVisible(true);
-						_transformLineIndicator->setScale(Vector2(_initialDistFromSelectedBodiesCenter, 0.0f));
-						_transformLineIndicator->setAngle(Vector2::UNIT_X.angleTo(_lastMousePositions.leftScene - aabbCenter));
-
-						_interactionState = IS_TRANSFORMING_BODIES;
+					else 
+					{							
+						if( callback._firstPolygon->getUserType() == PHYSKETCH_POLYGON_UTYPE_PHYJOINT)
+						{
+							PhysicsJoint *pj = static_cast<PhysicsJoint*>(callback._firstPolygon->getUserData());
+							if(pj->isSelected())
+							{
+								move = true;
+							}
+						}
 					}
+				}
+
+				if(move)
+				{
+					showDestructionArea();
+					_interactionState = IS_MOVING_BODIES;
+				}
+				else
+				{					
+					_selectedBodiesAABB  = _physicsMgr->getSelectedBodiesAABB();
+					Vector2 aabbCenter = _selectedBodiesAABB.getCenter();
+
+					_initialDistFromSelectedBodiesCenter = Vector2::distance(_lastMousePositions.leftScene, aabbCenter);
+					_initialDistFromSelectedBodiesCenter = std::max(FLT_MIN, _initialDistFromSelectedBodiesCenter);	
+					_currScale = 1.0f;
+
+					// Show AABB of the selected bodies and AABB center indicator
+					_selectedBodiesAABBPoly->setPosition(aabbCenter);
+					_selectedBodiesAABBPoly->setScale(_selectedBodiesAABB.getSize());
+					_selectedBodiesAABBPoly->setAngle(0.0f);
+					_selectedBodiesAABBPoly->setVisible(true);
+
+					_transformCenterIndicator->setPosition(aabbCenter);
+					_transformCenterIndicator->setVisible(true);
+
+					_transformLineIndicator->setPosition(aabbCenter);
+					_transformLineIndicator->setVisible(true);
+					_transformLineIndicator->setScale(Vector2(_initialDistFromSelectedBodiesCenter, 0.0f));
+					_transformLineIndicator->setAngle(Vector2::UNIT_X.angleTo(_lastMousePositions.leftScene - aabbCenter));
+
+					_interactionState = IS_TRANSFORMING_BODIES;
 				}
 			}
 			break;
