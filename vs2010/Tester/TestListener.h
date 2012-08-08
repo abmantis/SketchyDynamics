@@ -45,11 +45,13 @@ public:
 	virtual void initInputListener() 
 	{
 		PhySketch::Vector2 pauseIndicatorPos(7.0f, 3.5f);
+		PhySketch::Vector2 pauseIndicatorScale(1.3f, 1.3f);
 		_simulationPausedIndicator = new PhySketch::Polygon(PhySketch::VV_Static, "Tester::simulationPausedIndicator");
 		_simulationPausedIndicator->CreateSquareSubPolygon(PhySketch::DM_TRIANGLE_FAN);
 		_simulationPausedIndicator->setMaterial(PhySketch::MaterialManager::getSingletonPtr()->createMaterial("pauseMat", "../../../textures/pause.png", false, false));
 		_simulationPausedIndicator->setVisible(false);
 		_simulationPausedIndicator->setPosition(pauseIndicatorPos);
+		_simulationPausedIndicator->setScale(pauseIndicatorScale);
 		PhySketch::Renderer::getSingletonPtr()->addPolygon(_simulationPausedIndicator, PhySketch::RQT_UI);
 
 		_simulationInternalPausedIndicator = new PhySketch::Polygon(PhySketch::VV_Static, "Tester::simulationInternalPausedIndicator");
@@ -57,6 +59,7 @@ public:
 		_simulationInternalPausedIndicator->setMaterial(PhySketch::MaterialManager::getSingletonPtr()->createMaterial("pauseInternalMat", "../../../textures/pause_internal.png", false, false));
 		_simulationInternalPausedIndicator->setVisible(false);
 		_simulationInternalPausedIndicator->setPosition(pauseIndicatorPos);
+		_simulationInternalPausedIndicator->setScale(pauseIndicatorScale);
 		PhySketch::Renderer::getSingletonPtr()->addPolygon(_simulationInternalPausedIndicator, PhySketch::RQT_UI);
 	}
 

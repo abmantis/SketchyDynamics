@@ -981,10 +981,11 @@ bool MainInputListener::createFreeform(bool testOnly)
 		return false;
 	}
 
-	if(gestVertices[0].distanceTo(gestVertices[gestVertices.size()-1]) > 0.5f)
-	{
-		return false;
-	}
+	// check first-last point distance
+// 	if(gestVertices[0].distanceTo(gestVertices[gestVertices.size()-1]) > 0.5f)
+// 	{
+// 		return false;
+// 	}
 				
 	DouglasPeuckerReduction(gestVertices, 0.07f, gestSimplifiedVertices);
 	if(gestSimplifiedVertices.size() < 3)
@@ -1005,7 +1006,7 @@ bool MainInputListener::createFreeform(bool testOnly)
 		// Re-disconnect first and last vertices
 		gestSimplifiedVertices.pop_back();
 
-		translateCentroidTo(gestSimplifiedVertices, Vector2(0.0f, 0.0f));
+		//translateCentroidTo(gestSimplifiedVertices, Vector2(0.0f, 0.0f));
 
 		// Copy Vector2 array to a p2t::Point array
 		std::vector<p2t::Point*> verts;
@@ -1035,7 +1036,7 @@ bool MainInputListener::createFreeform(bool testOnly)
 		Vector2 position = _gesturePolygon->getAABB().getCenter();
 		b2BodyDef bodyDef;
 		bodyDef.type = b2_dynamicBody;
-		bodyDef.position.Set(position.x, position.y);
+		//bodyDef.position.Set(position.x, position.y);
 		bodyDef.angle = 0;
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
