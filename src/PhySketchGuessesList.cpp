@@ -7,7 +7,7 @@ namespace PhySketch
 {
 	GuessesList::GuessesList()
 	{		
-		_basePosition = Vector2(-9.6f, 4.0f);
+		_basePosition = Vector2(-9.8f, 4.0f);
 
 		Renderer *renderer = Renderer::getSingletonPtr();
 		_mainMaterial = MaterialManager::getSingletonPtr()->createMaterial("PS_guesseslist", "../../../textures/GuessesList.png", false, false);
@@ -208,14 +208,14 @@ namespace PhySketch
 			(*guessVisibilityFlag_ptr) = true;
 			
 			float translationUnitsPerSec = 20.0f;
-			float scale = 1.0f;
+			float scale;
 			if(highlight)
 			{
-				scale = 1.3f;
+				scale = 1.8f;
 			}
 			else
 			{
-				scale = 1.0f;
+				scale = 1.2f;
 			}
 
 			guessPoly_ptr->setScale(Vector2(scale, scale));
