@@ -48,18 +48,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	PhySketch::MainInputListener::getSingletonPtr()->enableGuessesList(true);
 
-	//PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", PhySketch::Color(1.0f,1.0f,1.0f,1.0f));
-	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/fzm-notebook.texture-03.jpg");
-
+	// Create background polygon (the background body is bigger than the screen and would stretch the texture)
+	PhySketch::Material* backgroundMat = _matMgr->createMaterial("backgroundMat", "../../../textures/fzm-notebook.texture-03.jpg");	
 	PhySketch::Polygon* backPoly = new PhySketch::Polygon(PhySketch::VV_Static, "background");
 	backPoly->CreateSquareSubPolygon(PhySketch::DM_TRIANGLE_FAN);
 	backPoly->setScale(_renderer->getSceneViewAxisMax() - _renderer->getSceneViewAxisMin());
 	backPoly->setMaterial(backgroundMat);	
 	_renderer->addPolygon(backPoly, 0);
-	
-
+		
+	PhySketch::Material* transparentMat = _matMgr->createMaterial("transparentMat", PhySketch::Color(0.0f, 0.0f, 0.0f, 0.0f));
 	{
-		PhySketch::Material* transparentMat = _matMgr->createMaterial("transparentMat", PhySketch::Color(0.0f, 0.0f, 0.0f, 0.0f));
+		// Create transparent background body		
 		b2BodyDef backgroundbodyDef;
 		backgroundbodyDef.position.Set(0.0f, 0.0f);
 		PhySketch::PhysicsBody *backgroundPhyBody = _physicsMgr->createBody(backgroundbodyDef);
@@ -78,6 +77,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 		
 	{
+		PhySketch::Material* rullerMat = _matMgr->createMaterial("rullerMat", "../../../textures/ruler5.png");	
+		PhySketch::Material* rullerBorderMat = _matMgr->createMaterial("rullerBorderMat", PhySketch::Color(1.0f, 0.95f, 0.0f, 1.0f));	
+
+		// Create "ground" body
 		b2BodyDef bodyDef;
 		bodyDef.position.Set(0.0f, -4.0f);
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
@@ -85,14 +88,19 @@ int _tmain(int argc, _TCHAR* argv[])
 		b2PolygonShape groundBox;
 		groundBox.SetAsBox(7.0f, 0.3f);
 		body->CreateFixture(&groundBox, 0.0f);
-		PhySketch::PhysicsBody *phyBody = _physicsMgr->createBody(body);
-		_physicsMgr->setUnselectableBody(phyBody);
+		PhySketch::PhysicsBody *groundPhyBody = _physicsMgr->createBody(body);
+		groundPhyBody->setFillMaterial(rullerMat);
+		//groundPhyBody->setLineMaterial(rullerBorderMat);
+		groundPhyBody->setLineMaterial(transparentMat);
+		groundPhyBody->reconstructPolygon();
+		groundPhyBody->recomputeTexCoordsToFit();
+		_physicsMgr->setUnselectableBody(groundPhyBody);
 	}
 	
 	PhySketch::Material* polyFill = _matMgr->createMaterial("polyFill", "../../../textures/whiteSmoke.jpg");
 	polyFill->setColor(PhySketch::Color(0.7f, 0.7f, 0.8f, 0.6f));
 	_physicsMgr->setDefaultBodyFillMat(polyFill);
-	PhySketch::Material* polyLine = _matMgr->createMaterial("polyLine", "../../../textures/laser_w.png");
+	PhySketch::Material* polyLine = _matMgr->createMaterial("polyLine", "../../../textures/laser_blue.png");
 	_physicsMgr->setDefaultBodyLineMat(polyLine);
 	
 
