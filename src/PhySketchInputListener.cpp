@@ -869,8 +869,8 @@ bool MainInputListener::createTriangle(bool testOnly)
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &triShape;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
+		fixtureDef.friction = 0.6f;
+		fixtureDef.restitution = 0.3f;	
 		body->CreateFixture(&fixtureDef);
 
 		_lastPhysicsBody = _physicsMgr->createBody(body);
@@ -916,8 +916,8 @@ bool MainInputListener::createRectangle(bool testOnly)
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &dynamicBox;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
+		fixtureDef.friction = 0.6f;
+		fixtureDef.restitution = 0.3f;	
 		body->CreateFixture(&fixtureDef);
 
 		_lastPhysicsBody = _physicsMgr->createBody(body);
@@ -958,8 +958,8 @@ bool MainInputListener::createCircle(bool testOnly)
 		b2FixtureDef fixtureDef;
 		fixtureDef.shape = &circleShape;
 		fixtureDef.density = 1.0f;
-		fixtureDef.friction = 0.3f;
-		fixtureDef.restitution = 0.2f;	
+		fixtureDef.friction = 0.6f;
+		fixtureDef.restitution = 0.3f;	
 		body->CreateFixture(&fixtureDef);
 
 		_lastPhysicsBody = _physicsMgr->createBody(body);
@@ -1056,7 +1056,12 @@ bool MainInputListener::createFreeform(bool testOnly)
 			b2PolygonShape triShape;
 			triShape.Set(triVertices, 3);
 
-			body->CreateFixture(&triShape, 1.0f);
+			b2FixtureDef fixtureDef;
+			fixtureDef.shape = &triShape;
+			fixtureDef.density = 1.0f;
+			fixtureDef.friction = 0.6f;
+			fixtureDef.restitution = 0.3f;	
+			body->CreateFixture(&fixtureDef);
 		}
 		
 		_lastPhysicsBody = _physicsMgr->createBody(body);	
