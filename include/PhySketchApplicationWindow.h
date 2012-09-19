@@ -45,6 +45,7 @@ namespace PhySketch
 		virtual void addInputListener(InputListener * inputListener);
 		virtual void removeInputListener(InputListener * inputListener);
 
+		virtual void maximized(bool flag) = 0;
 
 		/// <summary> Turns VSync on/off. </summary>
 		/// <param name="on"> true to turn VSync on. </param>

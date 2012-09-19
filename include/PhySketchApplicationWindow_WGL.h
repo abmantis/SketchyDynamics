@@ -69,6 +69,8 @@ namespace PhySketch
 
 		virtual void drawGLScene(ulong timeSinceLastFrame);
 
+		virtual void maximized( bool flag );
+
 	protected:
 		HDC			_hDC;			// Private GDI Device Context
 		HGLRC		_hRC;			// Permanent Rendering Context

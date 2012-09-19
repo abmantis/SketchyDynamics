@@ -36,7 +36,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	PhySketch::Vector2 worldSize(100.0f,100.0f);
 
 	_core.initialise("Log.txt", true, PhySketch::Vector2(0, -10), worldSize);
-	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(1280, 720), false);
+	_window = _core.createWindow("test", PhySketch::Vector2::ZERO_XY, PhySketch::Vector2(854, 480), false);
+	_window->maximized(true);
 	_renderer = PhySketch::Renderer::getSingletonPtr();
 	_physicsMgr = PhySketch::PhysicsManager::getSingletonPtr();
 	_matMgr = PhySketch::MaterialManager::getSingletonPtr();
@@ -77,8 +78,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 		
 	{
-		PhySketch::Material* rullerMat = _matMgr->createMaterial("rullerMat", "../../../textures/ruler5.png");	
-		PhySketch::Material* rullerBorderMat = _matMgr->createMaterial("rullerBorderMat", PhySketch::Color(1.0f, 0.95f, 0.0f, 1.0f));	
+		PhySketch::Material* rullerMat = _matMgr->createMaterial("rullerMat", "../../../textures/ruler.png", false, false);	
+		//PhySketch::Material* rullerBorderMat = _matMgr->createMaterial("rullerBorderMat", PhySketch::Color(1.0f, 0.95f, 0.0f, 1.0f));	
 
 		// Create "ground" body
 		b2BodyDef bodyDef;
@@ -86,15 +87,25 @@ int _tmain(int argc, _TCHAR* argv[])
 		b2Body *body = _physicsMgr->getPhysicsWorld()->CreateBody(&bodyDef);
 
 		b2PolygonShape groundBox;
-		groundBox.SetAsBox(7.0f, 0.3f);
+		groundBox.SetAsBox(7.0f, 0.4f);
 		body->CreateFixture(&groundBox, 0.0f);
 		PhySketch::PhysicsBody *groundPhyBody = _physicsMgr->createBody(body);
-		groundPhyBody->setFillMaterial(rullerMat);
+		//groundPhyBody->setFillMaterial(rullerMat);
 		//groundPhyBody->setLineMaterial(rullerBorderMat);
+		groundPhyBody->setFillMaterial(transparentMat);
 		groundPhyBody->setLineMaterial(transparentMat);
 		groundPhyBody->reconstructPolygon();
 		groundPhyBody->recomputeTexCoordsToFit();
 		_physicsMgr->setUnselectableBody(groundPhyBody);
+
+
+		// Create ground polygon (the background body would not work good with the shadow)
+		PhySketch::Polygon* grndPoly = new PhySketch::Polygon(PhySketch::VV_Static, "groundPoly");
+		grndPoly->CreateSquareSubPolygon(PhySketch::DM_TRIANGLE_FAN);
+		grndPoly->setScale(PhySketch::Vector2(14.1f, 0.8f));
+		grndPoly->setPosition(PhySketch::Vector2(-0.05f, -4.0f));
+		grndPoly->setMaterial(rullerMat);	
+		_renderer->addPolygon(grndPoly, 0);
 	}
 	
 	PhySketch::Material* polyFill = _matMgr->createMaterial("polyFill", "../../../textures/whiteSmoke.jpg");

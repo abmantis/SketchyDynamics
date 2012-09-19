@@ -704,6 +704,14 @@ namespace PhySketch
 		return _hWnd;
 	}
 
+	void ApplicationWindow_WGL::maximized( bool flag )
+	{
+		if(flag)
+			ShowWindow(_hWnd, SW_MAXIMIZE);
+		else
+			ShowWindow(_hWnd, SW_RESTORE);
+	}
+
 
 
 } // namespace PhySketch
