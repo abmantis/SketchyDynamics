@@ -65,6 +65,7 @@ namespace PhySketch
 
 		bool _selected;
 		bool _selectable;
+		bool _validSituation;
 	};
 
 	class PhysicsJointRevolute : public PhysicsJoint

@@ -15,7 +15,8 @@ PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointType type, Material* mat
 	_selectedMaterial	(selectedMaterial),
 	_id					(id),
 	_selectable			(true),
-	_selected			(false)
+	_selected			(false),
+	_validSituation		(true)
 {
 	_joint->SetUserData(this);
 }

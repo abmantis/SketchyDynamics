@@ -644,7 +644,23 @@ void PhysicsManager::translateSelectedJoints( Vector2 translation )
 	PhysicsJointList::iterator itEnd = _selectedJoints.end();
 	for (PhysicsJointList::iterator it = _selectedJoints.begin(); it != itEnd; ++it)
 	{
-		(*it)->translate(translation);
+		PhysicsJoint* j = (*it);
+		j->translate(translation);
+		JointAnchorsSituation jas = j->checkAnchorsSituation();
+		if(j->_validSituation == true)
+		{
+			if(jas == JAS_MOVED_OUT)
+			{
+				std::cout << "OUT" << std::endl;
+				j->_validSituation = false;
+			}
+		}
+		else if(jas == JAS_MOVED)
+		{
+			std::cout << "IN" << std::endl;
+			j->_validSituation = true;
+		}
+
 	}
 }
 
