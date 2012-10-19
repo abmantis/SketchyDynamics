@@ -1,6 +1,6 @@
 #include "PhySketchInputListener.h"
 #include "PhySketchVector2.h"
-#include "PhySketchPolygon.h"
+#include "PhySketchAnimatedPolygon.h"
 #include "PhySketchRenderer.h"
 #include "PhySketchCore.h"
 #include "PhySketchPhysicsManager.h"

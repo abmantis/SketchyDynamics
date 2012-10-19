@@ -204,6 +204,9 @@
     <ClInclude Include="..\include\PhySketchPhysicsEventsListener.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\PhySketchAnimatedPolygon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -330,6 +333,9 @@
       <Filter>Dependencies\poly2tri\common</Filter>
     </ClCompile>
     <ClCompile Include="..\src\PhySketchGuessesList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\PhySketchAnimatedPolygon.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

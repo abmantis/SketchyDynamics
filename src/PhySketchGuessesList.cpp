@@ -1,5 +1,5 @@
 #include "PhySketchGuessesList.h"
-#include "PhySketchPolygon.h"
+#include "PhySketchAnimatedPolygon.h"
 #include "PhySketchMaterialManager.h"
 #include "PhySketchRenderer.h"
 
