@@ -3,7 +3,7 @@
 
 #include "PhySketchDefinitions.h"
 #include "PhySketchMaterial.h"
-#include "PhySketchPolygon.h"
+#include "PhySketchAnimatedPolygon.h"
 
 class b2Joint;
 class b2RevoluteJoint;
@@ -46,7 +46,7 @@ namespace PhySketch
 		virtual bool isSelectable() const;
 		virtual bool isSelected() const;
 
-		virtual JointAnchorsSituation checkAnchorsSituation() const = 0;
+		virtual JointAnchorsSituation checkAnchorsSituation(bool updateVisual) = 0;
 
 		virtual PhysicsJointType getType() const;
 		
@@ -81,7 +81,7 @@ namespace PhySketch
 
 		virtual void update(ulong timeSinceLastFrame);
 
-		virtual JointAnchorsSituation checkAnchorsSituation() const;
+		virtual JointAnchorsSituation checkAnchorsSituation(bool updateVisual);
 		
 		virtual void setPosition( const Vector2& position );
 		virtual void translate( const Vector2& amount );
@@ -92,7 +92,7 @@ namespace PhySketch
 		virtual void unselect();
 		
 	protected:
-		Polygon* _poly;
+		AnimatedPolygon* _poly;
 
 	};
 
@@ -109,7 +109,7 @@ namespace PhySketch
 
 		virtual void update(ulong timeSinceLastFrame);
 
-		virtual JointAnchorsSituation checkAnchorsSituation() const;
+		virtual JointAnchorsSituation checkAnchorsSituation(bool updateVisual);
 
 		virtual void setPosition( const Vector2& position );
 		virtual void translate( const Vector2& amount );
@@ -137,7 +137,7 @@ namespace PhySketch
 
 		virtual void update(ulong timeSinceLastFrame);
 
-		virtual JointAnchorsSituation checkAnchorsSituation() const;
+		virtual JointAnchorsSituation checkAnchorsSituation(bool updateVisual);
 
 		virtual void setPosition( const Vector2& position );
 		virtual void setPositions( const Vector2& anchorA, const Vector2& anchorB );

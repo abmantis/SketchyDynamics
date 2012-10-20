@@ -51,9 +51,9 @@ PhySketch::PhysicsJointType PhysicsJoint::getType() const
 PhysicsJointRevolute::PhysicsJointRevolute( b2RevoluteJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Revolute, material, selectedMaterial, id)
 {
-	_poly = new Polygon(VV_Static, "PS_Joint" + toString(ulong(id)));
+	_poly = new AnimatedPolygon(VV_Static, "PS_Joint" + toString(ulong(id)));
 	_poly->CreateCircleSubPolygon(DM_LINE_LOOP, Vector2::ZERO_XY, 0.10f, 80)->setMaterial(_material);
-	_poly->setPosition(_joint->GetAnchorA());
+	_poly->Polygon::setPosition(_joint->GetAnchorA());
 
 	_poly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
 	_poly->setUserData(this);
@@ -81,11 +81,12 @@ void PhysicsJointRevolute::update(ulong timeSinceLastFrame)
 		return;
 	}
 	
-	_poly->setPosition(Vector2(_joint->GetAnchorA()));
+	_poly->Polygon::setPosition(Vector2(_joint->GetAnchorA()));
 }
 
-PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() const
+PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation(bool updateVisual) 
 {
+	JointAnchorsSituation jas = JAS_NOT_MOVED;
 	Vector2 jointPos = _poly->getPosition();
 	// TODO: improve anchor check (sometimes A and B anchors can be different)
 	if(Vector2(_joint->GetAnchorA()) != jointPos || Vector2(_joint->GetAnchorB()) != jointPos)
@@ -96,28 +97,52 @@ PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation() c
 		if(bA->isPointInside(jointPos) && bB->isPointInside(jointPos))
 		{
 			// the joint was only moved INSIDE the bodies
-			return JAS_MOVED;
+			jas = JAS_MOVED;
 		}
 		else
 		{
 			// the joint is now outside one (or both) bodies
-			return JAS_MOVED_OUT;
+			jas = JAS_MOVED_OUT;
 		}
 	}
 
-	return JAS_NOT_MOVED;
+	if(updateVisual)
+	{
+		if(_validSituation == true)
+		{
+			if(jas == JAS_MOVED_OUT)
+			{
+				_poly->blink(500, 200);
+			}
+		}
+		else if(jas == JAS_MOVED)
+		{
+			_poly->stopBlink(true);
+		}
+	}
+
+	if(jas == JAS_MOVED_OUT)
+	{
+		_validSituation = false;
+	}
+	else
+	{
+		_validSituation = true;
+	}
+
+	return jas;
 }
 
 void PhysicsJointRevolute::setPosition( const Vector2& position )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
-	_poly->setPosition(position);
+	_poly->Polygon::setPosition(position);
 }
 
 void PhysicsJointRevolute::translate( const Vector2& amount )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot translate an unselected joint");
-	_poly->translate(amount);
+	_poly->Polygon::translate(amount);
 }
 
 void PhysicsJointRevolute::rotateAroundPoint( float angle, const Vector2& rotationPoint )
@@ -190,7 +215,7 @@ void PhysicsJointWeld::update(ulong timeSinceLastFrame)
 	_poly->setAngle(_joint->GetBodyA()->GetAngle());
 }
 
-PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation() const
+PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation(bool updateVisual)
 {
 	Vector2 jointPos = _poly->getPosition();
 	// TODO: improve anchor check (sometimes A and B anchors can be different)
@@ -345,7 +370,7 @@ void PhysicsJointDistance::update( ulong timeSinceLastFrame )
 	_circlePolyB->setPosition(anchorB);
 }
 
-PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation() const
+PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation(bool updateVisual)
 {
 	Vector2 anchorA = _circlePolyA->getPosition();
 	Vector2 anchorB = _circlePolyB->getPosition();

@@ -646,27 +646,13 @@ void PhysicsManager::translateSelectedJoints( Vector2 translation )
 	{
 		PhysicsJoint* j = (*it);
 		j->translate(translation);
-		JointAnchorsSituation jas = j->checkAnchorsSituation();
-		if(j->_validSituation == true)
-		{
-			if(jas == JAS_MOVED_OUT)
-			{
-				std::cout << "OUT" << std::endl;
-				j->_validSituation = false;
-			}
-		}
-		else if(jas == JAS_MOVED)
-		{
-			std::cout << "IN" << std::endl;
-			j->_validSituation = true;
-		}
-
+		JointAnchorsSituation jas = j->checkAnchorsSituation(true);		
 	}
 }
 
 bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
 {
-	JointAnchorsSituation jas = j->checkAnchorsSituation();
+	JointAnchorsSituation jas = j->checkAnchorsSituation(false);
 	switch(jas)
 	{
 	case JAS_MOVED:
