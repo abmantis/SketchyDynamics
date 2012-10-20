@@ -47,7 +47,20 @@ void AnimatedPolygon::update( ulong timeSinceLastFrame )
 
 	// blink
 	if(_blinkCurrStateMsToComplete > 0)
-	{		
+	{	
+		if(_blinkFading)
+		{
+			_alpha += _blinkCurrIncrePerMs;
+			if(_alpha < 0.0f)
+			{
+				_alpha = 0.0f;
+			}
+			else if(_alpha > _blinkOriginalAlpha)
+			{
+				_alpha = _blinkOriginalAlpha;
+			}
+		}
+
 		if(_blinkCurrStateMsToComplete > timeSinceLastFrame)
 		{
 			_blinkCurrStateMsToComplete -= timeSinceLastFrame;
@@ -55,38 +68,63 @@ void AnimatedPolygon::update( ulong timeSinceLastFrame )
 		else
 		{
 			// toggle visibility
-			if(_alpha == 0)
-			{
-				_alpha = 1.0f;
-				_blinkCurrStateMsToComplete = _blinkMsOn;
+			if(_blinkFading)
+			{				
+				if(_blinkFadingIn)
+				{
+					_blinkCurrStateMsToComplete = _blinkMsOn;
+					_alpha = _blinkOriginalAlpha;
+				}
+				else
+				{
+					_blinkCurrStateMsToComplete = _blinkMsOff;
+					_alpha = 0.0f;
+				}
 			}
 			else
 			{
-				_alpha = 0.0f;
-				_blinkCurrStateMsToComplete = _blinkMsOff;
+				if(_blinkFadingIn)
+				{
+					_blinkCurrStateMsToComplete = _blinkMsFadeOut;
+					_blinkCurrIncrePerMs		= _blinkFadeOutIncrePerMs;
+				}
+				else
+				{
+					_blinkCurrStateMsToComplete = _blinkMsFadeIn;
+					_blinkCurrIncrePerMs		= _blinkFadeInIncrePerMs;
+				}
+				_blinkFadingIn = !_blinkFadingIn;
 			}
+			_blinkFading = !_blinkFading;
 		}
 
 	}
 }
 
-void AnimatedPolygon::blink( ulong timeOn, ulong timeOff )
+void AnimatedPolygon::blink( ulong timeOn, ulong timeOff, ulong fadeInTime, ulong fadeOutTime )
 {
-	_blinkMsOn = timeOn;
-	_blinkMsOff = timeOff;
+	_blinkOriginalAlpha			= _alpha;
+	_blinkMsOn					= timeOn;
+	_blinkMsOff					= timeOff;
+	_blinkMsFadeIn				= fadeInTime;
+	_blinkMsFadeOut				= fadeOutTime;
+	_blinkFadeInIncrePerMs		= _blinkOriginalAlpha / fadeInTime;
+	_blinkFadeOutIncrePerMs		= (_blinkOriginalAlpha / fadeOutTime) * -1.0f;
 
-	_blinkOriginalAlpha = _alpha;
+	_blinkFading = true;
 
 	// toggle visibility
 	if(_alpha == 0)
 	{
-		_alpha = 1.0f;
-		_blinkCurrStateMsToComplete = _blinkMsOn;
+		_blinkCurrStateMsToComplete	= _blinkMsFadeIn;
+		_blinkCurrIncrePerMs		= _blinkFadeInIncrePerMs;
+		_blinkFadingIn				= true;
 	}
 	else
 	{
-		_alpha = 0.0f;
-		_blinkCurrStateMsToComplete = _blinkMsOff;
+		_blinkCurrStateMsToComplete	= _blinkMsFadeOut;
+		_blinkCurrIncrePerMs		= _blinkFadeOutIncrePerMs;
+		_blinkFadingIn				= false;
 	}
 }
 
