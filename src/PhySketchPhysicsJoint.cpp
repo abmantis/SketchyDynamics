@@ -112,7 +112,7 @@ PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation(boo
 		{
 			if(jas == JAS_MOVED_OUT)
 			{
-				_poly->blink(500, 200);
+				_poly->blink(500, 1, 250, 500);
 			}
 		}
 		else if(jas == JAS_MOVED)
@@ -173,7 +173,7 @@ Vector2 PhysicsJointRevolute::getPosition() const
 PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, Material* material, Material* selectedMaterial, ulong id ) :
 	PhysicsJoint(joint, PJT_Weld, material, selectedMaterial, id)
 {
-	_poly = new Polygon(VV_Static, "PS_Joint" + toString(ulong(id)));
+	_poly = new AnimatedPolygon(VV_Static, "PS_Joint" + toString(ulong(id)));
 	
 	SubPolygon *subpoly = _poly->createSubPolygon(DM_LINES);
 	subpoly->addVertex(Vector2(-0.10f,-0.10f));
@@ -181,7 +181,7 @@ PhysicsJointWeld::PhysicsJointWeld( b2WeldJoint *joint, Material* material, Mate
 	subpoly->addVertex(Vector2(-0.10f, 0.10f));
 	subpoly->addVertex(Vector2( 0.10f,-0.10f));
 	subpoly->setMaterial(_material);
-	_poly->setPosition(_joint->GetAnchorA());
+	_poly->Polygon::setPosition(_joint->GetAnchorA());
 	_poly->setAngle(_joint->GetBodyA()->GetAngle());		
 
 	_poly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
@@ -211,12 +211,13 @@ void PhysicsJointWeld::update(ulong timeSinceLastFrame)
 		return;
 	}
 
-	_poly->setPosition(Vector2(_joint->GetAnchorA()));
+	_poly->Polygon::setPosition(Vector2(_joint->GetAnchorA()));
 	_poly->setAngle(_joint->GetBodyA()->GetAngle());
 }
 
 PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation(bool updateVisual)
 {
+	JointAnchorsSituation jas = JAS_NOT_MOVED;
 	Vector2 jointPos = _poly->getPosition();
 	// TODO: improve anchor check (sometimes A and B anchors can be different)
 	if(Vector2(_joint->GetAnchorA()) != jointPos || Vector2(_joint->GetAnchorB()) != jointPos)
@@ -227,28 +228,52 @@ PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation(bool up
 		if(bA->isPointInside(jointPos) && bB->isPointInside(jointPos))
 		{
 			// the joint was only moved INSIDE the bodies
-			return JAS_MOVED;
+			jas = JAS_MOVED;
 		}
 		else
 		{
 			// the joint is now outside one (or both) bodies
-			return JAS_MOVED_OUT;
+			jas = JAS_MOVED_OUT;
 		}
 	}
 
-	return JAS_NOT_MOVED;
+	if(updateVisual)
+	{
+		if(_validSituation == true)
+		{
+			if(jas == JAS_MOVED_OUT)
+			{
+				_poly->blink(500, 1, 250, 500);
+			}
+		}
+		else if(jas == JAS_MOVED)
+		{
+			_poly->stopBlink(true);
+		}
+	}
+
+	if(jas == JAS_MOVED_OUT)
+	{
+		_validSituation = false;
+	}
+	else
+	{
+		_validSituation = true;
+	}
+
+	return jas;
 }
 
 void PhysicsJointWeld::setPosition( const Vector2& position )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot setPosition on an unselected joint");
-	_poly->setPosition(position);
+	_poly->Polygon::setPosition(position);
 }
 
 void PhysicsJointWeld::translate( const Vector2& amount )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot translate an unselected joint");
-	_poly->translate(amount);
+	_poly->Polygon::translate(amount);
 }
 
 void PhysicsJointWeld::rotateAroundPoint( float angle, const Vector2& rotationPoint )
@@ -285,7 +310,7 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 
 	std::string jointName = "PS_Joint" + toString(ulong(id));
 
-	_zigZagPoly = new Polygon(VV_Static, jointName + "zigzag");
+	_zigZagPoly = new AnimatedPolygon(VV_Static, jointName + "zigzag");
 
 	SubPolygon *subpoly = _zigZagPoly->createSubPolygon(DM_LINE_STRIP);
 
@@ -315,22 +340,22 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 	_material->setColor(Color(1.0f, 0,0, 0.5f));
 	_zigZagPoly->setMaterial(_material);
 		
-	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->Polygon::setPosition(anchorA);
 	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
 	_zigZagPoly->setScale(Vector2(distance, 1.0f));
 	_zigZagPoly->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
 	_zigZagPoly->setUserData(this);
 
 	// Create anchor point circles
-	_circlePolyA = new Polygon(VV_Static, jointName + "circleA");
-	_circlePolyB = new Polygon(VV_Static, jointName + "circleB");
+	_circlePolyA = new AnimatedPolygon(VV_Static, jointName + "circleA");
+	_circlePolyB = new AnimatedPolygon(VV_Static, jointName + "circleB");
 	_circlePolyA->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.045f, 20);
 	_circlePolyB->CreateCircleSubPolygon(DM_TRIANGLE_FAN, Vector2::ZERO_XY, 0.045f, 20);
 
 	_circlePolyA->setMaterial(_material);
 	_circlePolyB->setMaterial(_material);
-	_circlePolyA->setPosition(anchorA);
-	_circlePolyB->setPosition(anchorB);
+	_circlePolyA->Polygon::setPosition(anchorA);
+	_circlePolyB->Polygon::setPosition(anchorB);
 	_circlePolyA->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
 	_circlePolyA->setUserData(this);
 	_circlePolyB->setUserType(PHYSKETCH_POLYGON_UTYPE_PHYJOINT);
@@ -362,16 +387,17 @@ void PhysicsJointDistance::update( ulong timeSinceLastFrame )
 
 	Vector2 anchorA = _joint->GetAnchorA();
 	Vector2 anchorB = _joint->GetAnchorB();	
-	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->Polygon::setPosition(anchorA);
 	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
 	_zigZagPoly->setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
 
-	_circlePolyA->setPosition(anchorA);
-	_circlePolyB->setPosition(anchorB);
+	_circlePolyA->Polygon::setPosition(anchorA);
+	_circlePolyB->Polygon::setPosition(anchorB);
 }
 
 PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation(bool updateVisual)
 {
+	JointAnchorsSituation jas = JAS_NOT_MOVED;
 	Vector2 anchorA = _circlePolyA->getPosition();
 	Vector2 anchorB = _circlePolyB->getPosition();
 	if(Vector2(_joint->GetAnchorA()) != anchorA || Vector2(_joint->GetAnchorB()) != anchorB)
@@ -382,16 +408,44 @@ PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation(boo
 		if(bA->isPointInside(anchorA) && bB->isPointInside(anchorB))
 		{
 			// the joint was only moved INSIDE the bodies
-			return JAS_MOVED;
+			jas = JAS_MOVED;
 		}
 		else
 		{
 			// the joint is now outside one (or both) bodies
-			return JAS_MOVED_OUT;
+			jas = JAS_MOVED_OUT;
 		}
 	}
 
-	return JAS_NOT_MOVED;
+	if(updateVisual)
+	{
+		if(_validSituation == true)
+		{
+			if(jas == JAS_MOVED_OUT)
+			{
+				_zigZagPoly->blink(500, 1, 250, 500);
+				_circlePolyA->blink(500, 1, 250, 500);
+				_circlePolyB->blink(500, 1, 250, 500);
+			}
+		}
+		else if(jas == JAS_MOVED)
+		{
+			_zigZagPoly->stopBlink(true);
+			_circlePolyA->stopBlink(true);
+			_circlePolyB->stopBlink(true);
+		}
+	}
+
+	if(jas == JAS_MOVED_OUT)
+	{
+		_validSituation = false;
+	}
+	else
+	{
+		_validSituation = true;
+	}
+
+	return jas;
 }
 
 void PhysicsJointDistance::setPosition( const Vector2& position )
@@ -408,21 +462,21 @@ void PhysicsJointDistance::setPositions( const Vector2& anchorA, const Vector2& 
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot setPositions on an unselected joint");
 
-	_zigZagPoly->setPosition(anchorA);
+	_zigZagPoly->Polygon::setPosition(anchorA);
 	_zigZagPoly->setAngle(Vector2::lineAngle(anchorA, anchorB));
 	_zigZagPoly->setScale(Vector2(anchorA.distanceTo(anchorB), 1.0f));
 
-	_circlePolyA->setPosition(anchorA);
-	_circlePolyB->setPosition(anchorB);
+	_circlePolyA->Polygon::setPosition(anchorA);
+	_circlePolyB->Polygon::setPosition(anchorB);
 }
 
 
 void PhysicsJointDistance::translate( const Vector2& amount )
 {
 	PHYSKETCH_ASSERT(_selected && "Cannot translate an unselected joint");
-	_zigZagPoly->translate(amount);
-	_circlePolyA->translate(amount);
-	_circlePolyB->translate(amount);
+	_zigZagPoly->Polygon::translate(amount);
+	_circlePolyA->Polygon::translate(amount);
+	_circlePolyB->Polygon::translate(amount);
 }
 
 void PhysicsJointDistance::rotateAroundPoint( float angle, const Vector2& rotationPoint )

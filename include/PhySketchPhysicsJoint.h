@@ -120,7 +120,7 @@ namespace PhySketch
 		virtual void unselect();
 		
 	protected:
-		Polygon* _poly;
+		AnimatedPolygon* _poly;
 
 	};
 
@@ -150,9 +150,9 @@ namespace PhySketch
 		virtual void unselect();
 
 	protected:
-		Polygon* _zigZagPoly;
-		Polygon* _circlePolyA;
-		Polygon* _circlePolyB;
+		AnimatedPolygon* _zigZagPoly;
+		AnimatedPolygon* _circlePolyA;
+		AnimatedPolygon* _circlePolyB;
 
 	};
 }
