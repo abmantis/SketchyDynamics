@@ -288,6 +288,7 @@ namespace PhySketch
 		AABB _aabb;
 
 		bool _visible;
+		float _alpha;
 
 		void* _userData;
 		ulong _userType;			

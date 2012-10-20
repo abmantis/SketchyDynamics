@@ -325,14 +325,6 @@ namespace PhySketch
 	
 	void Renderer::renderPolygons(ulong timeSinceLastFrame)
 	{
-// 		// change the view to scene coordinates
-// 		glMatrixMode(GL_PROJECTION);						
-// 		glLoadIdentity();									
-// 		gluOrtho2D(_sceneViewMin.x, _sceneViewMax.x, 
-// 			_sceneViewMin.y, _sceneViewMax.y);
-// 		glMatrixMode(GL_MODELVIEW);	
-// 		glLoadIdentity();
-
 		RenderQueue::iterator it, it_end;
 		Polygon* poly = nullptr;
 
@@ -429,7 +421,7 @@ namespace PhySketch
 	
 
 			glUniform4f(_shaderVars.uniforms.color, color.r, color.g, color.b, 
-				color.a);
+				color.a*poly->_alpha);
 
 			if(texID > 0)
 			{

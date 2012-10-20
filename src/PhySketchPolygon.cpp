@@ -217,7 +217,8 @@ Polygon::Polygon(VertexVariance vv /*= VV_Static*/, std::string name /*= ""*/, C
 	_inRenderingQueue	(false),
 	_userData			(NULL),
 	_userType			(PHYSKETCH_POLYGON_UTYPE_NONE),
-	_visible			(true)
+	_visible			(true),
+	_alpha				(1.0f)
 {
 }
 
