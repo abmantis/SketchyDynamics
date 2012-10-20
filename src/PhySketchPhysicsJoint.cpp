@@ -337,7 +337,6 @@ PhysicsJointDistance::PhysicsJointDistance( b2DistanceJoint *joint, Material* ma
 
 	_zigZagPoly->CreateSquareSubPolygon(DM_TRIANGLE_FAN, Vector2(0.5f, 0.2f), Vector2(0.5f, 0.0f))->setVisible(false);
 		
-	_material->setColor(Color(1.0f, 0,0, 0.5f));
 	_zigZagPoly->setMaterial(_material);
 		
 	_zigZagPoly->Polygon::setPosition(anchorA);

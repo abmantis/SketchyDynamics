@@ -16,7 +16,7 @@ template<> PhysicsManager* Singleton<PhysicsManager>::ms_Singleton = 0;
 PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	_physicsBodiesIDSeed				(0),
 	_physicsJointsIDSeed				(0),
-	_simulationPaused_user					(false),
+	_simulationPaused_user				(false),
 	_simulationPaused_physketch			(false),
 	_simulationPaused_selectedObjects	(false),
 	_simulationPaused_prev				(false),
@@ -30,9 +30,9 @@ PhysicsManager::PhysicsManager(Vector2 gravity, Vector2 worldsize) :
 	MaterialManager* matMgr = MaterialManager::getSingletonPtr();	
 	_defaultBodyFillMat		= matMgr->createMaterial("PS_defaultBodyFillMat",		Color(0.7f, 0.7f, 0.8f, 1.0f));
 	_defaultBodyLineMat		= matMgr->createMaterial("PS_defaultBodyLineMat",		Color(0.3f, 0.3f, 1.0f, 1.0f));
-	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(1.0f, 0.5f, 0.5f, 1.0f));
-	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.3f, 0.3f, 1.0f));
-	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.7f, 0.7f, 1.0f));
+	_defaultBodySelectedMat	= matMgr->createMaterial("PS_defaultBodySelectedMat",	Color(0.2f, 1.0f, 1.0f, 1.0f));
+	_defaultJointMat		= matMgr->createMaterial("PS_defaultJointMat",			Color(1.0f, 0.0f, 0.0f, 0.8f));
+	_defaultJointSelectedMat= matMgr->createMaterial("PS_defaultJointSelectedMat",	Color(1.0f, 0.0f, 1.0f, 1.0f));
 
 	//////////////////////////////////////////////////////////////////////////
 	// Init physics world 
