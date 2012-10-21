@@ -112,7 +112,7 @@ PhySketch::JointAnchorsSituation PhysicsJointRevolute::checkAnchorsSituation(boo
 		{
 			if(jas == JAS_MOVED_OUT)
 			{
-				_poly->blink(500, 1, 250, 500);
+				_poly->blink(400, 1, 150, 300);
 			}
 		}
 		else if(jas == JAS_MOVED)
@@ -243,7 +243,7 @@ PhySketch::JointAnchorsSituation PhysicsJointWeld::checkAnchorsSituation(bool up
 		{
 			if(jas == JAS_MOVED_OUT)
 			{
-				_poly->blink(500, 1, 250, 500);
+				_poly->blink(400, 1, 150, 300);
 			}
 		}
 		else if(jas == JAS_MOVED)
@@ -422,9 +422,9 @@ PhySketch::JointAnchorsSituation PhysicsJointDistance::checkAnchorsSituation(boo
 		{
 			if(jas == JAS_MOVED_OUT)
 			{
-				_zigZagPoly->blink(500, 1, 250, 500);
-				_circlePolyA->blink(500, 1, 250, 500);
-				_circlePolyB->blink(500, 1, 250, 500);
+				_zigZagPoly->blink(400, 1, 150, 300);
+				_circlePolyA->blink(400, 1, 150, 300);
+				_circlePolyB->blink(400, 1, 150, 300);
 			}
 		}
 		else if(jas == JAS_MOVED)
