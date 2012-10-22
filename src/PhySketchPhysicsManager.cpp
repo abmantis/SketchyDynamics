@@ -6,6 +6,8 @@
 #include "PhySketchPhysicsJoint.h"
 #include "PhySketchPolygon.h"
 #include "PhySketchMaterialManager.h"
+#include "..\dependecies\xmlParser\xmlParser.h"
+#include "PhySketchUtils.h"
 
 
 namespace PhySketch
@@ -700,6 +702,7 @@ bool PhysicsManager::validateJointAnchors( PhysicsJoint *j )
 					jd.collideConnected	= distj->GetCollideConnected();
 					jd.dampingRatio		= distj->GetDampingRatio();
 					jd.frequencyHz		= distj->GetFrequency();
+					//TODO: save the length (needs confirmation and test)
 					newb2djoint			= _physicsWorld->CreateJoint(&jd);
 					break;
 				}
@@ -804,6 +807,379 @@ void PhysicsManager::invokeListenersJointCreated( PhysicsJoint *joint )
 	{
 		(*iter)->jointCreated(joint);
 	}
+}
+
+void PhysicsManager::saveToDisk( std::string file ) const
+{
+	std::string xmlEncoding = "ISO-8859-1";
+	XMLNode xMainNode = XMLNode::createXMLTopNode("xml", TRUE);
+	xMainNode.addAttribute("version", "1.0");
+	xMainNode.addAttribute("encoding", xmlEncoding.c_str());
+	
+	saveBodies(xMainNode);
+	saveJoints(xMainNode);
+	xMainNode.writeToFile(file.c_str(), xmlEncoding.c_str());
+}
+
+
+void PhysicsManager::saveBodies( XMLNode& parentNode ) const
+{
+	XMLNode xPhysicsBodiesNode = parentNode.addChild("PhysicsBodies");
+
+	PhysicsBodyList::const_iterator bodiesItEnd = _physicsBodies.end();
+	PhysicsBodyList::const_iterator bodyIt = _physicsBodies.begin(); 
+	PhysicsBody *pb = nullptr;
+	b2Body *b2dBody = nullptr;
+	while(bodyIt != bodiesItEnd)
+	{
+		pb = *bodyIt;
+		b2dBody = pb->_body;
+		++bodyIt;
+
+		if(pb->_saveToDisk == false)
+		{
+			continue;
+		}
+
+		XMLNode xBodyNode = xPhysicsBodiesNode.addChild("Body");
+		xBodyNode.addAttribute("ID", toString(pb->_id).c_str());
+		xBodyNode.addAttribute("Type", toString((long)pb->_type).c_str());
+		xBodyNode.addAttribute("Selectable", toString(pb->_selectable).c_str());
+		xBodyNode.addAttribute("B2DType", toString((long)b2dBody->GetType()).c_str());
+		xBodyNode.addAttribute("B2DPositionX", toString(b2dBody->GetPosition().x).c_str());
+		xBodyNode.addAttribute("B2DPositionY", toString(b2dBody->GetPosition().y).c_str());
+		xBodyNode.addAttribute("B2DAngle", toString(b2dBody->GetAngle()).c_str());
+		
+		b2Fixture* node_fixture = b2dBody->GetFixtureList();
+		b2Fixture* fixture;
+		while(node_fixture) 
+		{
+			fixture = node_fixture;
+			node_fixture = node_fixture->GetNext();
+
+			XMLNode xB2DFixtureNode = xBodyNode.addChild("B2DFixture");
+			xB2DFixtureNode.addAttribute("Type", toString((long)fixture->GetType()).c_str());
+			xB2DFixtureNode.addAttribute("Density", toString(fixture->GetDensity()).c_str());
+			xB2DFixtureNode.addAttribute("Friction", toString(fixture->GetFriction()).c_str());
+			xB2DFixtureNode.addAttribute("Restitution", toString(fixture->GetRestitution()).c_str());
+			xB2DFixtureNode.addAttribute("IsSensor", toString(fixture->IsSensor()).c_str());
+			//xB2DFixtureNode.addAttribute("FilterData", toString(fixture->GetFilterData()).c_str()); TODO: Save this params
+						
+
+			switch (fixture->GetType())
+			{
+			case b2Shape::e_circle:
+				{
+					b2CircleShape* circle = (b2CircleShape*)fixture->GetShape();
+					xB2DFixtureNode.addAttribute("PositionX", toString(circle->m_p.x).c_str());
+					xB2DFixtureNode.addAttribute("PositionY", toString(circle->m_p.y).c_str());
+					xB2DFixtureNode.addAttribute("Radius", toString(circle->m_radius).c_str());
+				}
+				break;
+
+			case b2Shape::e_polygon:
+				{
+					b2PolygonShape* box2dpoly = (b2PolygonShape*)fixture->GetShape();
+					xB2DFixtureNode.addAttribute("PositionX", toString(box2dpoly->m_centroid.x).c_str());
+					xB2DFixtureNode.addAttribute("PositionY", toString(box2dpoly->m_centroid.y).c_str());
+					xB2DFixtureNode.addAttribute("VertexCount", toString((long)box2dpoly->m_count).c_str());
+
+					int32 vertexCount = box2dpoly->m_count;
+					for (int32 i = 0; i < vertexCount; ++i)
+					{
+						b2Vec2 pos = box2dpoly->m_vertices[i];
+						XMLNode xPointNode = xB2DFixtureNode.addChild("Point");
+						xPointNode.addAttribute("X", toString(pos.x).c_str());
+						xPointNode.addAttribute("Y", toString(pos.y).c_str());
+					}
+				}
+				break;
+			default:
+				throw std::exception("Saving of this body shape type not implemented.");
+				break;
+			}		
+		}
+	}
+}
+
+void PhysicsManager::saveJoints( XMLNode& parentNode ) const
+{
+	XMLNode xPhysicsJointsNode = parentNode.addChild("PhysicsJoints");
+
+	PhysicsJointList::const_iterator jointsItEnd = _physicsJoints.end();
+	PhysicsJointList::const_iterator jointIt = _physicsJoints.begin();
+	PhysicsJoint *pj = nullptr;
+	b2Joint *b2dJoint = nullptr;
+	while(jointIt != jointsItEnd)
+	{
+		pj = *jointIt;
+		b2dJoint = pj->_joint;
+		++jointIt;
+
+		if(pj->_saveToDisk == false)
+		{
+			continue;
+		}
+
+		ulong bodyA_id = (static_cast<PhysicsBody*>(b2dJoint->GetBodyA()->GetUserData()))->_id;
+		ulong bodyB_id = (static_cast<PhysicsBody*>(b2dJoint->GetBodyB()->GetUserData()))->_id;
+
+		b2JointType b2dtype = b2dJoint->GetType();
+
+		XMLNode xJointNode = xPhysicsJointsNode.addChild("Joint");
+		xJointNode.addAttribute("ID", toString(pj->_id).c_str());
+		xJointNode.addAttribute("Type", toString((long)pj->_pjt).c_str());
+		xJointNode.addAttribute("Selectable", toString(pj->_selectable).c_str());
+		xJointNode.addAttribute("B2DType", toString((long)b2dtype).c_str());
+		
+		XMLNode xBodyANode = xJointNode.addChild("BodyA");
+		xBodyANode.addAttribute("ID", toString(bodyA_id).c_str());
+		xBodyANode.addAttribute("AnchorX", toString(b2dJoint->GetAnchorA().x).c_str());
+		xBodyANode.addAttribute("AnchorY", toString(b2dJoint->GetAnchorA().y).c_str());
+
+		XMLNode xBodyBNode = xJointNode.addChild("BodyB");
+		xBodyBNode.addAttribute("ID", toString(bodyB_id).c_str());
+		xBodyBNode.addAttribute("AnchorX", toString(b2dJoint->GetAnchorB().x).c_str());
+		xBodyBNode.addAttribute("AnchorY", toString(b2dJoint->GetAnchorB().y).c_str());
+
+		switch (b2dtype)
+		{
+		case e_revoluteJoint:
+			{
+				//TODO: save more properties
+			}
+			break;
+		case e_weldJoint:
+			{
+				//TODO: save more properties
+			}
+			break;
+		case e_distanceJoint:
+			{
+				b2DistanceJoint* b2ddistj = static_cast<b2DistanceJoint*>(b2dJoint);
+				xJointNode.addChild("CollideConnected").addText(toString(b2ddistj->GetCollideConnected()).c_str());
+				xJointNode.addChild("DampingRatio").addText(toString(b2ddistj->GetDampingRatio()).c_str());
+				xJointNode.addChild("Frequency").addText(toString(b2ddistj->GetFrequency()).c_str());
+				xJointNode.addChild("Length").addText(toString(b2ddistj->GetLength()).c_str());
+			}
+			break;
+		}
+
+	}
+
+}
+
+
+bool PhysicsManager::loadFromDisk( std::string file )
+{
+	// Get PhysicsBodies node
+	std::map<ulong, ulong> bodiesIDMapping;
+	XMLNode xMainNode = XMLNode::openFileHelper(file.c_str(), "xml");
+	loadBodies(xMainNode, bodiesIDMapping);
+	loadJoints(xMainNode, bodiesIDMapping);
+
+	return false;
+}
+
+void PhysicsManager::loadBodies( XMLNode parentNode, std::map<ulong, ulong>& bodiesIDMapping )
+{
+	XMLNode xPhysicsBodiesNode = parentNode.getChildNode("PhysicsBodies");
+	int physicsBodyCount = xPhysicsBodiesNode.nChildNode("Body");
+
+	// Get each body
+	int physicsBodyIter = 0;
+	for (int i = 0; i < physicsBodyCount; ++i)
+	{
+		XMLNode xBodyNode = xPhysicsBodiesNode.getChildNode("Body", &physicsBodyIter);
+		std::string sID				= xBodyNode.getAttribute("ID");
+		std::string sType			= xBodyNode.getAttribute("Type");
+		std::string sSelectable		= xBodyNode.getAttribute("Selectable");
+		std::string sB2DType		= xBodyNode.getAttribute("B2DType");
+		std::string sB2DPositionX	= xBodyNode.getAttribute("B2DPositionX");
+		std::string sB2DPositionY	= xBodyNode.getAttribute("B2DPositionY");
+		std::string sB2DAngle		= xBodyNode.getAttribute("B2DAngle");
+
+		// Create body
+		b2BodyDef bodyDef;
+		bodyDef.type	= (b2BodyType)stringToLong(sB2DType);
+		bodyDef.angle	= stringToFloat(sB2DAngle);
+		bodyDef.position.Set(stringToFloat(sB2DPositionX), stringToFloat(sB2DPositionY));
+		b2Body *body = _physicsWorld->CreateBody(&bodyDef);
+
+		int fixtureCount = xBodyNode.nChildNode("B2DFixture");
+		int fixtureIter = 0;
+		for (int j = 0; j < fixtureCount; ++j)
+		{
+			XMLNode xB2DFixtureNode = xBodyNode.getChildNode("B2DFixture", &fixtureIter);
+			std::string sFixtureType		= xB2DFixtureNode.getAttribute("Type");
+			std::string sFixtureDensity		= xB2DFixtureNode.getAttribute("Density");
+			std::string sFixtureFriction	= xB2DFixtureNode.getAttribute("Friction");
+			std::string sFixtureRestitution	= xB2DFixtureNode.getAttribute("Restitution");
+			std::string sFixtureIsSensor	= xB2DFixtureNode.getAttribute("IsSensor");
+			std::string sFixturePositionX	= xB2DFixtureNode.getAttribute("PositionX");
+			std::string sFixturePositionY	= xB2DFixtureNode.getAttribute("PositionY");
+
+			// Create fixture def
+			b2FixtureDef fixtureDef;
+			fixtureDef.density		= stringToFloat(sFixtureDensity);
+			fixtureDef.friction		= stringToFloat(sFixtureFriction);
+			fixtureDef.restitution	= stringToFloat(sFixtureRestitution);
+			fixtureDef.isSensor		= (stringToLong(sFixtureIsSensor))? true : false;
+
+			switch(stringToLong(sFixtureType))
+			{
+			case b2Shape::e_circle:
+				{
+					b2CircleShape circleShape;
+					circleShape.m_p.Set(stringToFloat(sFixturePositionX), stringToFloat(sFixturePositionY));
+					circleShape.m_radius = stringToFloat(xB2DFixtureNode.getAttribute("Radius"));
+					fixtureDef.shape = &circleShape;
+					body->CreateFixture(&fixtureDef);
+				}
+				break;
+			case b2Shape::e_polygon:
+				{
+					int32 vertexCount = stringToLong(xB2DFixtureNode.getAttribute("VertexCount"));
+
+					b2Vec2 *vertices = new b2Vec2[vertexCount];
+
+					// Get each point
+					int pointIter = 0;
+					for (int k = 0; k < vertexCount; ++k)
+					{
+						XMLNode xPointNode = xB2DFixtureNode.getChildNode("Point", &pointIter);
+						vertices[k].x = stringToFloat(xPointNode.getAttribute("X"));
+						vertices[k].y = stringToFloat(xPointNode.getAttribute("Y"));
+					}
+
+					b2PolygonShape polyShape;
+					polyShape.Set(vertices, vertexCount);
+					fixtureDef.shape = &polyShape;
+					delete[] vertices;
+					body->CreateFixture(&fixtureDef);
+				}
+				break;
+			default:
+				throw std::exception("Loading of this body shape type not implemented.");
+				break;
+			}		
+		}
+		PhysicsBody* newBody = createBody(body);
+		newBody->setType((PhysicsBodyType)stringToLong(sType));
+		bodiesIDMapping[stringToULong(sID)] = newBody->_id;
+	}
+}
+
+void PhysicsManager::loadJoints( XMLNode parentNode, std::map<ulong, ulong> bodiesIDMapping )
+{
+	XMLNode xPhysicsJointsNode = parentNode.getChildNode("PhysicsJoints");
+	int physicsJointCount = xPhysicsJointsNode.nChildNode("Joint");
+
+	// Get each joint
+	int physicsJointIter = 0;
+	for (int i = 0; i < physicsJointCount; ++i)
+	{
+		XMLNode xJointNode = xPhysicsJointsNode.getChildNode("Joint", &physicsJointIter);
+		std::string sID			= xJointNode.getAttribute("ID");
+		std::string sType		= xJointNode.getAttribute("Type");
+		std::string sSelectable	= xJointNode.getAttribute("Selectable");
+		std::string sB2DType	= xJointNode.getAttribute("B2DType");
+
+		XMLNode xBodyANode = xJointNode.getChildNode("BodyA");
+		std::string sBodyA_ID		= xBodyANode.getAttribute("ID");
+		std::string sBodyA_AnchorX	= xBodyANode.getAttribute("AnchorX");
+		std::string sBodyA_AnchorY	= xBodyANode.getAttribute("AnchorY");
+
+		XMLNode xBodyBNode = xJointNode.getChildNode("BodyB");
+		std::string sBodyB_ID		= xBodyBNode.getAttribute("ID");
+		std::string sBodyB_AnchorX	= xBodyBNode.getAttribute("AnchorX");
+		std::string sBodyB_AnchorY	= xBodyBNode.getAttribute("AnchorY");
+
+
+		b2Vec2 bodyA_Anchor(stringToFloat(sBodyA_AnchorX), stringToFloat(sBodyA_AnchorY));
+		b2Vec2 bodyB_Anchor(stringToFloat(sBodyB_AnchorX), stringToFloat(sBodyB_AnchorY));
+
+		ulong bodyANewID, bodyBNewID;
+		if ( bodiesIDMapping.find(stringToULong(sBodyA_ID)) == bodiesIDMapping.end() ) {
+			// body ID mapping not found, use the ID directly
+			bodyANewID = stringToULong(sBodyA_ID);
+		}
+		else {
+			// body ID mapping found
+			bodyANewID = bodiesIDMapping[stringToULong(sBodyA_ID)];
+		}
+
+		if ( bodiesIDMapping.find(stringToULong(sBodyB_ID)) == bodiesIDMapping.end() ) {
+			// body ID mapping not found, use the ID directly
+			bodyBNewID = stringToULong(sBodyB_ID);
+		}
+		else {
+			// body ID mapping found
+			bodyBNewID = bodiesIDMapping[stringToULong(sBodyB_ID)];
+		}
+
+		b2Body* b2dbA = getBodyByID(bodyANewID)->_body;
+		b2Body* b2dbB = getBodyByID(bodyBNewID)->_body;
+
+		switch (stringToLong(sB2DType))
+		{
+		case e_revoluteJoint:
+			{
+				//TODO: load  more properties
+				b2RevoluteJointDef jd;
+				jd.Initialize(b2dbA, b2dbB, bodyA_Anchor);
+				b2Joint* j = _physicsWorld->CreateJoint(&jd);
+				createJoint(j);
+			}
+			break;
+		case e_weldJoint:
+			{
+				//TODO: load more properties
+				b2WeldJointDef jd;
+				jd.Initialize(b2dbA, b2dbB, bodyA_Anchor);
+				b2Joint* j = _physicsWorld->CreateJoint(&jd);
+				createJoint(j);
+			}
+			break;
+		case e_distanceJoint:
+			{				
+				std::string sCollideConnected	= xJointNode.getChildNode("CollideConnected").getText();
+				std::string sDampingRatio		= xJointNode.getChildNode("DampingRatio").getText();
+				std::string sFrequency			= xJointNode.getChildNode("Frequency").getText();
+				std::string sLength				= xJointNode.getChildNode("Length").getText();
+
+				b2DistanceJointDef jd;
+				jd.Initialize(b2dbA, b2dbB, bodyA_Anchor, bodyB_Anchor);
+				jd.collideConnected	= (stringToLong(sCollideConnected))? true : false;
+				jd.dampingRatio		= stringToFloat(sDampingRatio);
+				jd.frequencyHz		= stringToFloat(sFrequency);
+				jd.length			= stringToFloat(sLength);
+
+				b2Joint* j = _physicsWorld->CreateJoint(&jd);
+				createJoint(j);
+			}
+			break;
+		}
+	}
+}
+
+PhysicsBody* PhysicsManager::getBodyByID( ulong id )
+{
+	PhysicsBodyList::iterator bodiesItEnd = _physicsBodies.end();
+	PhysicsBodyList::iterator bodyIt = _physicsBodies.begin(); 
+	PhysicsBody *pb = nullptr;
+	while(bodyIt != bodiesItEnd)
+	{
+		pb = *bodyIt;
+		++bodyIt;
+
+		if(pb->_id == id)
+		{
+			return pb;
+		}
+	}
+
+	return nullptr;
 }
 
 

@@ -20,7 +20,8 @@ PhysicsBody::PhysicsBody( b2Body *body, uint id, Material* fillMaterial, Materia
 	_fillMaterial		(fillMaterial),
 	_lineMaterial		(lineMaterial),
 	_selectedMaterial	(selectedMaterial),
-	_type				(PBT_Unknown)
+	_type				(PBT_Unknown),
+	_saveToDisk			(true)
 {
 	_body->SetUserData(this);
 	reconstructPolygon();
@@ -463,6 +464,16 @@ const PhysicsBodyType PhysicsBody::getType( void ) const
 void PhysicsBody::setType( PhysicsBodyType type )
 {
 	_type = type;
+}
+
+void PhysicsBody::setSaveToDisk( bool save )
+{
+	_saveToDisk = save;
+}
+
+bool PhysicsBody::getSaveToDisk() const
+{
+	return _saveToDisk;
 }
 
 

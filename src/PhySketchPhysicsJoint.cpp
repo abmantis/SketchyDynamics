@@ -16,7 +16,8 @@ PhysicsJoint::PhysicsJoint( b2Joint *joint, PhysicsJointType type, Material* mat
 	_id					(id),
 	_selectable			(true),
 	_selected			(false),
-	_validSituation		(true)
+	_validSituation		(true),
+	_saveToDisk			(true)
 {
 	_joint->SetUserData(this);
 }
@@ -43,6 +44,16 @@ bool PhysicsJoint::isSelected() const
 PhySketch::PhysicsJointType PhysicsJoint::getType() const
 {
 	return _pjt;
+}
+
+void PhysicsJoint::setSaveToDisk( bool save )
+{
+	_saveToDisk = save;
+}
+
+bool PhysicsJoint::getSaveToDisk() const
+{
+	return _saveToDisk;
 }
 
 

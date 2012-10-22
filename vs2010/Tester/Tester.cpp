@@ -73,7 +73,8 @@ int _tmain(int argc, _TCHAR* argv[])
  		backgroundPhyBody->setFillMaterial(transparentMat);
  		backgroundPhyBody->setLineMaterial(transparentMat);
 		backgroundPhyBody->reconstructPolygon();		
-		_physicsMgr->setUnselectableBody(backgroundPhyBody);		
+		_physicsMgr->setUnselectableBody(backgroundPhyBody);	
+		backgroundPhyBody->setSaveToDisk(false);
 	}
 	
 		
@@ -97,7 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		groundPhyBody->reconstructPolygon();
 		groundPhyBody->recomputeTexCoordsToFit();
 		_physicsMgr->setUnselectableBody(groundPhyBody);
-
+		groundPhyBody->setSaveToDisk(false);
 
 		// Create ground polygon (the background body would not work good with the shadow)
 		PhySketch::Polygon* grndPoly = new PhySketch::Polygon(PhySketch::VV_Static, "groundPoly");

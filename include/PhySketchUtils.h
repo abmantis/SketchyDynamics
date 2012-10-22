@@ -12,6 +12,13 @@ namespace PhySketch
 		stream << f;
 		return stream.str();
 	}
+
+	static std::string toString(long l)
+	{
+		std::ostringstream stream;
+		stream << l;
+		return stream.str();
+	}
 	
 	static std::string toString(unsigned long i)
 	{
@@ -20,13 +27,38 @@ namespace PhySketch
 		return stream.str();
 	}
 
-	static float stringToFloat(const char* str)
+	static std::string toString(bool b)
+	{
+		if(b)
+			return "1";
+		return "0";
+	}
+
+	static float stringToFloat(std::string str)
 	{
 		std::istringstream stm;
 		stm.str(str);
 		float f;
 		stm >> f;
 		return f;
+	}
+
+	static long stringToLong(std::string str)
+	{
+		std::istringstream stm;
+		stm.str(str);
+		long l;
+		stm >> l;
+		return l;
+	}
+
+	static unsigned long stringToULong(std::string str)
+	{
+		std::istringstream stm;
+		stm.str(str);
+		unsigned long l;
+		stm >> l;
+		return l;
 	}
 
 	static float degreesToRadians (float degrees)

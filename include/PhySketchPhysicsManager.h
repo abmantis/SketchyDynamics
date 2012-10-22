@@ -5,6 +5,7 @@
 #include "PhySketchSingleton.h"
 #include "Box2D/Box2D.h"
 #include "PhySketchVector2.h"
+#include "../dependecies/xmlParser/xmlParser.h"
 
 
 namespace PhySketch
@@ -43,6 +44,8 @@ namespace PhySketch
 		/// <param name="destroyB2DBody"> True to also destroy the Box2D b2Body
 		/// 	attached to this object. </param>
 		virtual void destroyBody(PhysicsBody *b, bool destroyB2DBody = true);
+
+		virtual PhysicsBody* getBodyByID(ulong id);
 
 		virtual void selectBody(PhysicsBody *b);
 		virtual void unselectBody(PhysicsBody *b);
@@ -137,6 +140,15 @@ namespace PhySketch
 		/// <summary> Removes the event listener. The listener will stop receiving events</summary>
 		/// <param name="listener"> The PhysicsEventsListener. </param>
 		virtual void removeEventListener(PhysicsEventsListener *listener);
+
+		/// <summary> Saves physics objects to disk. </summary>
+		/// <param name="file"> The file (path+name) to save the objects. </param>
+		virtual void saveToDisk(std::string file) const;
+
+		/// <summary> Loads physics objects from disk. </summary>
+		/// <param name="file"> The file (path+name) to save the objects. </param>
+		/// <returns> true if it succeeds, false if it fails. </returns>
+		virtual bool loadFromDisk(std::string file); 
 		
 
 		static PhysicsManager* getSingletonPtr(void);
@@ -167,6 +179,11 @@ namespace PhySketch
 		/// <summary> Notify listeners joint creation. </summary>
 		/// <param name="body"> The new joint. </param>
 		virtual void invokeListenersJointCreated(PhysicsJoint *joint);
+
+		virtual void saveBodies(XMLNode& parentNode) const;
+		virtual void saveJoints(XMLNode& parentNode) const;
+		virtual void loadBodies(XMLNode parentNode, std::map<ulong, ulong>& bodiesIDMapping);
+		virtual void loadJoints(XMLNode parentNode, std::map<ulong, ulong> bodiesIDMapping);
 		
 
 	protected:

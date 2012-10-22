@@ -11,6 +11,7 @@
 #include "PhySketchMaterialManager.h"
 #include "PhySketchRenderer.h"
 
+
 class TestListener : public PhySketch::InputListener, public PhySketch::PhysicsEventsListener
 {
 public:
@@ -31,6 +32,34 @@ public:
 		case PhySketch::KEY_Space:
 			{
 				_physicsMgr->toggleSimulation();
+				break;
+			}
+		case PhySketch::KEY_S:
+			{
+				HWND hwnd = GetConsoleWindow();
+				SetForegroundWindow(hwnd);
+
+				std::string file;
+				std::cout << "File to save? ";
+				std::cin >> file;
+				
+
+				file = file + ".xml";
+				_physicsMgr->saveToDisk(file);
+				break;
+			}
+		case PhySketch::KEY_A:
+			{
+				HWND hwnd = GetConsoleWindow();
+				SetForegroundWindow(hwnd);
+
+				std::string file;
+				std::cout << "File to load (add)? ";
+				std::cin >> file;
+
+
+				file = file + ".xml";
+				_physicsMgr->loadFromDisk(file);
 				break;
 			}
 		}

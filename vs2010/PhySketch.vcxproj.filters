@@ -28,6 +28,9 @@
     <Filter Include="Dependencies\poly2tri\common">
       <UniqueIdentifier>{f6d6876e-b82f-4579-9fa9-28591f6a066b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Dependencies\xmlParser">
+      <UniqueIdentifier>{a2a88dcb-124e-4b2e-8bcf-a75f453989f8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -207,6 +210,9 @@
     <ClInclude Include="..\include\PhySketchAnimatedPolygon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\dependecies\xmlParser\xmlParser.h">
+      <Filter>Dependencies\xmlParser</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\PhySketchApplicationWindow.cpp">
@@ -337,6 +343,9 @@
     </ClCompile>
     <ClCompile Include="..\src\PhySketchAnimatedPolygon.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\dependecies\xmlParser\xmlParser.cpp">
+      <Filter>Dependencies\xmlParser</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

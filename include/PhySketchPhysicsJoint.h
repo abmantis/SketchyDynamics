@@ -49,6 +49,18 @@ namespace PhySketch
 		virtual JointAnchorsSituation checkAnchorsSituation(bool updateVisual) = 0;
 
 		virtual PhysicsJointType getType() const;
+
+		/// <summary> Wheather or not this joint should be saved to disk when
+		/// 	saving. </summary>
+		/// <remarks> This does not actually save it, it only specifies that it
+		/// 	would be included in the saving process. </remarks>
+		/// <param name="save"> true to indicate that it should be saved. </param>
+		virtual void setSaveToDisk(bool save);
+
+		/// <summary> Returns wheather or not this joint is going to be saved to
+		/// 	disk when saving. </summary>
+		/// <returns> true if the joint is going to be saved. </returns>
+		virtual bool getSaveToDisk() const;
 		
 	protected:
 		virtual void select() = 0;
@@ -66,6 +78,7 @@ namespace PhySketch
 		bool _selected;
 		bool _selectable;
 		bool _validSituation;
+		bool _saveToDisk;
 	};
 
 	class PhysicsJointRevolute : public PhysicsJoint

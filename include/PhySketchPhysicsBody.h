@@ -72,6 +72,18 @@ namespace PhySketch
 		virtual const PhysicsBodyType getType(void) const;
 		virtual void setType(PhysicsBodyType type);
 
+		/// <summary> Wheather or not this body should be saved to disk when
+		/// 	saving. </summary>
+		/// <remarks> This does not actually save it, it only specifies that it
+		/// 	would be included in the saving process. </remarks>
+		/// <param name="save"> true to indicate that it should be saved. </param>
+		virtual void setSaveToDisk(bool save);
+
+		/// <summary> Returns wheather or not this body is going to be saved to
+		/// 	disk when saving. </summary>
+		/// <returns> true if the body is going to be saved. </returns>
+		virtual bool getSaveToDisk() const;
+
 
 	protected:
 		b2Body* _body;
@@ -83,6 +95,7 @@ namespace PhySketch
 		Material* _fillMaterial;
 		Material* _lineMaterial;
 		Material* _selectedMaterial;
+		bool _saveToDisk;
 	};
 }
 #endif // PhySketchPhysicsBody_h__

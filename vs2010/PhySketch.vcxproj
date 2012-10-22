@@ -123,6 +123,7 @@
     <ClInclude Include="..\dependecies\poly2tri\sweep\cdt.h" />
     <ClInclude Include="..\dependecies\poly2tri\sweep\sweep.h" />
     <ClInclude Include="..\dependecies\poly2tri\sweep\sweep_context.h" />
+    <ClInclude Include="..\dependecies\xmlParser\xmlParser.h" />
     <ClInclude Include="..\include\PhySketchAABB.h" />
     <ClInclude Include="..\include\PhySketchAnimatedPolygon.h" />
     <ClInclude Include="..\include\PhySketchApplicationWindow_WGL.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="..\dependecies\poly2tri\sweep\cdt.cc" />
     <ClCompile Include="..\dependecies\poly2tri\sweep\sweep.cc" />
     <ClCompile Include="..\dependecies\poly2tri\sweep\sweep_context.cc" />
+    <ClCompile Include="..\dependecies\xmlParser\xmlParser.cpp" />
     <ClCompile Include="..\src\PhySketchAnimatedPolygon.cpp" />
     <ClCompile Include="..\src\PhySketchApplicationWindow_WGL.cpp" />
     <ClCompile Include="..\src\PhySketchCore.cpp" />
