@@ -43,10 +43,10 @@
  *   available on windows 9x/NT/2000/XP/Vista only.
  *
  * The following license terms apply to projects that are in some way related to
- * the "PhySketch  project", including applications
- * using "PhySketch  project" and tools developed
- * for enhancing "PhySketch  project". All other projects
- * (not related to "PhySketch  project") have to use this
+ * the "SketchyDynamics  project", including applications
+ * using "SketchyDynamics  project" and tools developed
+ * for enhancing "SketchyDynamics  project". All other projects
+ * (not related to "SketchyDynamics  project") have to use this
  * code under the Aladdin Free Public License (AFPL)
  * See the file "AFPL-license.txt" for more informations about the AFPL license.
  * (see http://www.artifex.com/downloads/doc/Public.htm for detailed AFPL terms)

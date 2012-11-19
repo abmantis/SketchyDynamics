@@ -98,7 +98,7 @@
     <ClCompile Include="Tester.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PhySketch.vcxproj">
+    <ProjectReference Include="..\SketchyDynamics.vcxproj">
       <Project>{4bdb6380-06b6-4241-9178-0cfcb5f3047f}</Project>
       <Private>false</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>

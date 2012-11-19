@@ -1,0 +1,13 @@
+#include "SketchyDynamicsVector2.h"
+
+namespace SketchyDynamics
+{
+	const Vector2 Vector2::ZERO_XY	(0, 0);	
+	const Vector2 Vector2::UNIT_X	(1, 0);
+	const Vector2 Vector2::UNIT_Y	(0, 1);
+	const Vector2 Vector2::UNIT_XY	(1, 1);
+	const Vector2 Vector2::NEGATIVE_UNIT_X	(-1, 0);
+	const Vector2 Vector2::NEGATIVE_UNIT_Y	( 0,-1);
+	const Vector2 Vector2::NEGATIVE_UNIT_XY	(-1,-1);
+	
+}
