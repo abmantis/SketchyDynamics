@@ -121,8 +121,7 @@ void Sweep::EdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* triangl
       triangle = &triangle->NeighborAcross(point);
       EdgeEvent( tcx, ep, *p1, triangle, *p1 );
     } else {
-      std::runtime_error("EdgeEvent - collinear points not supported");
-      assert(0);
+      assert("EdgeEvent - collinear points not supported" & false);
     }
     return;
   }
@@ -138,8 +137,7 @@ void Sweep::EdgeEvent(SweepContext& tcx, Point& ep, Point& eq, Triangle* triangl
       triangle = &triangle->NeighborAcross(point);
       EdgeEvent( tcx, ep, *p2, triangle, *p2 );
     } else {
-      std::runtime_error("EdgeEvent - collinear points not supported");
-      assert(0);
+     assert("EdgeEvent - collinear points not supported" & false);
     }
     return;
   }

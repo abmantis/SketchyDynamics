@@ -1,6 +1,6 @@
-#include "../dependecies/CALI/CIAlpha.h"
-#include "../dependecies/CALI/CIVector.h"
-#include "../dependecies/CALI/CIFunction.h"
+#include "CIAlpha.h"
+#include "CIVector.h"
+#include "CIFunction.h"
 
 CIAlpha::CIAlpha ()
 {

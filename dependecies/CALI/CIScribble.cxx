@@ -29,9 +29,9 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIScribble.h"
-#include "../dependecies/CALI/CIFunction.h"
-#include "../dependecies/CALI/myValues.h"
+#include "CIScribble.h"
+#include "CIFunction.h"
+#include "myValues.h"
 
 #ifndef _USE_MATH_DEFINES
 	#define _USE_MATH_DEFINES

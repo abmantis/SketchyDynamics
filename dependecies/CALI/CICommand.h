@@ -43,7 +43,7 @@ public:
     CICommand ()          { _sc = NULL; }
 
     virtual char *getName() { return NULL; }
-    char *getGestureType() { return "Command"; }
+    char *getGestureType() { "Command"; }
     virtual CIGesture* clone(){ return NULL; }
     void popAttribs ();
     

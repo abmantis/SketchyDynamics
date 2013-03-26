@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIDiamond.h"
+#include "CIDiamond.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 

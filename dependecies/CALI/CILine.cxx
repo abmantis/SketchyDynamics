@@ -30,7 +30,7 @@
 +----------------------------------------------------------------------------*/
 
 
-#include "../dependecies/CALI/CILine.h"
+#include "CILine.h"
 
 /*----------------------------------------------------------------------------+
 | Description: In this constructor we define all the features that are used 

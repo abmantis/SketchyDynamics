@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIFeatures.h"
+#include "CIFeatures.h"
 
 CIFeatures::CIFeatures (double (CIEvaluate::* ptrF) (CIScribble*), double awa, double a, double b, double bwb)
 {

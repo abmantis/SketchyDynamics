@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIFunction.h"
+#include "CIFunction.h"
 
 double CIVector::length()
 { 

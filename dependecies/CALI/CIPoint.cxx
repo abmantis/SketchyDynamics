@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIPoint.h"
+#include "CIPoint.h"
 
 #ifdef WIN32 	// For Windows
 CIPoint& CIPoint::operator= (CIPoint& point)

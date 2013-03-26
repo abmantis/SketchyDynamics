@@ -30,7 +30,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIFunction.h"
+#include "CIFunction.h"
 #include <stdlib.h>
 #include <math.h>
 #include <iostream>

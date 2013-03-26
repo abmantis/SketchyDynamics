@@ -29,9 +29,9 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIWavyLine.h"
-#include "../dependecies/CALI/CIVector.h"
-#include "../dependecies/CALI/CIFunction.h"
+#include "CIWavyLine.h"
+#include "CIVector.h"
+#include "CIFunction.h"
 
 CIWavyLine::CIWavyLine ()
 {

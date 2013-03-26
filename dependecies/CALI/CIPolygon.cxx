@@ -29,9 +29,9 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIPolygon.h"
-#include "../dependecies/CALI/CIFunction.h"
-#include "../dependecies/CALI/myValues.h"
+#include "CIPolygon.h"
+#include "CIFunction.h"
+#include "myValues.h"
 #include <math.h>
 
 CIPolygon::CIPolygon ()

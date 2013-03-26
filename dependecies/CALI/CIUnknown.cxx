@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIUnknown.h"
+#include "CIUnknown.h"
 
 CIUnknown::CIUnknown() : CIShape()
 { 

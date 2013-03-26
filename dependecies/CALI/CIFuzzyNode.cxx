@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIFuzzyNode.h"
+#include "CIFuzzyNode.h"
 
 CIFuzzyNode::CIFuzzyNode (CIFuzzySet *fuzzy, double (CIEvaluate::* ptrF) (CIScribble*))
 {

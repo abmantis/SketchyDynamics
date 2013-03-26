@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CICommand.h"
+#include "CICommand.h"
 
 /*----------------------------------------------------------------------------+
 | Description: Computes the degree of membership for the scribble, taking

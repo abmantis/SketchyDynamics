@@ -29,7 +29,7 @@
 | 
 +----------------------------------------------------------------------------*/
 
-#include "../dependecies/CALI/CIRecognizer.h"
+#include "CIRecognizer.h"
 #include <string.h>
 
 CIRecognizer::CIRecognizer (bool rotated, double alfaCut)

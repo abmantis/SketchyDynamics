@@ -12,16 +12,6 @@
 #   define SKETCHYDYNAMICS_ARCH_32
 #endif
 
-
-#ifndef M_PI
-	#define M_PI	3.14159265358979323846f  
-#endif
-#ifndef M_PI_2
-	#define M_PI_2	1.57079632679489661923f
-#endif
-#ifndef M_PI_4
-	#define M_PI_4	0.785398163397448309616f
-#endif
 //////////////////////////////////////////////////////////////////////////
 // include files
 //
@@ -37,6 +27,16 @@
 #include <unordered_map>
 #include <algorithm>
 #include <GL/glew.h>
+
+#ifndef M_PI
+	#define M_PI	3.14159265358979323846f  
+#endif
+#ifndef M_PI_2
+	#define M_PI_2	1.57079632679489661923f
+#endif
+#ifndef M_PI_4
+	#define M_PI_4	0.785398163397448309616f
+#endif
 
 //////////////////////////////////////////////////////////////////////////
 // Windows includes. 
