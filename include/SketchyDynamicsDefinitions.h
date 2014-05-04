@@ -1,16 +1,18 @@
 // Define current OS
 #if defined( __WIN32__ ) || defined( _WIN32 )
 #   define SKETCHYDYNAMICS_OS_WIN32
+#elif defined (__ANDROID__)
+#	define SKETCHYDYNAMICS_OS_ANDROID
 #else
 #   define SKETCHYDYNAMICS_OS_LINUX
 #endif
 
 /* Find the arch type */
-#if defined(__x86_64__) || defined(_M_X64) || defined(__powerpc64__) || defined(__alpha__) || defined(__ia64__) || defined(__s390__) || defined(__s390x__)
-#   define SKETCHYDYNAMICS_ARCH_64
-#else
-#   define SKETCHYDYNAMICS_ARCH_32
-#endif
+//#if defined(__x86_64__) || defined(_M_X64) || defined(__powerpc64__) || defined(__alpha__) || defined(__ia64__) || defined(__s390__) || defined(__s390x__)
+//#   define SKETCHYDYNAMICS_ARCH_64
+//#else
+//#   define SKETCHYDYNAMICS_ARCH_32
+//#endif
 
 //////////////////////////////////////////////////////////////////////////
 // include files
@@ -26,7 +28,6 @@
 #include <sstream>
 #include <unordered_map>
 #include <algorithm>
-#include <GL/glew.h>
 
 #ifndef M_PI
 	#define M_PI	3.14159265358979323846f  
@@ -42,18 +43,18 @@
 // Windows includes. 
 #ifdef SKETCHYDYNAMICS_OS_WIN32
 
-#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
-#define NOMINMAX						// Stop windows.h from messing up std::min
+	#define WIN32_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
+	#define NOMINMAX						// Stop windows.h from messing up std::min
 
-// Including SDKDDKVer.h defines the highest available Windows platform.
-// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
-// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
-#include <SDKDDKVer.h>
+	// Including SDKDDKVer.h defines the highest available Windows platform.
+	// If you wish to build your application for a previous Windows platform, include WinSDKVer.h and
+	// set the _WIN32_WINNT macro to the platform you wish to support before including SDKDDKVer.h.
+	#include <SDKDDKVer.h>
 
-#include <windows.h>
-#include <windowsx.h>
-#include <GL/gl.h>
-//#include <GL/glu.h>
+	#include <windows.h>
+	#include <windowsx.h>
+	#include <GL/gl.h>
+	#include <GL/glew.h>
 
 #endif //SKETCHYDYNAMICS_OS_WIN32
 
