@@ -34,7 +34,7 @@
 #ifndef _CISCRIBBLE_H
 #define _CISCRIBBLE_H
 
-#include <math.h>
+#include <cmath>
 #include <fstream>
 #include "CIStroke.h"
 #include "CIList.h"

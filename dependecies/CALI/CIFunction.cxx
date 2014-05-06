@@ -31,8 +31,8 @@
 +----------------------------------------------------------------------------*/
 
 #include "CIFunction.h"
-#include <stdlib.h>
-#include <math.h>
+#include <cstdlib>
+#include <cmath>
 #include <iostream>
 #include <fstream>
 #include <stdio.h>

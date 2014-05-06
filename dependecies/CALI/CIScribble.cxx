@@ -35,14 +35,14 @@
 
 #ifndef _USE_MATH_DEFINES
 	#define _USE_MATH_DEFINES
-	#include <math.h>
+	#include <cmath>
 	#undef _USE_MATH_DEFINES
 #else
-	#include <math.h>
+	#include <cmath>
 #endif // _USE_MATH_DEFINES
 
 
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 //using namespace std;
 

@@ -32,7 +32,7 @@
 #include "CIPolygon.h"
 #include "CIFunction.h"
 #include "myValues.h"
-#include <math.h>
+#include <cmath>
 
 CIPolygon::CIPolygon ()
 {

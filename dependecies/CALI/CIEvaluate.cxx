@@ -31,7 +31,7 @@
 
 #include "CIEvaluate.h"
 #include "CIFunction.h"
-#include <math.h>
+#include <cmath>
 
 // Special ratios
 double CIEvaluate::Tl_Pch (CIScribble *sc)

@@ -31,6 +31,7 @@
 #include "CIPoint.h"
 #include "CIStroke.h"
 #include "myValues.h"
+#include "cmath"
 
 CIStroke::CIStroke ()
 {
